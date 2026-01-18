@@ -1,0 +1,553 @@
+[21:27:01.467] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.01, batch_size=2, cache_mode='part', cfg='configs/swin_base_patch4_window12_384_22k.yaml', dataset='TN3K', deterministic=1, eval=False, eval_interval=1, img_size=384, list_dir='./lists/TN3K', local_rank=0, max_epochs=100, max_iterations=30000, n_class=2, n_gpu=1, num_classes=2, num_workers=2, opts=None, output_dir='./output_tn3k', resume=None, root_path='/home/ub/pql/Swin-Unet-main/data/TN3K', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[21:27:01.467] Using Gradient Accumulation: Real Batch Size=2, Accumulation Steps=6, Virtual Batch Size=12
+[21:27:01.477] 480 iterations per epoch. 48000 max iterations 
+[21:28:05.234] iteration 20 : loss : 0.397117, loss_ce: 0.418875, loss_dice: 0.382611
+[21:29:05.673] iteration 40 : loss : 0.389408, loss_ce: 0.382296, loss_dice: 0.394150
+[21:30:05.959] iteration 60 : loss : 0.373515, loss_ce: 0.247807, loss_dice: 0.457321
+[21:31:06.506] iteration 80 : loss : 0.363214, loss_ce: 0.244215, loss_dice: 0.442546
+[21:31:07.624] save last model to ./output_tn3k/last_model.pth
+[21:32:08.549] iteration 100 : loss : 0.363745, loss_ce: 0.252654, loss_dice: 0.437806
+[21:33:08.960] iteration 120 : loss : 0.442852, loss_ce: 0.521080, loss_dice: 0.390701
+[21:34:09.276] iteration 140 : loss : 0.417638, loss_ce: 0.481795, loss_dice: 0.374866
+[21:35:09.626] iteration 160 : loss : 0.388702, loss_ce: 0.418748, loss_dice: 0.368672
+[21:35:11.081] save last model to ./output_tn3k/last_model.pth
+[21:36:12.072] iteration 180 : loss : 0.454434, loss_ce: 0.607052, loss_dice: 0.352690
+[21:37:12.461] iteration 200 : loss : 0.363090, loss_ce: 0.521006, loss_dice: 0.257813
+[21:38:12.898] iteration 220 : loss : 0.360447, loss_ce: 0.385073, loss_dice: 0.344029
+[21:39:13.276] iteration 240 : loss : 0.169638, loss_ce: 0.172219, loss_dice: 0.167918
+[21:39:14.702] save last model to ./output_tn3k/last_model.pth
+[21:40:15.592] iteration 260 : loss : 0.190158, loss_ce: 0.262577, loss_dice: 0.141879
+[21:41:15.927] iteration 280 : loss : 0.234776, loss_ce: 0.241606, loss_dice: 0.230222
+[21:42:16.272] iteration 300 : loss : 0.057273, loss_ce: 0.071981, loss_dice: 0.047469
+[21:43:16.580] iteration 320 : loss : 0.115698, loss_ce: 0.149946, loss_dice: 0.092866
+[21:43:17.986] save last model to ./output_tn3k/last_model.pth
+[21:44:18.785] iteration 340 : loss : 0.115029, loss_ce: 0.174528, loss_dice: 0.075363
+[21:45:19.092] iteration 360 : loss : 0.050268, loss_ce: 0.067006, loss_dice: 0.039110
+[21:46:19.543] iteration 380 : loss : 0.233425, loss_ce: 0.113565, loss_dice: 0.313332
+[21:47:19.925] iteration 400 : loss : 0.069647, loss_ce: 0.114895, loss_dice: 0.039482
+[21:47:21.356] save last model to ./output_tn3k/last_model.pth
+[21:48:22.224] iteration 420 : loss : 0.072618, loss_ce: 0.098448, loss_dice: 0.055398
+[21:49:22.589] iteration 440 : loss : 0.064716, loss_ce: 0.081293, loss_dice: 0.053665
+[21:50:22.955] iteration 460 : loss : 0.167150, loss_ce: 0.125243, loss_dice: 0.195088
+[21:51:23.312] iteration 480 : loss : 0.062073, loss_ce: 0.099794, loss_dice: 0.036925
+[21:51:24.902] save last model to ./output_tn3k/last_model.pth
+[21:52:25.694] iteration 500 : loss : 0.135322, loss_ce: 0.224225, loss_dice: 0.076054
+[21:53:26.125] iteration 520 : loss : 0.135465, loss_ce: 0.159649, loss_dice: 0.119343
+[21:54:26.674] iteration 540 : loss : 0.089735, loss_ce: 0.107213, loss_dice: 0.078084
+[21:55:27.144] iteration 560 : loss : 0.096676, loss_ce: 0.051889, loss_dice: 0.126535
+[21:55:28.575] save last model to ./output_tn3k/last_model.pth
+[21:56:29.379] iteration 580 : loss : 0.065445, loss_ce: 0.067974, loss_dice: 0.063759
+[21:57:29.705] iteration 600 : loss : 0.034983, loss_ce: 0.043950, loss_dice: 0.029005
+[21:58:30.012] iteration 620 : loss : 0.079284, loss_ce: 0.122959, loss_dice: 0.050168
+[21:59:30.306] iteration 640 : loss : 0.087722, loss_ce: 0.043065, loss_dice: 0.117494
+[21:59:31.743] save last model to ./output_tn3k/last_model.pth
+[22:00:32.752] iteration 660 : loss : 0.065914, loss_ce: 0.042393, loss_dice: 0.081594
+[22:01:33.000] iteration 680 : loss : 0.153632, loss_ce: 0.186450, loss_dice: 0.131754
+[22:02:33.258] iteration 700 : loss : 0.116197, loss_ce: 0.050744, loss_dice: 0.159833
+[22:03:33.444] iteration 720 : loss : 0.061745, loss_ce: 0.091688, loss_dice: 0.041782
+[22:03:34.871] save last model to ./output_tn3k/last_model.pth
+[22:04:35.738] iteration 740 : loss : 0.063286, loss_ce: 0.079561, loss_dice: 0.052435
+[22:05:36.259] iteration 760 : loss : 0.104741, loss_ce: 0.078861, loss_dice: 0.121994
+[22:06:36.660] iteration 780 : loss : 0.061296, loss_ce: 0.087317, loss_dice: 0.043948
+[22:07:36.924] iteration 800 : loss : 0.046700, loss_ce: 0.057383, loss_dice: 0.039578
+[22:07:38.339] save last model to ./output_tn3k/last_model.pth
+[22:08:39.183] iteration 820 : loss : 0.271209, loss_ce: 0.399905, loss_dice: 0.185412
+[22:09:39.689] iteration 840 : loss : 0.140572, loss_ce: 0.056495, loss_dice: 0.196624
+[22:10:40.363] iteration 860 : loss : 0.061103, loss_ce: 0.079048, loss_dice: 0.049140
+[22:11:40.907] iteration 880 : loss : 0.064262, loss_ce: 0.077373, loss_dice: 0.055521
+[22:11:42.334] save last model to ./output_tn3k/last_model.pth
+[22:12:43.062] iteration 900 : loss : 0.110292, loss_ce: 0.137079, loss_dice: 0.092434
+[22:13:43.314] iteration 920 : loss : 0.049553, loss_ce: 0.077701, loss_dice: 0.030787
+[22:14:43.861] iteration 940 : loss : 0.042938, loss_ce: 0.055902, loss_dice: 0.034295
+[22:15:44.341] iteration 960 : loss : 0.135292, loss_ce: 0.208471, loss_dice: 0.086506
+[22:15:45.787] save last model to ./output_tn3k/last_model.pth
+[22:16:46.648] iteration 980 : loss : 0.045720, loss_ce: 0.016509, loss_dice: 0.065193
+[22:17:47.090] iteration 1000 : loss : 0.033604, loss_ce: 0.022696, loss_dice: 0.040876
+[22:18:47.494] iteration 1020 : loss : 0.129175, loss_ce: 0.192994, loss_dice: 0.086629
+[22:19:48.048] iteration 1040 : loss : 0.046161, loss_ce: 0.019790, loss_dice: 0.063741
+[22:19:49.431] save last model to ./output_tn3k/last_model.pth
+[22:20:50.226] iteration 1060 : loss : 0.080818, loss_ce: 0.139328, loss_dice: 0.041812
+[22:21:50.559] iteration 1080 : loss : 0.057951, loss_ce: 0.025981, loss_dice: 0.079264
+[22:22:50.973] iteration 1100 : loss : 0.060836, loss_ce: 0.074382, loss_dice: 0.051805
+[22:23:51.293] iteration 1120 : loss : 0.131631, loss_ce: 0.168412, loss_dice: 0.107110
+[22:23:52.728] save last model to ./output_tn3k/last_model.pth
+[22:24:53.835] iteration 1140 : loss : 0.077471, loss_ce: 0.036895, loss_dice: 0.104521
+[22:25:54.237] iteration 1160 : loss : 0.187879, loss_ce: 0.191715, loss_dice: 0.185322
+[22:26:54.681] iteration 1180 : loss : 0.143156, loss_ce: 0.235947, loss_dice: 0.081295
+[22:27:55.109] iteration 1200 : loss : 0.090392, loss_ce: 0.142863, loss_dice: 0.055412
+[22:27:56.529] save last model to ./output_tn3k/last_model.pth
+[22:28:57.447] iteration 1220 : loss : 0.047211, loss_ce: 0.056409, loss_dice: 0.041080
+[22:29:57.872] iteration 1240 : loss : 0.151396, loss_ce: 0.124053, loss_dice: 0.169624
+[22:30:58.321] iteration 1260 : loss : 0.078227, loss_ce: 0.118582, loss_dice: 0.051323
+[22:31:58.877] iteration 1280 : loss : 0.117635, loss_ce: 0.190186, loss_dice: 0.069267
+[22:32:00.309] save last model to ./output_tn3k/last_model.pth
+[22:33:01.153] iteration 1300 : loss : 0.108465, loss_ce: 0.148255, loss_dice: 0.081938
+[22:34:01.509] iteration 1320 : loss : 0.074726, loss_ce: 0.078241, loss_dice: 0.072383
+[22:35:01.915] iteration 1340 : loss : 0.093214, loss_ce: 0.102816, loss_dice: 0.086812
+[22:36:02.489] iteration 1360 : loss : 0.051208, loss_ce: 0.051806, loss_dice: 0.050809
+[22:36:03.936] save last model to ./output_tn3k/last_model.pth
+[22:37:04.998] iteration 1380 : loss : 0.039117, loss_ce: 0.054051, loss_dice: 0.029162
+[22:38:05.602] iteration 1400 : loss : 0.021435, loss_ce: 0.018034, loss_dice: 0.023702
+[22:39:06.254] iteration 1420 : loss : 0.136897, loss_ce: 0.093196, loss_dice: 0.166031
+[22:40:06.737] iteration 1440 : loss : 0.065675, loss_ce: 0.079082, loss_dice: 0.056737
+[22:40:08.147] save last model to ./output_tn3k/last_model.pth
+[22:41:08.884] iteration 1460 : loss : 0.059753, loss_ce: 0.093310, loss_dice: 0.037382
+[22:42:09.297] iteration 1480 : loss : 0.039092, loss_ce: 0.026922, loss_dice: 0.047205
+[22:43:09.851] iteration 1500 : loss : 0.049780, loss_ce: 0.060557, loss_dice: 0.042596
+[22:44:10.179] iteration 1520 : loss : 0.060537, loss_ce: 0.093643, loss_dice: 0.038467
+[22:44:11.614] save last model to ./output_tn3k/last_model.pth
+[22:45:12.505] iteration 1540 : loss : 0.105076, loss_ce: 0.031559, loss_dice: 0.154088
+[22:46:12.876] iteration 1560 : loss : 0.089064, loss_ce: 0.145614, loss_dice: 0.051365
+[22:47:13.323] iteration 1580 : loss : 0.058023, loss_ce: 0.097760, loss_dice: 0.031532
+[22:48:13.683] iteration 1600 : loss : 0.046973, loss_ce: 0.038665, loss_dice: 0.052512
+[22:48:15.118] save last model to ./output_tn3k/last_model.pth
+[22:49:15.983] iteration 1620 : loss : 0.153744, loss_ce: 0.114631, loss_dice: 0.179819
+[22:50:16.547] iteration 1640 : loss : 0.036973, loss_ce: 0.031606, loss_dice: 0.040552
+[22:51:17.007] iteration 1660 : loss : 0.109799, loss_ce: 0.157577, loss_dice: 0.077946
+[22:52:17.429] iteration 1680 : loss : 0.017651, loss_ce: 0.022549, loss_dice: 0.014385
+[22:52:18.853] save last model to ./output_tn3k/last_model.pth
+[22:53:19.802] iteration 1700 : loss : 0.032578, loss_ce: 0.027705, loss_dice: 0.035827
+[22:54:20.146] iteration 1720 : loss : 0.057928, loss_ce: 0.066164, loss_dice: 0.052437
+[22:55:20.614] iteration 1740 : loss : 0.066064, loss_ce: 0.108221, loss_dice: 0.037960
+[22:56:21.141] iteration 1760 : loss : 0.061732, loss_ce: 0.080659, loss_dice: 0.049113
+[22:56:22.561] save last model to ./output_tn3k/last_model.pth
+[22:57:23.571] iteration 1780 : loss : 0.026099, loss_ce: 0.026942, loss_dice: 0.025537
+[22:58:24.089] iteration 1800 : loss : 0.130147, loss_ce: 0.131366, loss_dice: 0.129335
+[22:59:24.453] iteration 1820 : loss : 0.046421, loss_ce: 0.058096, loss_dice: 0.038638
+[23:00:24.745] iteration 1840 : loss : 0.063583, loss_ce: 0.086465, loss_dice: 0.048329
+[23:00:26.163] save last model to ./output_tn3k/last_model.pth
+[23:01:27.027] iteration 1860 : loss : 0.050944, loss_ce: 0.042293, loss_dice: 0.056711
+[23:02:27.453] iteration 1880 : loss : 0.047685, loss_ce: 0.050122, loss_dice: 0.046061
+[23:03:27.797] iteration 1900 : loss : 0.072005, loss_ce: 0.084740, loss_dice: 0.063515
+[23:04:28.172] iteration 1920 : loss : 0.043942, loss_ce: 0.027991, loss_dice: 0.054576
+[23:04:29.592] save last model to ./output_tn3k/last_model.pth
+[23:05:30.318] iteration 1940 : loss : 0.264510, loss_ce: 0.233452, loss_dice: 0.285215
+[23:06:30.894] iteration 1960 : loss : 0.033889, loss_ce: 0.023622, loss_dice: 0.040734
+[23:07:31.291] iteration 1980 : loss : 0.040631, loss_ce: 0.065345, loss_dice: 0.024156
+[23:08:31.628] iteration 2000 : loss : 0.153963, loss_ce: 0.202015, loss_dice: 0.121927
+[23:08:33.049] save last model to ./output_tn3k/last_model.pth
+[23:09:33.937] iteration 2020 : loss : 0.110781, loss_ce: 0.057868, loss_dice: 0.146056
+[23:10:34.520] iteration 2040 : loss : 0.180626, loss_ce: 0.277169, loss_dice: 0.116263
+[23:11:35.008] iteration 2060 : loss : 0.076476, loss_ce: 0.125774, loss_dice: 0.043611
+[23:12:35.378] iteration 2080 : loss : 0.063792, loss_ce: 0.091778, loss_dice: 0.045134
+[23:12:36.812] save last model to ./output_tn3k/last_model.pth
+[23:13:37.887] iteration 2100 : loss : 0.033127, loss_ce: 0.051324, loss_dice: 0.020996
+[23:14:38.336] iteration 2120 : loss : 0.042861, loss_ce: 0.061479, loss_dice: 0.030449
+[23:15:38.933] iteration 2140 : loss : 0.103072, loss_ce: 0.078731, loss_dice: 0.119300
+[23:16:39.437] iteration 2160 : loss : 0.036273, loss_ce: 0.060799, loss_dice: 0.019923
+[23:16:40.891] save last model to ./output_tn3k/last_model.pth
+[23:17:41.769] iteration 2180 : loss : 0.132352, loss_ce: 0.083531, loss_dice: 0.164899
+[23:18:42.151] iteration 2200 : loss : 0.106632, loss_ce: 0.142137, loss_dice: 0.082962
+[23:19:42.502] iteration 2220 : loss : 0.062226, loss_ce: 0.058313, loss_dice: 0.064834
+[23:20:42.896] iteration 2240 : loss : 0.057606, loss_ce: 0.019360, loss_dice: 0.083104
+[23:20:44.344] save last model to ./output_tn3k/last_model.pth
+[23:21:45.232] iteration 2260 : loss : 0.015904, loss_ce: 0.014854, loss_dice: 0.016603
+[23:22:45.611] iteration 2280 : loss : 0.065089, loss_ce: 0.081700, loss_dice: 0.054015
+[23:23:45.942] iteration 2300 : loss : 0.192227, loss_ce: 0.136368, loss_dice: 0.229466
+[23:24:46.363] iteration 2320 : loss : 0.080048, loss_ce: 0.129881, loss_dice: 0.046826
+[23:24:47.779] save last model to ./output_tn3k/last_model.pth
+[23:25:48.688] iteration 2340 : loss : 0.053715, loss_ce: 0.055434, loss_dice: 0.052568
+[23:26:49.089] iteration 2360 : loss : 0.025722, loss_ce: 0.035545, loss_dice: 0.019173
+[23:27:49.615] iteration 2380 : loss : 0.041100, loss_ce: 0.066885, loss_dice: 0.023910
+[23:28:50.070] iteration 2400 : loss : 0.043638, loss_ce: 0.053232, loss_dice: 0.037242
+[23:28:51.480] save last model to ./output_tn3k/last_model.pth
+[23:29:52.462] iteration 2420 : loss : 0.048171, loss_ce: 0.051548, loss_dice: 0.045920
+[23:30:52.931] iteration 2440 : loss : 0.041694, loss_ce: 0.023691, loss_dice: 0.053696
+[23:31:53.551] iteration 2460 : loss : 0.234568, loss_ce: 0.181781, loss_dice: 0.269759
+[23:32:53.956] iteration 2480 : loss : 0.046934, loss_ce: 0.015977, loss_dice: 0.067572
+[23:32:55.364] save last model to ./output_tn3k/last_model.pth
+[23:33:55.966] iteration 2500 : loss : 0.071738, loss_ce: 0.119217, loss_dice: 0.040084
+[23:34:56.135] iteration 2520 : loss : 0.065017, loss_ce: 0.036281, loss_dice: 0.084175
+[23:35:56.330] iteration 2540 : loss : 0.110617, loss_ce: 0.175915, loss_dice: 0.067084
+[23:36:56.417] iteration 2560 : loss : 0.178498, loss_ce: 0.278364, loss_dice: 0.111921
+[23:36:57.841] save last model to ./output_tn3k/last_model.pth
+[23:37:58.270] iteration 2580 : loss : 0.022544, loss_ce: 0.024831, loss_dice: 0.021019
+[23:38:58.207] iteration 2600 : loss : 0.045348, loss_ce: 0.057468, loss_dice: 0.037268
+[23:39:58.158] iteration 2620 : loss : 0.042899, loss_ce: 0.031954, loss_dice: 0.050197
+[23:40:58.088] iteration 2640 : loss : 0.085354, loss_ce: 0.023242, loss_dice: 0.126762
+[23:40:59.549] save last model to ./output_tn3k/last_model.pth
+[23:41:59.978] iteration 2660 : loss : 0.043036, loss_ce: 0.055570, loss_dice: 0.034680
+[23:42:59.924] iteration 2680 : loss : 0.025096, loss_ce: 0.030370, loss_dice: 0.021579
+[23:43:59.841] iteration 2700 : loss : 0.088572, loss_ce: 0.133011, loss_dice: 0.058946
+[23:44:59.792] iteration 2720 : loss : 0.078262, loss_ce: 0.040228, loss_dice: 0.103617
+[23:45:01.214] save last model to ./output_tn3k/last_model.pth
+[23:46:01.676] iteration 2740 : loss : 0.211152, loss_ce: 0.228570, loss_dice: 0.199540
+[23:47:01.611] iteration 2760 : loss : 0.100822, loss_ce: 0.168073, loss_dice: 0.055989
+[23:48:01.581] iteration 2780 : loss : 0.043706, loss_ce: 0.034299, loss_dice: 0.049976
+[23:49:01.456] iteration 2800 : loss : 0.052628, loss_ce: 0.014528, loss_dice: 0.078029
+[23:49:02.896] save last model to ./output_tn3k/last_model.pth
+[23:50:03.347] iteration 2820 : loss : 0.086510, loss_ce: 0.026571, loss_dice: 0.126469
+[23:51:03.241] iteration 2840 : loss : 0.038553, loss_ce: 0.059776, loss_dice: 0.024404
+[23:52:03.221] iteration 2860 : loss : 0.145344, loss_ce: 0.193494, loss_dice: 0.113243
+[23:53:03.165] iteration 2880 : loss : 0.066282, loss_ce: 0.067462, loss_dice: 0.065495
+[23:53:04.605] save last model to ./output_tn3k/last_model.pth
+[23:54:05.092] iteration 2900 : loss : 0.242254, loss_ce: 0.324289, loss_dice: 0.187564
+[23:55:05.006] iteration 2920 : loss : 0.054745, loss_ce: 0.037810, loss_dice: 0.066035
+[23:56:04.981] iteration 2940 : loss : 0.030497, loss_ce: 0.044198, loss_dice: 0.021364
+[23:57:04.895] iteration 2960 : loss : 0.050898, loss_ce: 0.046146, loss_dice: 0.054067
+[23:57:06.281] save last model to ./output_tn3k/last_model.pth
+[23:58:06.828] iteration 2980 : loss : 0.040044, loss_ce: 0.059395, loss_dice: 0.027143
+[23:59:06.854] iteration 3000 : loss : 0.084002, loss_ce: 0.130418, loss_dice: 0.053057
+[00:00:07.009] iteration 3020 : loss : 0.099029, loss_ce: 0.068206, loss_dice: 0.119578
+[00:01:06.979] iteration 3040 : loss : 0.075825, loss_ce: 0.112978, loss_dice: 0.051056
+[00:01:08.440] save last model to ./output_tn3k/last_model.pth
+[00:02:09.029] iteration 3060 : loss : 0.086717, loss_ce: 0.130721, loss_dice: 0.057380
+[00:03:09.086] iteration 3080 : loss : 0.139257, loss_ce: 0.145754, loss_dice: 0.134926
+[00:04:09.006] iteration 3100 : loss : 0.034029, loss_ce: 0.033952, loss_dice: 0.034080
+[00:05:08.862] iteration 3120 : loss : 0.048610, loss_ce: 0.045176, loss_dice: 0.050900
+[00:05:10.309] save last model to ./output_tn3k/last_model.pth
+[00:06:10.864] iteration 3140 : loss : 0.077202, loss_ce: 0.119268, loss_dice: 0.049158
+[00:07:10.833] iteration 3160 : loss : 0.137185, loss_ce: 0.118357, loss_dice: 0.149737
+[00:08:10.801] iteration 3180 : loss : 0.025714, loss_ce: 0.038030, loss_dice: 0.017504
+[00:09:10.741] iteration 3200 : loss : 0.028437, loss_ce: 0.023082, loss_dice: 0.032007
+[00:09:12.189] save last model to ./output_tn3k/last_model.pth
+[00:10:12.744] iteration 3220 : loss : 0.019928, loss_ce: 0.023518, loss_dice: 0.017534
+[00:11:12.791] iteration 3240 : loss : 0.034088, loss_ce: 0.052463, loss_dice: 0.021837
+[00:12:12.855] iteration 3260 : loss : 0.073898, loss_ce: 0.089979, loss_dice: 0.063178
+[00:13:12.850] iteration 3280 : loss : 0.071751, loss_ce: 0.083416, loss_dice: 0.063975
+[00:13:14.261] save last model to ./output_tn3k/last_model.pth
+[00:14:14.707] iteration 3300 : loss : 0.037733, loss_ce: 0.033059, loss_dice: 0.040849
+[00:15:14.694] iteration 3320 : loss : 0.068524, loss_ce: 0.105817, loss_dice: 0.043662
+[00:16:14.764] iteration 3340 : loss : 0.031687, loss_ce: 0.020191, loss_dice: 0.039350
+[00:17:14.748] iteration 3360 : loss : 0.113079, loss_ce: 0.113365, loss_dice: 0.112888
+[00:17:16.187] save last model to ./output_tn3k/last_model.pth
+[00:18:16.602] iteration 3380 : loss : 0.028851, loss_ce: 0.045897, loss_dice: 0.017486
+[00:19:16.592] iteration 3400 : loss : 0.100887, loss_ce: 0.074719, loss_dice: 0.118333
+[00:20:16.587] iteration 3420 : loss : 0.051168, loss_ce: 0.012044, loss_dice: 0.077251
+[00:21:16.544] iteration 3440 : loss : 0.037083, loss_ce: 0.037026, loss_dice: 0.037122
+[00:21:17.985] save last model to ./output_tn3k/last_model.pth
+[00:22:18.711] iteration 3460 : loss : 0.031862, loss_ce: 0.042296, loss_dice: 0.024905
+[00:23:18.668] iteration 3480 : loss : 0.122330, loss_ce: 0.165195, loss_dice: 0.093754
+[00:24:18.602] iteration 3500 : loss : 0.042398, loss_ce: 0.046937, loss_dice: 0.039372
+[00:25:18.505] iteration 3520 : loss : 0.054741, loss_ce: 0.086054, loss_dice: 0.033866
+[00:25:19.916] save last model to ./output_tn3k/last_model.pth
+[00:26:20.545] iteration 3540 : loss : 0.098903, loss_ce: 0.158529, loss_dice: 0.059152
+[00:27:20.722] iteration 3560 : loss : 0.056808, loss_ce: 0.065696, loss_dice: 0.050883
+[00:28:20.711] iteration 3580 : loss : 0.040557, loss_ce: 0.060911, loss_dice: 0.026988
+[00:29:20.669] iteration 3600 : loss : 0.057012, loss_ce: 0.082135, loss_dice: 0.040264
+[00:29:22.085] save last model to ./output_tn3k/last_model.pth
+[00:30:22.552] iteration 3620 : loss : 0.032175, loss_ce: 0.050484, loss_dice: 0.019969
+[00:31:22.495] iteration 3640 : loss : 0.079496, loss_ce: 0.087450, loss_dice: 0.074193
+[00:32:22.549] iteration 3660 : loss : 0.056074, loss_ce: 0.025050, loss_dice: 0.076757
+[00:33:22.614] iteration 3680 : loss : 0.042684, loss_ce: 0.062317, loss_dice: 0.029596
+[00:33:24.044] save last model to ./output_tn3k/last_model.pth
+[00:34:24.556] iteration 3700 : loss : 0.026006, loss_ce: 0.025352, loss_dice: 0.026442
+[00:35:24.516] iteration 3720 : loss : 0.032282, loss_ce: 0.026845, loss_dice: 0.035907
+[00:36:24.495] iteration 3740 : loss : 0.082394, loss_ce: 0.056541, loss_dice: 0.099629
+[00:37:24.433] iteration 3760 : loss : 0.026586, loss_ce: 0.034491, loss_dice: 0.021316
+[00:37:25.844] save last model to ./output_tn3k/last_model.pth
+[00:38:26.275] iteration 3780 : loss : 0.167788, loss_ce: 0.245355, loss_dice: 0.116077
+[00:39:26.286] iteration 3800 : loss : 0.034816, loss_ce: 0.048227, loss_dice: 0.025875
+[00:40:26.313] iteration 3820 : loss : 0.054088, loss_ce: 0.058541, loss_dice: 0.051118
+[00:41:26.319] iteration 3840 : loss : 0.040954, loss_ce: 0.045273, loss_dice: 0.038074
+[00:41:27.739] save last model to ./output_tn3k/last_model.pth
+[00:42:28.093] iteration 3860 : loss : 0.033842, loss_ce: 0.034822, loss_dice: 0.033190
+[00:43:27.978] iteration 3880 : loss : 0.053258, loss_ce: 0.089085, loss_dice: 0.029374
+[00:44:27.872] iteration 3900 : loss : 0.028743, loss_ce: 0.019630, loss_dice: 0.034819
+[00:45:27.761] iteration 3920 : loss : 0.047981, loss_ce: 0.050593, loss_dice: 0.046240
+[00:45:29.308] save last model to ./output_tn3k/last_model.pth
+[00:46:29.840] iteration 3940 : loss : 0.089099, loss_ce: 0.120688, loss_dice: 0.068040
+[00:47:30.011] iteration 3960 : loss : 0.031255, loss_ce: 0.017956, loss_dice: 0.040121
+[00:48:30.123] iteration 3980 : loss : 0.114934, loss_ce: 0.113436, loss_dice: 0.115932
+[00:49:30.176] iteration 4000 : loss : 0.075541, loss_ce: 0.052444, loss_dice: 0.090940
+[00:49:31.610] save last model to ./output_tn3k/last_model.pth
+[00:50:32.219] iteration 4020 : loss : 0.038662, loss_ce: 0.031299, loss_dice: 0.043571
+[00:51:32.312] iteration 4040 : loss : 0.048584, loss_ce: 0.076517, loss_dice: 0.029963
+[00:52:32.604] iteration 4060 : loss : 0.053040, loss_ce: 0.031098, loss_dice: 0.067668
+[00:53:32.917] iteration 4080 : loss : 0.059841, loss_ce: 0.100678, loss_dice: 0.032616
+[00:53:34.356] save last model to ./output_tn3k/last_model.pth
+[00:53:35.230] save model to ./output_tn3k/epoch_50.pth
+[00:54:35.803] iteration 4100 : loss : 0.030310, loss_ce: 0.017640, loss_dice: 0.038757
+[00:55:35.926] iteration 4120 : loss : 0.048889, loss_ce: 0.058295, loss_dice: 0.042619
+[00:56:36.070] iteration 4140 : loss : 0.058984, loss_ce: 0.075959, loss_dice: 0.047668
+[00:57:36.160] iteration 4160 : loss : 0.051175, loss_ce: 0.034560, loss_dice: 0.062251
+[00:57:37.581] save last model to ./output_tn3k/last_model.pth
+[00:57:38.451] save model to ./output_tn3k/epoch_51.pth
+[00:58:39.162] iteration 4180 : loss : 0.146405, loss_ce: 0.171217, loss_dice: 0.129863
+[00:59:39.313] iteration 4200 : loss : 0.060094, loss_ce: 0.043518, loss_dice: 0.071144
+[01:00:39.482] iteration 4220 : loss : 0.058408, loss_ce: 0.063345, loss_dice: 0.055117
+[01:01:39.637] iteration 4240 : loss : 0.026836, loss_ce: 0.007834, loss_dice: 0.039503
+[01:01:41.086] save last model to ./output_tn3k/last_model.pth
+[01:01:41.948] save model to ./output_tn3k/epoch_52.pth
+[01:02:42.552] iteration 4260 : loss : 0.049197, loss_ce: 0.070308, loss_dice: 0.035123
+[01:03:42.707] iteration 4280 : loss : 0.032143, loss_ce: 0.039581, loss_dice: 0.027184
+[01:04:42.882] iteration 4300 : loss : 0.083888, loss_ce: 0.097029, loss_dice: 0.075127
+[01:05:42.992] iteration 4320 : loss : 0.061627, loss_ce: 0.076180, loss_dice: 0.051925
+[01:05:44.406] save last model to ./output_tn3k/last_model.pth
+[01:05:45.274] save model to ./output_tn3k/epoch_53.pth
+[01:06:45.856] iteration 4340 : loss : 0.051916, loss_ce: 0.085806, loss_dice: 0.029322
+[01:07:46.058] iteration 4360 : loss : 0.030251, loss_ce: 0.018066, loss_dice: 0.038375
+[01:08:46.236] iteration 4380 : loss : 0.078112, loss_ce: 0.096395, loss_dice: 0.065924
+[01:09:46.324] iteration 4400 : loss : 0.046419, loss_ce: 0.039636, loss_dice: 0.050941
+[01:09:47.764] save last model to ./output_tn3k/last_model.pth
+[01:09:48.636] save model to ./output_tn3k/epoch_54.pth
+[01:10:49.166] iteration 4420 : loss : 0.047885, loss_ce: 0.073262, loss_dice: 0.030967
+[01:11:49.239] iteration 4440 : loss : 0.045063, loss_ce: 0.063637, loss_dice: 0.032681
+[01:12:49.297] iteration 4460 : loss : 0.031774, loss_ce: 0.038408, loss_dice: 0.027350
+[01:13:49.243] iteration 4480 : loss : 0.061550, loss_ce: 0.078341, loss_dice: 0.050356
+[01:13:50.646] save last model to ./output_tn3k/last_model.pth
+[01:13:51.515] save model to ./output_tn3k/epoch_55.pth
+[01:14:52.001] iteration 4500 : loss : 0.116847, loss_ce: 0.175486, loss_dice: 0.077754
+[01:15:51.931] iteration 4520 : loss : 0.075493, loss_ce: 0.087799, loss_dice: 0.067289
+[01:16:51.916] iteration 4540 : loss : 0.041638, loss_ce: 0.058480, loss_dice: 0.030409
+[01:17:51.828] iteration 4560 : loss : 0.051909, loss_ce: 0.039840, loss_dice: 0.059955
+[01:17:53.246] save last model to ./output_tn3k/last_model.pth
+[01:17:54.114] save model to ./output_tn3k/epoch_56.pth
+[01:18:54.616] iteration 4580 : loss : 0.065770, loss_ce: 0.097934, loss_dice: 0.044328
+[01:19:54.720] iteration 4600 : loss : 0.044897, loss_ce: 0.045660, loss_dice: 0.044388
+[01:20:54.795] iteration 4620 : loss : 0.054464, loss_ce: 0.064074, loss_dice: 0.048058
+[01:21:54.774] iteration 4640 : loss : 0.042292, loss_ce: 0.054766, loss_dice: 0.033976
+[01:21:56.186] save last model to ./output_tn3k/last_model.pth
+[01:21:57.058] save model to ./output_tn3k/epoch_57.pth
+[01:22:57.845] iteration 4660 : loss : 0.039283, loss_ce: 0.016733, loss_dice: 0.054317
+[01:23:58.187] iteration 4680 : loss : 0.041541, loss_ce: 0.067815, loss_dice: 0.024024
+[01:24:58.477] iteration 4700 : loss : 0.042221, loss_ce: 0.051141, loss_dice: 0.036274
+[01:25:58.764] iteration 4720 : loss : 0.032297, loss_ce: 0.011529, loss_dice: 0.046143
+[01:26:00.175] save last model to ./output_tn3k/last_model.pth
+[01:26:01.032] save model to ./output_tn3k/epoch_58.pth
+[01:27:01.513] iteration 4740 : loss : 0.030732, loss_ce: 0.034207, loss_dice: 0.028416
+[01:28:01.590] iteration 4760 : loss : 0.202174, loss_ce: 0.196697, loss_dice: 0.205825
+[01:29:01.591] iteration 4780 : loss : 0.055190, loss_ce: 0.049927, loss_dice: 0.058698
+[01:30:01.533] iteration 4800 : loss : 0.045772, loss_ce: 0.069579, loss_dice: 0.029901
+[01:30:02.953] save last model to ./output_tn3k/last_model.pth
+[01:30:03.819] save model to ./output_tn3k/epoch_59.pth
+[01:31:04.311] iteration 4820 : loss : 0.087300, loss_ce: 0.091137, loss_dice: 0.084742
+[01:32:04.336] iteration 4840 : loss : 0.046928, loss_ce: 0.079200, loss_dice: 0.025413
+[01:33:04.447] iteration 4860 : loss : 0.072065, loss_ce: 0.047509, loss_dice: 0.088436
+[01:34:04.485] iteration 4880 : loss : 0.065558, loss_ce: 0.043856, loss_dice: 0.080026
+[01:34:05.910] save last model to ./output_tn3k/last_model.pth
+[01:34:06.778] save model to ./output_tn3k/epoch_60.pth
+[01:35:07.261] iteration 4900 : loss : 0.050806, loss_ce: 0.034434, loss_dice: 0.061721
+[01:36:07.277] iteration 4920 : loss : 0.046238, loss_ce: 0.056207, loss_dice: 0.039592
+[01:37:07.314] iteration 4940 : loss : 0.033798, loss_ce: 0.019059, loss_dice: 0.043624
+[01:38:07.423] iteration 4960 : loss : 0.071487, loss_ce: 0.102609, loss_dice: 0.050739
+[01:38:08.863] save last model to ./output_tn3k/last_model.pth
+[01:38:09.732] save model to ./output_tn3k/epoch_61.pth
+[01:39:10.184] iteration 4980 : loss : 0.021460, loss_ce: 0.014758, loss_dice: 0.025928
+[01:40:10.074] iteration 5000 : loss : 0.047973, loss_ce: 0.045624, loss_dice: 0.049539
+[01:41:10.024] iteration 5020 : loss : 0.029192, loss_ce: 0.015788, loss_dice: 0.038128
+[01:42:09.980] iteration 5040 : loss : 0.042157, loss_ce: 0.024468, loss_dice: 0.053950
+[01:42:11.413] save last model to ./output_tn3k/last_model.pth
+[01:42:12.281] save model to ./output_tn3k/epoch_62.pth
+[01:43:12.735] iteration 5060 : loss : 0.059977, loss_ce: 0.074461, loss_dice: 0.050321
+[01:44:12.670] iteration 5080 : loss : 0.037519, loss_ce: 0.019376, loss_dice: 0.049615
+[01:45:12.696] iteration 5100 : loss : 0.032977, loss_ce: 0.040366, loss_dice: 0.028051
+[01:46:12.707] iteration 5120 : loss : 0.054999, loss_ce: 0.086582, loss_dice: 0.033944
+[01:46:14.123] save last model to ./output_tn3k/last_model.pth
+[01:46:14.992] save model to ./output_tn3k/epoch_63.pth
+[01:47:15.451] iteration 5140 : loss : 0.041173, loss_ce: 0.032456, loss_dice: 0.046985
+[01:48:15.498] iteration 5160 : loss : 0.027878, loss_ce: 0.027979, loss_dice: 0.027810
+[01:49:15.543] iteration 5180 : loss : 0.030268, loss_ce: 0.021861, loss_dice: 0.035872
+[01:50:15.521] iteration 5200 : loss : 0.039216, loss_ce: 0.056426, loss_dice: 0.027743
+[01:50:17.023] save last model to ./output_tn3k/last_model.pth
+[01:50:17.889] save model to ./output_tn3k/epoch_64.pth
+[01:51:18.290] iteration 5220 : loss : 0.032915, loss_ce: 0.026863, loss_dice: 0.036949
+[01:52:18.355] iteration 5240 : loss : 0.046214, loss_ce: 0.029233, loss_dice: 0.057535
+[01:53:18.362] iteration 5260 : loss : 0.053946, loss_ce: 0.080110, loss_dice: 0.036503
+[01:54:18.346] iteration 5280 : loss : 0.037705, loss_ce: 0.060169, loss_dice: 0.022729
+[01:54:19.761] save last model to ./output_tn3k/last_model.pth
+[01:54:20.628] save model to ./output_tn3k/epoch_65.pth
+[01:55:21.097] iteration 5300 : loss : 0.068806, loss_ce: 0.094998, loss_dice: 0.051344
+[01:56:21.136] iteration 5320 : loss : 0.036914, loss_ce: 0.032400, loss_dice: 0.039924
+[01:57:21.180] iteration 5340 : loss : 0.042738, loss_ce: 0.045331, loss_dice: 0.041009
+[01:58:21.140] iteration 5360 : loss : 0.047443, loss_ce: 0.022619, loss_dice: 0.063992
+[01:58:22.592] save last model to ./output_tn3k/last_model.pth
+[01:58:23.461] save model to ./output_tn3k/epoch_66.pth
+[01:59:23.970] iteration 5380 : loss : 0.022452, loss_ce: 0.027165, loss_dice: 0.019309
+[02:00:24.159] iteration 5400 : loss : 0.036837, loss_ce: 0.029441, loss_dice: 0.041768
+[02:01:24.488] iteration 5420 : loss : 0.025970, loss_ce: 0.012389, loss_dice: 0.035024
+[02:02:24.773] iteration 5440 : loss : 0.059064, loss_ce: 0.096519, loss_dice: 0.034094
+[02:02:26.178] save last model to ./output_tn3k/last_model.pth
+[02:02:27.044] save model to ./output_tn3k/epoch_67.pth
+[02:03:27.569] iteration 5460 : loss : 0.051619, loss_ce: 0.064667, loss_dice: 0.042920
+[02:04:27.573] iteration 5480 : loss : 0.072316, loss_ce: 0.102374, loss_dice: 0.052278
+[02:05:27.597] iteration 5500 : loss : 0.030426, loss_ce: 0.025906, loss_dice: 0.033440
+[02:06:27.621] iteration 5520 : loss : 0.040474, loss_ce: 0.033723, loss_dice: 0.044975
+[02:06:29.039] save last model to ./output_tn3k/last_model.pth
+[02:06:29.908] save model to ./output_tn3k/epoch_68.pth
+[02:07:30.565] iteration 5540 : loss : 0.051472, loss_ce: 0.059018, loss_dice: 0.046442
+[02:08:30.571] iteration 5560 : loss : 0.033799, loss_ce: 0.050575, loss_dice: 0.022616
+[02:09:30.559] iteration 5580 : loss : 0.061762, loss_ce: 0.075327, loss_dice: 0.052718
+[02:10:30.524] iteration 5600 : loss : 0.051473, loss_ce: 0.026790, loss_dice: 0.067929
+[02:10:31.947] save last model to ./output_tn3k/last_model.pth
+[02:10:32.817] save model to ./output_tn3k/epoch_69.pth
+[02:11:33.284] iteration 5620 : loss : 0.061554, loss_ce: 0.032512, loss_dice: 0.080914
+[02:12:33.208] iteration 5640 : loss : 0.058474, loss_ce: 0.040352, loss_dice: 0.070555
+[02:13:33.229] iteration 5660 : loss : 0.039228, loss_ce: 0.036855, loss_dice: 0.040810
+[02:14:33.182] iteration 5680 : loss : 0.039677, loss_ce: 0.040876, loss_dice: 0.038877
+[02:14:34.611] save last model to ./output_tn3k/last_model.pth
+[02:14:35.479] save model to ./output_tn3k/epoch_70.pth
+[02:15:35.951] iteration 5700 : loss : 0.056226, loss_ce: 0.078364, loss_dice: 0.041467
+[02:16:35.844] iteration 5720 : loss : 0.035561, loss_ce: 0.058534, loss_dice: 0.020245
+[02:17:35.781] iteration 5740 : loss : 0.023934, loss_ce: 0.023118, loss_dice: 0.024478
+[02:18:35.663] iteration 5760 : loss : 0.084175, loss_ce: 0.114732, loss_dice: 0.063804
+[02:18:37.084] save last model to ./output_tn3k/last_model.pth
+[02:18:37.952] save model to ./output_tn3k/epoch_71.pth
+[02:19:38.367] iteration 5780 : loss : 0.037407, loss_ce: 0.044029, loss_dice: 0.032992
+[02:20:38.307] iteration 5800 : loss : 0.048260, loss_ce: 0.051223, loss_dice: 0.046285
+[02:21:38.239] iteration 5820 : loss : 0.064031, loss_ce: 0.097038, loss_dice: 0.042026
+[02:22:38.141] iteration 5840 : loss : 0.041086, loss_ce: 0.058189, loss_dice: 0.029685
+[02:22:39.566] save last model to ./output_tn3k/last_model.pth
+[02:22:40.434] save model to ./output_tn3k/epoch_72.pth
+[02:23:41.014] iteration 5860 : loss : 0.225022, loss_ce: 0.292715, loss_dice: 0.179893
+[02:24:41.089] iteration 5880 : loss : 0.024413, loss_ce: 0.022450, loss_dice: 0.025722
+[02:25:41.200] iteration 5900 : loss : 0.035065, loss_ce: 0.050041, loss_dice: 0.025082
+[02:26:41.259] iteration 5920 : loss : 0.023635, loss_ce: 0.027048, loss_dice: 0.021359
+[02:26:42.769] save last model to ./output_tn3k/last_model.pth
+[02:26:43.637] save model to ./output_tn3k/epoch_73.pth
+[02:27:44.305] iteration 5940 : loss : 0.042463, loss_ce: 0.068858, loss_dice: 0.024866
+[02:28:44.440] iteration 5960 : loss : 0.128339, loss_ce: 0.176963, loss_dice: 0.095923
+[02:29:44.553] iteration 5980 : loss : 0.050361, loss_ce: 0.067306, loss_dice: 0.039065
+[02:30:44.630] iteration 6000 : loss : 0.082425, loss_ce: 0.079153, loss_dice: 0.084607
+[02:30:46.091] save last model to ./output_tn3k/last_model.pth
+[02:30:46.959] save model to ./output_tn3k/epoch_74.pth
+[02:31:47.503] iteration 6020 : loss : 0.049135, loss_ce: 0.069087, loss_dice: 0.035833
+[02:32:47.615] iteration 6040 : loss : 0.064842, loss_ce: 0.076890, loss_dice: 0.056811
+[02:33:47.736] iteration 6060 : loss : 0.032118, loss_ce: 0.021259, loss_dice: 0.039357
+[02:34:47.864] iteration 6080 : loss : 0.035186, loss_ce: 0.044838, loss_dice: 0.028751
+[02:34:49.265] save last model to ./output_tn3k/last_model.pth
+[02:34:50.121] save model to ./output_tn3k/epoch_75.pth
+[02:35:50.812] iteration 6100 : loss : 0.038901, loss_ce: 0.036056, loss_dice: 0.040798
+[02:36:50.916] iteration 6120 : loss : 0.039988, loss_ce: 0.050535, loss_dice: 0.032956
+[02:37:51.183] iteration 6140 : loss : 0.051561, loss_ce: 0.028922, loss_dice: 0.066654
+[02:38:51.463] iteration 6160 : loss : 0.036196, loss_ce: 0.018919, loss_dice: 0.047715
+[02:38:52.990] save last model to ./output_tn3k/last_model.pth
+[02:38:53.909] save model to ./output_tn3k/epoch_76.pth
+[02:39:55.176] iteration 6180 : loss : 0.021583, loss_ce: 0.013523, loss_dice: 0.026957
+[02:40:56.046] iteration 6200 : loss : 0.077727, loss_ce: 0.107079, loss_dice: 0.058160
+[02:41:56.838] iteration 6220 : loss : 0.040527, loss_ce: 0.022435, loss_dice: 0.052588
+[02:42:57.626] iteration 6240 : loss : 0.047408, loss_ce: 0.040275, loss_dice: 0.052164
+[02:42:59.144] save last model to ./output_tn3k/last_model.pth
+[02:43:00.063] save model to ./output_tn3k/epoch_77.pth
+[02:44:01.383] iteration 6260 : loss : 0.069733, loss_ce: 0.106981, loss_dice: 0.044900
+[02:45:02.195] iteration 6280 : loss : 0.018633, loss_ce: 0.023135, loss_dice: 0.015631
+[02:46:02.749] iteration 6300 : loss : 0.039848, loss_ce: 0.030252, loss_dice: 0.046246
+[02:47:03.814] iteration 6320 : loss : 0.025013, loss_ce: 0.018886, loss_dice: 0.029098
+[02:47:05.360] save last model to ./output_tn3k/last_model.pth
+[02:47:06.285] save model to ./output_tn3k/epoch_78.pth
+[02:48:07.441] iteration 6340 : loss : 0.043605, loss_ce: 0.038681, loss_dice: 0.046888
+[02:49:08.295] iteration 6360 : loss : 0.033860, loss_ce: 0.057091, loss_dice: 0.018372
+[02:50:09.145] iteration 6380 : loss : 0.029470, loss_ce: 0.026360, loss_dice: 0.031544
+[02:51:09.997] iteration 6400 : loss : 0.024947, loss_ce: 0.006901, loss_dice: 0.036978
+[02:51:11.510] save last model to ./output_tn3k/last_model.pth
+[02:51:12.420] save model to ./output_tn3k/epoch_79.pth
+[02:52:13.615] iteration 6420 : loss : 0.042462, loss_ce: 0.037043, loss_dice: 0.046075
+[02:53:14.335] iteration 6440 : loss : 0.040786, loss_ce: 0.043769, loss_dice: 0.038798
+[02:54:14.917] iteration 6460 : loss : 0.043253, loss_ce: 0.063968, loss_dice: 0.029443
+[02:55:15.219] iteration 6480 : loss : 0.031820, loss_ce: 0.032600, loss_dice: 0.031300
+[02:55:16.703] save last model to ./output_tn3k/last_model.pth
+[02:55:17.621] save model to ./output_tn3k/epoch_80.pth
+[02:56:18.464] iteration 6500 : loss : 0.060105, loss_ce: 0.023915, loss_dice: 0.084231
+[02:57:19.252] iteration 6520 : loss : 0.033667, loss_ce: 0.040383, loss_dice: 0.029189
+[02:58:20.075] iteration 6540 : loss : 0.030940, loss_ce: 0.042492, loss_dice: 0.023239
+[02:59:20.909] iteration 6560 : loss : 0.030405, loss_ce: 0.032754, loss_dice: 0.028840
+[02:59:22.433] save last model to ./output_tn3k/last_model.pth
+[02:59:23.354] save model to ./output_tn3k/epoch_81.pth
+[03:00:24.677] iteration 6580 : loss : 0.139508, loss_ce: 0.041284, loss_dice: 0.204990
+[03:01:25.491] iteration 6600 : loss : 0.049317, loss_ce: 0.052036, loss_dice: 0.047504
+[03:02:26.314] iteration 6620 : loss : 0.089088, loss_ce: 0.059617, loss_dice: 0.108736
+[03:03:27.139] iteration 6640 : loss : 0.057927, loss_ce: 0.039905, loss_dice: 0.069941
+[03:03:28.641] save last model to ./output_tn3k/last_model.pth
+[03:03:29.553] save model to ./output_tn3k/epoch_82.pth
+[03:04:30.792] iteration 6660 : loss : 0.048995, loss_ce: 0.069518, loss_dice: 0.035313
+[03:05:31.560] iteration 6680 : loss : 0.067647, loss_ce: 0.088694, loss_dice: 0.053616
+[03:06:32.337] iteration 6700 : loss : 0.032128, loss_ce: 0.015835, loss_dice: 0.042990
+[03:07:33.078] iteration 6720 : loss : 0.088514, loss_ce: 0.088429, loss_dice: 0.088571
+[03:07:34.612] save last model to ./output_tn3k/last_model.pth
+[03:07:35.528] save model to ./output_tn3k/epoch_83.pth
+[03:08:36.802] iteration 6740 : loss : 0.045035, loss_ce: 0.046931, loss_dice: 0.043772
+[03:09:37.641] iteration 6760 : loss : 0.043838, loss_ce: 0.063895, loss_dice: 0.030467
+[03:10:38.439] iteration 6780 : loss : 0.037794, loss_ce: 0.058603, loss_dice: 0.023921
+[03:11:39.233] iteration 6800 : loss : 0.017965, loss_ce: 0.016971, loss_dice: 0.018628
+[03:11:40.779] save last model to ./output_tn3k/last_model.pth
+[03:11:41.697] save model to ./output_tn3k/epoch_84.pth
+[03:12:42.806] iteration 6820 : loss : 0.033204, loss_ce: 0.016537, loss_dice: 0.044315
+[03:13:43.510] iteration 6840 : loss : 0.096589, loss_ce: 0.050426, loss_dice: 0.127364
+[03:14:44.273] iteration 6860 : loss : 0.021882, loss_ce: 0.014291, loss_dice: 0.026942
+[03:15:45.061] iteration 6880 : loss : 0.039815, loss_ce: 0.058767, loss_dice: 0.027179
+[03:15:46.584] save last model to ./output_tn3k/last_model.pth
+[03:15:47.502] save model to ./output_tn3k/epoch_85.pth
+[03:16:48.673] iteration 6900 : loss : 0.034228, loss_ce: 0.044226, loss_dice: 0.027562
+[03:17:49.489] iteration 6920 : loss : 0.035493, loss_ce: 0.009540, loss_dice: 0.052795
+[03:18:50.239] iteration 6940 : loss : 0.054581, loss_ce: 0.042299, loss_dice: 0.062770
+[03:19:50.921] iteration 6960 : loss : 0.028258, loss_ce: 0.030622, loss_dice: 0.026681
+[03:19:52.466] save last model to ./output_tn3k/last_model.pth
+[03:19:53.486] save model to ./output_tn3k/epoch_86.pth
+[03:20:54.714] iteration 6980 : loss : 0.033314, loss_ce: 0.018504, loss_dice: 0.043188
+[03:21:55.590] iteration 7000 : loss : 0.020439, loss_ce: 0.023193, loss_dice: 0.018603
+[03:22:56.216] iteration 7020 : loss : 0.060258, loss_ce: 0.089034, loss_dice: 0.041073
+[03:23:56.800] iteration 7040 : loss : 0.093717, loss_ce: 0.136642, loss_dice: 0.065100
+[03:23:58.342] save last model to ./output_tn3k/last_model.pth
+[03:23:59.252] save model to ./output_tn3k/epoch_87.pth
+[03:25:00.251] iteration 7060 : loss : 0.026589, loss_ce: 0.028137, loss_dice: 0.025557
+[03:26:00.907] iteration 7080 : loss : 0.043888, loss_ce: 0.057647, loss_dice: 0.034716
+[03:27:01.564] iteration 7100 : loss : 0.028911, loss_ce: 0.019222, loss_dice: 0.035371
+[03:28:02.199] iteration 7120 : loss : 0.046413, loss_ce: 0.067806, loss_dice: 0.032151
+[03:28:03.732] save last model to ./output_tn3k/last_model.pth
+[03:28:04.644] save model to ./output_tn3k/epoch_88.pth
+[03:29:05.982] iteration 7140 : loss : 0.026128, loss_ce: 0.024747, loss_dice: 0.027048
+[03:30:06.800] iteration 7160 : loss : 0.047066, loss_ce: 0.055861, loss_dice: 0.041202
+[03:31:07.611] iteration 7180 : loss : 0.037620, loss_ce: 0.015666, loss_dice: 0.052256
+[03:32:08.440] iteration 7200 : loss : 0.061300, loss_ce: 0.028494, loss_dice: 0.083171
+[03:32:09.977] save last model to ./output_tn3k/last_model.pth
+[03:32:10.893] save model to ./output_tn3k/epoch_89.pth
+[03:33:12.150] iteration 7220 : loss : 0.024883, loss_ce: 0.015818, loss_dice: 0.030927
+[03:34:12.843] iteration 7240 : loss : 0.080673, loss_ce: 0.093232, loss_dice: 0.072300
+[03:35:13.497] iteration 7260 : loss : 0.099824, loss_ce: 0.073237, loss_dice: 0.117548
+[03:36:14.116] iteration 7280 : loss : 0.043050, loss_ce: 0.069739, loss_dice: 0.025257
+[03:36:15.633] save last model to ./output_tn3k/last_model.pth
+[03:36:16.540] save model to ./output_tn3k/epoch_90.pth
+[03:37:17.551] iteration 7300 : loss : 0.037853, loss_ce: 0.015643, loss_dice: 0.052659
+[03:38:18.162] iteration 7320 : loss : 0.087995, loss_ce: 0.151912, loss_dice: 0.045383
+[03:39:18.761] iteration 7340 : loss : 0.035354, loss_ce: 0.032489, loss_dice: 0.037265
+[03:40:19.296] iteration 7360 : loss : 0.043796, loss_ce: 0.059832, loss_dice: 0.033105
+[03:40:20.785] save last model to ./output_tn3k/last_model.pth
+[03:40:21.692] save model to ./output_tn3k/epoch_91.pth
+[03:41:22.646] iteration 7380 : loss : 0.038144, loss_ce: 0.033359, loss_dice: 0.041334
+[03:42:22.942] iteration 7400 : loss : 0.019956, loss_ce: 0.013864, loss_dice: 0.024017
+[03:43:23.244] iteration 7420 : loss : 0.028875, loss_ce: 0.043321, loss_dice: 0.019244
+[03:44:23.697] iteration 7440 : loss : 0.164350, loss_ce: 0.277061, loss_dice: 0.089209
+[03:44:25.228] save last model to ./output_tn3k/last_model.pth
+[03:44:26.160] save model to ./output_tn3k/epoch_92.pth
+[03:45:27.501] iteration 7460 : loss : 0.025951, loss_ce: 0.026473, loss_dice: 0.025603
+[03:46:28.397] iteration 7480 : loss : 0.044097, loss_ce: 0.068055, loss_dice: 0.028125
+[03:47:29.267] iteration 7500 : loss : 0.050305, loss_ce: 0.071027, loss_dice: 0.036490
+[03:48:30.070] iteration 7520 : loss : 0.072899, loss_ce: 0.055846, loss_dice: 0.084267
+[03:48:31.592] save last model to ./output_tn3k/last_model.pth
+[03:48:32.521] save model to ./output_tn3k/epoch_93.pth
+[03:49:34.118] iteration 7540 : loss : 0.057617, loss_ce: 0.084276, loss_dice: 0.039844
+[03:50:35.329] iteration 7560 : loss : 0.055234, loss_ce: 0.087055, loss_dice: 0.034019
+[03:51:36.590] iteration 7580 : loss : 0.034718, loss_ce: 0.032712, loss_dice: 0.036055
+[03:52:37.691] iteration 7600 : loss : 0.035577, loss_ce: 0.049231, loss_dice: 0.026474
+[03:52:39.169] save last model to ./output_tn3k/last_model.pth
+[03:52:40.090] save model to ./output_tn3k/epoch_94.pth
+[03:53:41.011] iteration 7620 : loss : 0.040335, loss_ce: 0.018451, loss_dice: 0.054924
+[03:54:41.462] iteration 7640 : loss : 0.032725, loss_ce: 0.020018, loss_dice: 0.041197
+[03:55:41.933] iteration 7660 : loss : 0.055075, loss_ce: 0.019407, loss_dice: 0.078854
+[03:56:42.255] iteration 7680 : loss : 0.056612, loss_ce: 0.081634, loss_dice: 0.039930
+[03:56:43.774] save last model to ./output_tn3k/last_model.pth
+[03:56:44.683] save model to ./output_tn3k/epoch_95.pth
+[03:57:46.143] iteration 7700 : loss : 0.044477, loss_ce: 0.060913, loss_dice: 0.033519
+[03:58:46.920] iteration 7720 : loss : 0.050952, loss_ce: 0.011896, loss_dice: 0.076989
+[03:59:48.083] iteration 7740 : loss : 0.022272, loss_ce: 0.007735, loss_dice: 0.031964
+[04:00:48.753] iteration 7760 : loss : 0.048907, loss_ce: 0.072605, loss_dice: 0.033109
+[04:00:50.269] save last model to ./output_tn3k/last_model.pth
+[04:00:51.213] save model to ./output_tn3k/epoch_96.pth
+[04:01:52.607] iteration 7780 : loss : 0.026983, loss_ce: 0.014292, loss_dice: 0.035444
+[04:02:52.913] iteration 7800 : loss : 0.058945, loss_ce: 0.096013, loss_dice: 0.034232
+[04:03:53.108] iteration 7820 : loss : 0.042410, loss_ce: 0.026552, loss_dice: 0.052983
+[04:04:53.188] iteration 7840 : loss : 0.034561, loss_ce: 0.032869, loss_dice: 0.035690
+[04:04:54.685] save last model to ./output_tn3k/last_model.pth
+[04:04:55.569] save model to ./output_tn3k/epoch_97.pth
+[04:05:56.427] iteration 7860 : loss : 0.045442, loss_ce: 0.071484, loss_dice: 0.028080
+[04:06:56.723] iteration 7880 : loss : 0.073843, loss_ce: 0.084724, loss_dice: 0.066588
+[04:07:56.736] iteration 7900 : loss : 0.025414, loss_ce: 0.020756, loss_dice: 0.028519
+[04:08:56.680] iteration 7920 : loss : 0.033419, loss_ce: 0.022649, loss_dice: 0.040599
+[04:08:58.083] save last model to ./output_tn3k/last_model.pth
+[04:08:58.957] save model to ./output_tn3k/epoch_98.pth
+[04:09:59.557] iteration 7940 : loss : 0.044521, loss_ce: 0.036243, loss_dice: 0.050040
+[04:10:59.628] iteration 7960 : loss : 0.062498, loss_ce: 0.040316, loss_dice: 0.077286
+[04:11:59.689] iteration 7980 : loss : 0.048801, loss_ce: 0.072560, loss_dice: 0.032962
+[04:12:59.694] iteration 8000 : loss : 0.053624, loss_ce: 0.078237, loss_dice: 0.037215
+[04:13:01.093] save last model to ./output_tn3k/last_model.pth
+[04:13:02.086] save model to ./output_tn3k/epoch_99.pth

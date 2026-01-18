@@ -1,0 +1,533 @@
+[22:31:42.930] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=4, n_gpu=1, num_classes=4, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[22:36:22.070] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=4, n_gpu=1, num_classes=4, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[22:38:23.039] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=4, n_gpu=1, num_classes=4, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[22:38:23.045] 93 iterations per epoch. 13950 max iterations 
+[22:43:33.346] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.025, batch_size=12, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[22:43:33.351] 185 iterations per epoch. 27750 max iterations 
+[22:46:54.481] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.0125, batch_size=6, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[22:46:54.487] 369 iterations per epoch. 55350 max iterations 
+[22:47:18.171] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=1, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[22:47:18.177] 2211 iterations per epoch. 331650 max iterations 
+[22:48:48.762] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.025, batch_size=12, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=3, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[22:48:48.768] 62 iterations per epoch. 9300 max iterations 
+[14:28:56.926] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.0125, batch_size=6, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:28:56.932] 369 iterations per epoch. 55350 max iterations 
+[14:32:29.214] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.0125, batch_size=6, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=9, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:32:29.219] 369 iterations per epoch. 55350 max iterations 
+[14:41:18.329] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.0125, batch_size=6, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=8, n_gpu=1, num_classes=8, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:41:18.334] 369 iterations per epoch. 55350 max iterations 
+[14:41:45.316] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.0125, batch_size=6, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:41:45.321] 369 iterations per epoch. 55350 max iterations 
+[14:43:15.684] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.0125, batch_size=6, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=3, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:43:15.689] 123 iterations per epoch. 18450 max iterations 
+[14:46:11.647] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=8, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:46:11.652] 277 iterations per epoch. 41550 max iterations 
+[14:47:09.425] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:47:09.431] 553 iterations per epoch. 82950 max iterations 
+[14:49:59.663] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:49:59.668] 1106 iterations per epoch. 165900 max iterations 
+[14:51:52.783] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=500, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:51:52.788] 1106 iterations per epoch. 553000 max iterations 
+[14:54:18.557] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=500, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:54:18.563] 1106 iterations per epoch. 553000 max iterations 
+[14:56:20.140] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=500, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:56:20.146] 553 iterations per epoch. 276500 max iterations 
+[14:58:35.735] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[14:58:35.740] 553 iterations per epoch. 82950 max iterations 
+[15:01:25.348] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[15:01:25.353] 553 iterations per epoch. 82950 max iterations 
+[15:02:23.325] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[15:02:23.330] 553 iterations per epoch. 82950 max iterations 
+[15:02:59.610] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[15:02:59.616] 553 iterations per epoch. 82950 max iterations 
+[15:06:23.940] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=500, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=0, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[15:06:23.946] 553 iterations per epoch. 276500 max iterations 
+[15:07:28.108] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=4, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=500, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=0, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[15:07:28.113] 553 iterations per epoch. 276500 max iterations 
+[16:04:11.812] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.025, batch_size=12, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[16:04:11.817] 185 iterations per epoch. 27750 max iterations 
+[16:07:49.570] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[16:07:49.575] 1106 iterations per epoch. 165900 max iterations 
+[16:08:50.138] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=8, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[16:08:50.143] 1106 iterations per epoch. 165900 max iterations 
+[16:09:24.519] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[16:09:24.524] 1106 iterations per epoch. 165900 max iterations 
+[18:43:10.552] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[18:43:10.558] 1106 iterations per epoch. 165900 max iterations 
+[20:50:23.944] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=2, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[20:50:23.950] 1106 iterations per epoch. 165900 max iterations 
+[20:51:40.188] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.025, batch_size=12, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=3, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[20:51:40.193] 62 iterations per epoch. 9300 max iterations 
+[20:52:56.788] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.025, batch_size=12, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[20:52:56.795] 185 iterations per epoch. 27750 max iterations 
+[20:53:24.906] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.05, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[20:53:24.911] 93 iterations per epoch. 13950 max iterations 
+[20:53:47.464] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.037500000000000006, batch_size=18, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[20:53:47.469] 123 iterations per epoch. 18450 max iterations 
+[20:54:06.302] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.025, batch_size=12, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[20:54:06.307] 185 iterations per epoch. 27750 max iterations 
+[20:54:45.132] Train epoch: 0 : loss : 0.579122, loss_ce: 0.220328, loss_dice: 0.818318
+[20:55:10.777] Val epoch: 0 : loss : 0.566217, loss_ce: 0.136964, loss_dice: 0.852386
+[20:55:10.963] save model to ./model_out/best_model.pth
+[20:55:47.390] Train epoch: 1 : loss : 0.495606, loss_ce: 0.139932, loss_dice: 0.732721
+[20:56:12.467] Val epoch: 1 : loss : 0.531192, loss_ce: 0.120517, loss_dice: 0.804975
+[20:56:12.722] save model to ./model_out/best_model.pth
+[20:56:49.149] Train epoch: 2 : loss : 0.435973, loss_ce: 0.118854, loss_dice: 0.647386
+[20:57:14.357] Val epoch: 2 : loss : 0.505167, loss_ce: 0.112563, loss_dice: 0.766904
+[20:57:14.614] save model to ./model_out/best_model.pth
+[20:57:51.111] Train epoch: 3 : loss : 0.361062, loss_ce: 0.097339, loss_dice: 0.536877
+[20:58:16.293] Val epoch: 3 : loss : 0.465021, loss_ce: 0.087845, loss_dice: 0.716472
+[20:58:16.549] save model to ./model_out/best_model.pth
+[20:58:53.071] Train epoch: 4 : loss : 0.294723, loss_ce: 0.077716, loss_dice: 0.439395
+[21:15:27.094] Namespace(accumulation_steps=None, amp_opt_level='O0', base_lr=0.025, batch_size=12, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Synapse', deterministic=1, eval=False, eval_interval=1, img_size=224, list_dir='./lists/Synapse', max_epochs=150, max_iterations=30000, n_class=9, n_gpu=1, num_classes=9, num_workers=2, opts=None, output_dir='./model_out', resume=None, root_path='datasets/Synapse/train_npz', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[21:15:27.099] 185 iterations per epoch. 27750 max iterations 
+[21:16:05.836] Train epoch: 0 : loss : 0.579122, loss_ce: 0.220328, loss_dice: 0.818318
+[21:16:31.205] Val epoch: 0 : loss : 0.566217, loss_ce: 0.136964, loss_dice: 0.852386
+[21:16:31.459] save model to ./model_out/best_model.pth
+[21:17:07.914] Train epoch: 1 : loss : 0.495606, loss_ce: 0.139932, loss_dice: 0.732721
+[21:17:33.092] Val epoch: 1 : loss : 0.531192, loss_ce: 0.120517, loss_dice: 0.804975
+[21:17:33.354] save model to ./model_out/best_model.pth
+[21:18:09.839] Train epoch: 2 : loss : 0.435973, loss_ce: 0.118854, loss_dice: 0.647386
+[21:18:35.005] Val epoch: 2 : loss : 0.505167, loss_ce: 0.112563, loss_dice: 0.766904
+[21:18:35.250] save model to ./model_out/best_model.pth
+[21:19:11.742] Train epoch: 3 : loss : 0.361062, loss_ce: 0.097339, loss_dice: 0.536877
+[21:19:36.920] Val epoch: 3 : loss : 0.465021, loss_ce: 0.087845, loss_dice: 0.716472
+[21:19:37.164] save model to ./model_out/best_model.pth
+[21:20:13.707] Train epoch: 4 : loss : 0.294723, loss_ce: 0.077716, loss_dice: 0.439395
+[21:20:38.956] Val epoch: 4 : loss : 0.448635, loss_ce: 0.066912, loss_dice: 0.703117
+[21:20:39.212] save model to ./model_out/best_model.pth
+[21:21:15.708] Train epoch: 5 : loss : 0.251050, loss_ce: 0.064300, loss_dice: 0.375550
+[21:21:40.941] Val epoch: 5 : loss : 0.426602, loss_ce: 0.050140, loss_dice: 0.677576
+[21:21:41.200] save model to ./model_out/best_model.pth
+[21:22:17.672] Train epoch: 6 : loss : 0.216882, loss_ce: 0.052705, loss_dice: 0.326334
+[21:22:42.933] Val epoch: 6 : loss : 0.416002, loss_ce: 0.045287, loss_dice: 0.663145
+[21:22:43.181] save model to ./model_out/best_model.pth
+[21:23:19.738] Train epoch: 7 : loss : 0.210609, loss_ce: 0.052935, loss_dice: 0.315725
+[21:23:45.117] Val epoch: 7 : loss : 0.409471, loss_ce: 0.039605, loss_dice: 0.656048
+[21:23:45.371] save model to ./model_out/best_model.pth
+[21:24:21.899] Train epoch: 8 : loss : 0.190579, loss_ce: 0.044261, loss_dice: 0.288124
+[21:24:47.108] Val epoch: 8 : loss : 0.417095, loss_ce: 0.050416, loss_dice: 0.661548
+[21:24:47.294] save model to ./model_out/last_model.pth
+[21:25:23.787] Train epoch: 9 : loss : 0.186685, loss_ce: 0.044411, loss_dice: 0.281535
+[21:25:49.341] Val epoch: 9 : loss : 0.405120, loss_ce: 0.033443, loss_dice: 0.652905
+[21:25:49.588] save model to ./model_out/best_model.pth
+[21:26:26.191] Train epoch: 10 : loss : 0.173060, loss_ce: 0.039303, loss_dice: 0.262232
+[21:26:52.122] Val epoch: 10 : loss : 0.395669, loss_ce: 0.029571, loss_dice: 0.639735
+[21:26:52.368] save model to ./model_out/best_model.pth
+[21:27:29.070] Train epoch: 11 : loss : 0.168801, loss_ce: 0.037600, loss_dice: 0.256269
+[21:27:54.928] Val epoch: 11 : loss : 0.405554, loss_ce: 0.039501, loss_dice: 0.649589
+[21:27:55.180] save model to ./model_out/last_model.pth
+[21:28:31.975] Train epoch: 12 : loss : 0.164524, loss_ce: 0.035540, loss_dice: 0.250514
+[21:28:57.838] Val epoch: 12 : loss : 0.399062, loss_ce: 0.034082, loss_dice: 0.642383
+[21:28:58.101] save model to ./model_out/last_model.pth
+[21:29:34.683] Train epoch: 13 : loss : 0.141050, loss_ce: 0.032264, loss_dice: 0.213573
+[21:30:00.143] Val epoch: 13 : loss : 0.386948, loss_ce: 0.025538, loss_dice: 0.627888
+[21:30:00.406] save model to ./model_out/best_model.pth
+[21:30:37.096] Train epoch: 14 : loss : 0.145998, loss_ce: 0.030384, loss_dice: 0.223075
+[21:31:03.669] Val epoch: 14 : loss : 0.386751, loss_ce: 0.025911, loss_dice: 0.627312
+[21:31:03.992] save model to ./model_out/best_model.pth
+[21:31:41.138] Train epoch: 15 : loss : 0.142277, loss_ce: 0.030545, loss_dice: 0.216765
+[21:32:06.809] Val epoch: 15 : loss : 0.384624, loss_ce: 0.025056, loss_dice: 0.624335
+[21:32:07.064] save model to ./model_out/best_model.pth
+[21:32:43.749] Train epoch: 16 : loss : 0.139219, loss_ce: 0.029137, loss_dice: 0.212608
+[21:33:09.194] Val epoch: 16 : loss : 0.382469, loss_ce: 0.024006, loss_dice: 0.621445
+[21:33:09.437] save model to ./model_out/best_model.pth
+[21:33:46.068] Train epoch: 17 : loss : 0.133018, loss_ce: 0.027400, loss_dice: 0.203429
+[21:34:11.472] Val epoch: 17 : loss : 0.379807, loss_ce: 0.023242, loss_dice: 0.617517
+[21:34:11.733] save model to ./model_out/best_model.pth
+[21:34:48.461] Train epoch: 18 : loss : 0.127536, loss_ce: 0.025453, loss_dice: 0.195591
+[21:35:13.938] Val epoch: 18 : loss : 0.379984, loss_ce: 0.023959, loss_dice: 0.617334
+[21:35:14.193] save model to ./model_out/last_model.pth
+[21:35:50.937] Train epoch: 19 : loss : 0.127055, loss_ce: 0.026685, loss_dice: 0.193968
+[21:36:16.347] Val epoch: 19 : loss : 0.390723, loss_ce: 0.027779, loss_dice: 0.632685
+[21:36:16.605] save model to ./model_out/last_model.pth
+[21:36:53.322] Train epoch: 20 : loss : 0.124277, loss_ce: 0.025426, loss_dice: 0.190177
+[21:37:18.724] Val epoch: 20 : loss : 0.368694, loss_ce: 0.020058, loss_dice: 0.601118
+[21:37:18.983] save model to ./model_out/best_model.pth
+[21:37:55.673] Train epoch: 21 : loss : 0.119622, loss_ce: 0.024070, loss_dice: 0.183323
+[21:38:22.352] Val epoch: 21 : loss : 0.372066, loss_ce: 0.021567, loss_dice: 0.605731
+[21:38:22.603] save model to ./model_out/last_model.pth
+[21:38:59.276] Train epoch: 22 : loss : 0.114308, loss_ce: 0.023518, loss_dice: 0.174835
+[21:39:25.029] Val epoch: 22 : loss : 0.367666, loss_ce: 0.019789, loss_dice: 0.599583
+[21:39:25.291] save model to ./model_out/best_model.pth
+[21:40:02.042] Train epoch: 23 : loss : 0.110232, loss_ce: 0.022356, loss_dice: 0.168817
+[21:40:27.300] Val epoch: 23 : loss : 0.340702, loss_ce: 0.019793, loss_dice: 0.554642
+[21:40:27.546] save model to ./model_out/best_model.pth
+[21:41:04.199] Train epoch: 24 : loss : 0.122982, loss_ce: 0.025448, loss_dice: 0.188004
+[21:41:31.258] Val epoch: 24 : loss : 0.359983, loss_ce: 0.026521, loss_dice: 0.582291
+[21:41:31.498] save model to ./model_out/last_model.pth
+[21:42:08.113] Train epoch: 25 : loss : 0.116641, loss_ce: 0.023739, loss_dice: 0.178576
+[21:42:33.526] Val epoch: 25 : loss : 0.316327, loss_ce: 0.019204, loss_dice: 0.514409
+[21:42:33.762] save model to ./model_out/best_model.pth
+[21:43:10.377] Train epoch: 26 : loss : 0.112837, loss_ce: 0.022382, loss_dice: 0.173140
+[21:43:35.776] Val epoch: 26 : loss : 0.340099, loss_ce: 0.019314, loss_dice: 0.553956
+[21:43:36.033] save model to ./model_out/last_model.pth
+[21:44:12.738] Train epoch: 27 : loss : 0.109747, loss_ce: 0.021178, loss_dice: 0.168794
+[21:44:38.082] Val epoch: 27 : loss : 0.327966, loss_ce: 0.019436, loss_dice: 0.533653
+[21:44:38.337] save model to ./model_out/last_model.pth
+[21:45:15.162] Train epoch: 28 : loss : 0.111522, loss_ce: 0.022155, loss_dice: 0.171100
+[21:45:40.623] Val epoch: 28 : loss : 0.321640, loss_ce: 0.018686, loss_dice: 0.523608
+[21:45:40.882] save model to ./model_out/last_model.pth
+[21:46:17.549] Train epoch: 29 : loss : 0.113924, loss_ce: 0.022020, loss_dice: 0.175194
+[21:46:42.868] Val epoch: 29 : loss : 0.307716, loss_ce: 0.018576, loss_dice: 0.500475
+[21:46:43.130] save model to ./model_out/best_model.pth
+[21:47:19.799] Train epoch: 30 : loss : 0.109017, loss_ce: 0.021177, loss_dice: 0.167577
+[21:47:45.172] Val epoch: 30 : loss : 0.306508, loss_ce: 0.018038, loss_dice: 0.498821
+[21:47:45.425] save model to ./model_out/best_model.pth
+[21:48:22.255] Train epoch: 31 : loss : 0.116615, loss_ce: 0.022258, loss_dice: 0.179520
+[21:48:47.656] Val epoch: 31 : loss : 0.307387, loss_ce: 0.018490, loss_dice: 0.499985
+[21:48:47.908] save model to ./model_out/last_model.pth
+[21:49:24.618] Train epoch: 32 : loss : 0.103983, loss_ce: 0.020218, loss_dice: 0.159827
+[21:49:49.998] Val epoch: 32 : loss : 0.309331, loss_ce: 0.017217, loss_dice: 0.504073
+[21:49:50.249] save model to ./model_out/last_model.pth
+[21:50:26.943] Train epoch: 33 : loss : 0.107155, loss_ce: 0.020224, loss_dice: 0.165109
+[21:50:52.258] Val epoch: 33 : loss : 0.325636, loss_ce: 0.018130, loss_dice: 0.530639
+[21:50:52.515] save model to ./model_out/last_model.pth
+[21:51:29.164] Train epoch: 34 : loss : 0.108510, loss_ce: 0.020323, loss_dice: 0.167302
+[21:51:56.253] Val epoch: 34 : loss : 0.339232, loss_ce: 0.019266, loss_dice: 0.552542
+[21:51:56.499] save model to ./model_out/last_model.pth
+[21:52:33.183] Train epoch: 35 : loss : 0.103185, loss_ce: 0.019058, loss_dice: 0.159270
+[21:52:58.623] Val epoch: 35 : loss : 0.315081, loss_ce: 0.017830, loss_dice: 0.513247
+[21:52:58.871] save model to ./model_out/last_model.pth
+[21:53:35.584] Train epoch: 36 : loss : 0.102660, loss_ce: 0.019976, loss_dice: 0.157783
+[21:54:01.038] Val epoch: 36 : loss : 0.326597, loss_ce: 0.016115, loss_dice: 0.533586
+[21:54:01.293] save model to ./model_out/last_model.pth
+[21:54:37.978] Train epoch: 37 : loss : 0.096554, loss_ce: 0.017743, loss_dice: 0.149095
+[21:55:03.595] Val epoch: 37 : loss : 0.353000, loss_ce: 0.017117, loss_dice: 0.576921
+[21:55:03.849] save model to ./model_out/last_model.pth
+[21:55:40.863] Train epoch: 38 : loss : 0.099807, loss_ce: 0.017896, loss_dice: 0.154414
+[21:56:06.310] Val epoch: 38 : loss : 0.342502, loss_ce: 0.015956, loss_dice: 0.560200
+[21:56:06.575] save model to ./model_out/last_model.pth
+[21:56:43.292] Train epoch: 39 : loss : 0.100240, loss_ce: 0.018292, loss_dice: 0.154871
+[21:57:08.772] Val epoch: 39 : loss : 0.323877, loss_ce: 0.015496, loss_dice: 0.529464
+[21:57:09.032] save model to ./model_out/last_model.pth
+[21:57:45.725] Train epoch: 40 : loss : 0.099995, loss_ce: 0.018662, loss_dice: 0.154217
+[21:58:11.149] Val epoch: 40 : loss : 0.324130, loss_ce: 0.016379, loss_dice: 0.529298
+[21:58:11.404] save model to ./model_out/last_model.pth
+[21:58:48.171] Train epoch: 41 : loss : 0.099956, loss_ce: 0.018216, loss_dice: 0.154449
+[21:59:13.273] Val epoch: 41 : loss : 0.333258, loss_ce: 0.015893, loss_dice: 0.544834
+[21:59:13.531] save model to ./model_out/last_model.pth
+[21:59:50.156] Train epoch: 42 : loss : 0.106202, loss_ce: 0.019030, loss_dice: 0.164316
+[22:00:15.389] Val epoch: 42 : loss : 0.307168, loss_ce: 0.017350, loss_dice: 0.500380
+[22:00:15.638] save model to ./model_out/last_model.pth
+[22:00:52.319] Train epoch: 43 : loss : 0.099873, loss_ce: 0.018979, loss_dice: 0.153803
+[22:01:17.591] Val epoch: 43 : loss : 0.271417, loss_ce: 0.015188, loss_dice: 0.442237
+[22:01:17.851] save model to ./model_out/best_model.pth
+[22:01:54.528] Train epoch: 44 : loss : 0.092365, loss_ce: 0.017906, loss_dice: 0.142004
+[22:02:21.538] Val epoch: 44 : loss : 0.273815, loss_ce: 0.015141, loss_dice: 0.446265
+[22:02:21.803] save model to ./model_out/last_model.pth
+[22:02:58.472] Train epoch: 45 : loss : 0.094023, loss_ce: 0.017003, loss_dice: 0.145370
+[22:03:23.718] Val epoch: 45 : loss : 0.277683, loss_ce: 0.014585, loss_dice: 0.453082
+[22:03:23.985] save model to ./model_out/last_model.pth
+[22:04:00.628] Train epoch: 46 : loss : 0.093024, loss_ce: 0.017484, loss_dice: 0.143384
+[22:04:25.920] Val epoch: 46 : loss : 0.287589, loss_ce: 0.015800, loss_dice: 0.468783
+[22:04:26.182] save model to ./model_out/last_model.pth
+[22:05:02.846] Train epoch: 47 : loss : 0.101581, loss_ce: 0.018311, loss_dice: 0.157094
+[22:05:29.105] Val epoch: 47 : loss : 0.314457, loss_ce: 0.016695, loss_dice: 0.512966
+[22:05:29.371] save model to ./model_out/last_model.pth
+[22:06:06.343] Train epoch: 48 : loss : 0.094041, loss_ce: 0.017352, loss_dice: 0.145168
+[22:06:31.668] Val epoch: 48 : loss : 0.285082, loss_ce: 0.014720, loss_dice: 0.465323
+[22:06:31.930] save model to ./model_out/last_model.pth
+[22:07:08.555] Train epoch: 49 : loss : 0.095961, loss_ce: 0.016723, loss_dice: 0.148787
+[22:07:33.956] Val epoch: 49 : loss : 0.279781, loss_ce: 0.014321, loss_dice: 0.456754
+[22:07:34.196] save model to ./model_out/last_model.pth
+[22:08:10.763] Train epoch: 50 : loss : 0.084575, loss_ce: 0.016704, loss_dice: 0.129823
+[22:08:36.129] Val epoch: 50 : loss : 0.289291, loss_ce: 0.014859, loss_dice: 0.472245
+[22:08:36.396] save model to ./model_out/last_model.pth
+[22:09:13.152] Train epoch: 51 : loss : 0.087541, loss_ce: 0.016688, loss_dice: 0.134776
+[22:09:38.604] Val epoch: 51 : loss : 0.297514, loss_ce: 0.013930, loss_dice: 0.486571
+[22:09:38.862] save model to ./model_out/last_model.pth
+[22:10:15.486] Train epoch: 52 : loss : 0.089853, loss_ce: 0.016352, loss_dice: 0.138853
+[22:10:40.833] Val epoch: 52 : loss : 0.295344, loss_ce: 0.015090, loss_dice: 0.482181
+[22:10:41.085] save model to ./model_out/last_model.pth
+[22:11:17.734] Train epoch: 53 : loss : 0.097879, loss_ce: 0.016895, loss_dice: 0.151868
+[22:11:43.074] Val epoch: 53 : loss : 0.298138, loss_ce: 0.013923, loss_dice: 0.487614
+[22:11:43.321] save model to ./model_out/last_model.pth
+[22:12:19.978] Train epoch: 54 : loss : 0.094649, loss_ce: 0.016378, loss_dice: 0.146829
+[22:12:47.009] Val epoch: 54 : loss : 0.317806, loss_ce: 0.015771, loss_dice: 0.519162
+[22:12:47.269] save model to ./model_out/last_model.pth
+[22:13:23.985] Train epoch: 55 : loss : 0.090729, loss_ce: 0.015506, loss_dice: 0.140879
+[22:13:49.563] Val epoch: 55 : loss : 0.269375, loss_ce: 0.013997, loss_dice: 0.439626
+[22:13:49.823] save model to ./model_out/best_model.pth
+[22:14:26.512] Train epoch: 56 : loss : 0.090633, loss_ce: 0.016200, loss_dice: 0.140255
+[22:14:51.940] Val epoch: 56 : loss : 0.220620, loss_ce: 0.013688, loss_dice: 0.358574
+[22:14:52.200] save model to ./model_out/best_model.pth
+[22:15:28.925] Train epoch: 57 : loss : 0.089553, loss_ce: 0.015988, loss_dice: 0.138596
+[22:15:55.903] Val epoch: 57 : loss : 0.235283, loss_ce: 0.015525, loss_dice: 0.381788
+[22:15:56.181] save model to ./model_out/last_model.pth
+[22:16:32.913] Train epoch: 58 : loss : 0.085585, loss_ce: 0.015513, loss_dice: 0.132300
+[22:16:58.181] Val epoch: 58 : loss : 0.207793, loss_ce: 0.013599, loss_dice: 0.337255
+[22:16:58.447] save model to ./model_out/best_model.pth
+[22:17:35.205] Train epoch: 59 : loss : 0.093127, loss_ce: 0.016533, loss_dice: 0.144190
+[22:18:00.613] Val epoch: 59 : loss : 0.251912, loss_ce: 0.015408, loss_dice: 0.409582
+[22:18:00.876] save model to ./model_out/last_model.pth
+[22:18:37.537] Train epoch: 60 : loss : 0.098298, loss_ce: 0.017556, loss_dice: 0.152125
+[22:19:02.895] Val epoch: 60 : loss : 0.194738, loss_ce: 0.013962, loss_dice: 0.315255
+[22:19:03.134] save model to ./model_out/best_model.pth
+[22:19:40.097] Train epoch: 61 : loss : 0.090857, loss_ce: 0.016573, loss_dice: 0.140379
+[22:20:05.539] Val epoch: 61 : loss : 0.179240, loss_ce: 0.013892, loss_dice: 0.289473
+[22:20:05.805] save model to ./model_out/best_model.pth
+[22:20:42.447] Train epoch: 62 : loss : 0.087249, loss_ce: 0.015502, loss_dice: 0.135081
+[22:21:07.803] Val epoch: 62 : loss : 0.187686, loss_ce: 0.013909, loss_dice: 0.303538
+[22:21:08.059] save model to ./model_out/last_model.pth
+[22:21:44.765] Train epoch: 63 : loss : 0.088410, loss_ce: 0.015916, loss_dice: 0.136739
+[22:22:10.132] Val epoch: 63 : loss : 0.205710, loss_ce: 0.013697, loss_dice: 0.333718
+[22:22:10.368] save model to ./model_out/last_model.pth
+[22:22:47.069] Train epoch: 64 : loss : 0.086992, loss_ce: 0.015019, loss_dice: 0.134974
+[22:23:13.420] Val epoch: 64 : loss : 0.271162, loss_ce: 0.015940, loss_dice: 0.441311
+[22:23:13.676] save model to ./model_out/last_model.pth
+[22:23:50.344] Train epoch: 65 : loss : 0.084686, loss_ce: 0.014966, loss_dice: 0.131166
+[22:24:15.611] Val epoch: 65 : loss : 0.208139, loss_ce: 0.013113, loss_dice: 0.338156
+[22:24:15.855] save model to ./model_out/last_model.pth
+[22:24:52.584] Train epoch: 66 : loss : 0.088784, loss_ce: 0.014782, loss_dice: 0.138118
+[22:25:18.240] Val epoch: 66 : loss : 0.232461, loss_ce: 0.013122, loss_dice: 0.378688
+[22:25:18.495] save model to ./model_out/last_model.pth
+[22:25:55.199] Train epoch: 67 : loss : 0.081889, loss_ce: 0.014718, loss_dice: 0.126670
+[22:26:22.122] Val epoch: 67 : loss : 0.234541, loss_ce: 0.013358, loss_dice: 0.381996
+[22:26:22.379] save model to ./model_out/last_model.pth
+[22:26:59.072] Train epoch: 68 : loss : 0.076702, loss_ce: 0.014355, loss_dice: 0.118267
+[22:27:24.469] Val epoch: 68 : loss : 0.231280, loss_ce: 0.012842, loss_dice: 0.376905
+[22:27:24.731] save model to ./model_out/last_model.pth
+[22:28:01.484] Train epoch: 69 : loss : 0.085200, loss_ce: 0.016111, loss_dice: 0.131260
+[22:28:26.917] Val epoch: 69 : loss : 0.279418, loss_ce: 0.014221, loss_dice: 0.456216
+[22:28:27.173] save model to ./model_out/last_model.pth
+[22:29:03.858] Train epoch: 70 : loss : 0.083179, loss_ce: 0.014878, loss_dice: 0.128713
+[22:29:29.266] Val epoch: 70 : loss : 0.278536, loss_ce: 0.013333, loss_dice: 0.455338
+[22:29:29.512] save model to ./model_out/last_model.pth
+[22:30:06.653] Train epoch: 71 : loss : 0.087009, loss_ce: 0.015613, loss_dice: 0.134606
+[22:30:31.947] Val epoch: 71 : loss : 0.281697, loss_ce: 0.013609, loss_dice: 0.460422
+[22:30:32.188] save model to ./model_out/last_model.pth
+[22:31:08.897] Train epoch: 72 : loss : 0.085795, loss_ce: 0.014840, loss_dice: 0.133098
+[22:31:34.674] Val epoch: 72 : loss : 0.274308, loss_ce: 0.012750, loss_dice: 0.448680
+[22:31:34.929] save model to ./model_out/last_model.pth
+[22:32:11.597] Train epoch: 73 : loss : 0.086477, loss_ce: 0.015527, loss_dice: 0.133777
+[22:32:37.078] Val epoch: 73 : loss : 0.272606, loss_ce: 0.013449, loss_dice: 0.445378
+[22:32:37.337] save model to ./model_out/last_model.pth
+[22:33:14.196] Train epoch: 74 : loss : 0.082808, loss_ce: 0.015075, loss_dice: 0.127964
+[22:33:39.635] Val epoch: 74 : loss : 0.273917, loss_ce: 0.013020, loss_dice: 0.447849
+[22:33:39.898] save model to ./model_out/last_model.pth
+[22:34:16.605] Train epoch: 75 : loss : 0.088140, loss_ce: 0.014848, loss_dice: 0.137001
+[22:34:41.921] Val epoch: 75 : loss : 0.272479, loss_ce: 0.013018, loss_dice: 0.445453
+[22:34:42.172] save model to ./model_out/last_model.pth
+[22:35:18.794] Train epoch: 76 : loss : 0.084205, loss_ce: 0.015576, loss_dice: 0.129957
+[22:35:44.083] Val epoch: 76 : loss : 0.276094, loss_ce: 0.013100, loss_dice: 0.451423
+[22:35:44.334] save model to ./model_out/last_model.pth
+[22:36:20.993] Train epoch: 77 : loss : 0.084028, loss_ce: 0.014483, loss_dice: 0.130391
+[22:36:48.031] Val epoch: 77 : loss : 0.266299, loss_ce: 0.012683, loss_dice: 0.435376
+[22:36:48.272] save model to ./model_out/last_model.pth
+[22:37:24.971] Train epoch: 78 : loss : 0.078417, loss_ce: 0.014420, loss_dice: 0.121082
+[22:37:50.372] Val epoch: 78 : loss : 0.250475, loss_ce: 0.012773, loss_dice: 0.408943
+[22:37:50.630] save model to ./model_out/last_model.pth
+[22:38:27.381] Train epoch: 79 : loss : 0.087563, loss_ce: 0.015017, loss_dice: 0.135927
+[22:38:52.696] Val epoch: 79 : loss : 0.204720, loss_ce: 0.014890, loss_dice: 0.331273
+[22:38:52.944] save model to ./model_out/last_model.pth
+[22:39:29.610] Train epoch: 80 : loss : 0.089995, loss_ce: 0.017221, loss_dice: 0.138511
+[22:39:54.974] Val epoch: 80 : loss : 0.189919, loss_ce: 0.012871, loss_dice: 0.307950
+[22:39:55.215] save model to ./model_out/last_model.pth
+[22:40:31.938] Train epoch: 81 : loss : 0.085844, loss_ce: 0.015353, loss_dice: 0.132838
+[22:40:57.167] Val epoch: 81 : loss : 0.219173, loss_ce: 0.013464, loss_dice: 0.356313
+[22:40:57.433] save model to ./model_out/last_model.pth
+[22:41:34.071] Train epoch: 82 : loss : 0.083966, loss_ce: 0.014234, loss_dice: 0.130454
+[22:41:59.317] Val epoch: 82 : loss : 0.209773, loss_ce: 0.012399, loss_dice: 0.341355
+[22:41:59.579] save model to ./model_out/last_model.pth
+[22:42:36.251] Train epoch: 83 : loss : 0.085380, loss_ce: 0.015466, loss_dice: 0.131989
+[22:43:01.557] Val epoch: 83 : loss : 0.229505, loss_ce: 0.012899, loss_dice: 0.373909
+[22:43:01.803] save model to ./model_out/last_model.pth
+[22:43:38.482] Train epoch: 84 : loss : 0.087704, loss_ce: 0.015580, loss_dice: 0.135787
+[22:44:03.924] Val epoch: 84 : loss : 0.249343, loss_ce: 0.013256, loss_dice: 0.406734
+[22:44:04.175] save model to ./model_out/last_model.pth
+[22:44:40.869] Train epoch: 85 : loss : 0.083951, loss_ce: 0.014372, loss_dice: 0.130336
+[22:45:06.102] Val epoch: 85 : loss : 0.227476, loss_ce: 0.012815, loss_dice: 0.370583
+[22:45:06.350] save model to ./model_out/last_model.pth
+[22:45:43.017] Train epoch: 86 : loss : 0.079335, loss_ce: 0.015094, loss_dice: 0.122162
+[22:46:08.324] Val epoch: 86 : loss : 0.226062, loss_ce: 0.013332, loss_dice: 0.367882
+[22:46:08.577] save model to ./model_out/last_model.pth
+[22:46:45.297] Train epoch: 87 : loss : 0.080922, loss_ce: 0.014635, loss_dice: 0.125114
+[22:47:12.251] Val epoch: 87 : loss : 0.172521, loss_ce: 0.012327, loss_dice: 0.279317
+[22:47:12.501] save model to ./model_out/best_model.pth
+[22:47:49.141] Train epoch: 88 : loss : 0.081019, loss_ce: 0.015305, loss_dice: 0.124829
+[22:48:14.424] Val epoch: 88 : loss : 0.160918, loss_ce: 0.014167, loss_dice: 0.258753
+[22:48:14.686] save model to ./model_out/best_model.pth
+[22:48:51.344] Train epoch: 89 : loss : 0.087027, loss_ce: 0.015531, loss_dice: 0.134692
+[22:49:16.652] Val epoch: 89 : loss : 0.165976, loss_ce: 0.014305, loss_dice: 0.267089
+[22:49:16.902] save model to ./model_out/last_model.pth
+[22:49:53.682] Train epoch: 90 : loss : 0.089216, loss_ce: 0.016986, loss_dice: 0.137370
+[22:50:18.900] Val epoch: 90 : loss : 0.148557, loss_ce: 0.014697, loss_dice: 0.237798
+[22:50:19.147] save model to ./model_out/best_model.pth
+[22:50:56.099] Train epoch: 91 : loss : 0.087114, loss_ce: 0.017568, loss_dice: 0.133477
+[22:51:21.592] Val epoch: 91 : loss : 0.183278, loss_ce: 0.013347, loss_dice: 0.296565
+[22:51:21.849] save model to ./model_out/last_model.pth
+[22:51:58.526] Train epoch: 92 : loss : 0.082252, loss_ce: 0.015674, loss_dice: 0.126637
+[22:52:23.910] Val epoch: 92 : loss : 0.188923, loss_ce: 0.013322, loss_dice: 0.305991
+[22:52:24.161] save model to ./model_out/last_model.pth
+[22:53:00.873] Train epoch: 93 : loss : 0.087429, loss_ce: 0.014630, loss_dice: 0.135962
+[22:53:26.193] Val epoch: 93 : loss : 0.194139, loss_ce: 0.013272, loss_dice: 0.314716
+[22:53:26.448] save model to ./model_out/last_model.pth
+[22:54:03.258] Train epoch: 94 : loss : 0.082212, loss_ce: 0.014189, loss_dice: 0.127561
+[22:54:28.486] Val epoch: 94 : loss : 0.165134, loss_ce: 0.012812, loss_dice: 0.266682
+[22:54:28.741] save model to ./model_out/last_model.pth
+[22:55:05.446] Train epoch: 95 : loss : 0.080382, loss_ce: 0.013692, loss_dice: 0.124841
+[22:55:31.170] Val epoch: 95 : loss : 0.147549, loss_ce: 0.013135, loss_dice: 0.237157
+[22:55:31.431] save model to ./model_out/best_model.pth
+[22:56:08.037] Train epoch: 96 : loss : 0.081131, loss_ce: 0.013836, loss_dice: 0.125995
+[22:56:33.308] Val epoch: 96 : loss : 0.155043, loss_ce: 0.011973, loss_dice: 0.250423
+[22:56:33.571] save model to ./model_out/last_model.pth
+[22:57:10.243] Train epoch: 97 : loss : 0.079029, loss_ce: 0.014331, loss_dice: 0.122161
+[22:57:37.146] Val epoch: 97 : loss : 0.144295, loss_ce: 0.012707, loss_dice: 0.232020
+[22:57:37.407] save model to ./model_out/best_model.pth
+[22:58:14.038] Train epoch: 98 : loss : 0.076891, loss_ce: 0.014002, loss_dice: 0.118816
+[22:58:39.346] Val epoch: 98 : loss : 0.153764, loss_ce: 0.012504, loss_dice: 0.247937
+[22:58:39.613] save model to ./model_out/last_model.pth
+[22:59:16.296] Train epoch: 99 : loss : 0.078852, loss_ce: 0.014375, loss_dice: 0.121836
+[22:59:41.477] Val epoch: 99 : loss : 0.146275, loss_ce: 0.012270, loss_dice: 0.235612
+[22:59:41.723] save model to ./model_out/last_model.pth
+[23:00:18.431] Train epoch: 100 : loss : 0.083030, loss_ce: 0.014548, loss_dice: 0.128684
+[23:00:43.732] Val epoch: 100 : loss : 0.152191, loss_ce: 0.013551, loss_dice: 0.244617
+[23:00:43.966] save model to ./model_out/last_model.pth
+[23:01:21.000] Train epoch: 101 : loss : 0.083077, loss_ce: 0.015027, loss_dice: 0.128443
+[23:01:46.339] Val epoch: 101 : loss : 0.140763, loss_ce: 0.012231, loss_dice: 0.226451
+[23:01:46.590] save model to ./model_out/best_model.pth
+[23:02:23.157] Train epoch: 102 : loss : 0.078366, loss_ce: 0.013904, loss_dice: 0.121341
+[23:02:48.323] Val epoch: 102 : loss : 0.141789, loss_ce: 0.012804, loss_dice: 0.227779
+[23:02:48.580] save model to ./model_out/last_model.pth
+[23:03:25.258] Train epoch: 103 : loss : 0.079141, loss_ce: 0.013510, loss_dice: 0.122895
+[23:03:50.536] Val epoch: 103 : loss : 0.137728, loss_ce: 0.011989, loss_dice: 0.221554
+[23:03:50.797] save model to ./model_out/best_model.pth
+[23:04:27.583] Train epoch: 104 : loss : 0.087802, loss_ce: 0.015921, loss_dice: 0.135722
+[23:04:53.238] Val epoch: 104 : loss : 0.201301, loss_ce: 0.013920, loss_dice: 0.326221
+[23:04:53.494] save model to ./model_out/last_model.pth
+[23:05:30.119] Train epoch: 105 : loss : 0.081048, loss_ce: 0.014969, loss_dice: 0.125101
+[23:05:55.402] Val epoch: 105 : loss : 0.149493, loss_ce: 0.012247, loss_dice: 0.240991
+[23:05:55.655] save model to ./model_out/last_model.pth
+[23:06:32.313] Train epoch: 106 : loss : 0.076201, loss_ce: 0.014028, loss_dice: 0.117650
+[23:06:57.559] Val epoch: 106 : loss : 0.142909, loss_ce: 0.012909, loss_dice: 0.229576
+[23:06:57.816] save model to ./model_out/last_model.pth
+[23:07:34.494] Train epoch: 107 : loss : 0.080036, loss_ce: 0.015077, loss_dice: 0.123342
+[23:08:01.485] Val epoch: 107 : loss : 0.150015, loss_ce: 0.013116, loss_dice: 0.241281
+[23:08:01.748] save model to ./model_out/last_model.pth
+[23:08:38.384] Train epoch: 108 : loss : 0.085188, loss_ce: 0.017430, loss_dice: 0.130359
+[23:09:03.469] Val epoch: 108 : loss : 0.169030, loss_ce: 0.026305, loss_dice: 0.264180
+[23:09:03.723] save model to ./model_out/last_model.pth
+[23:09:40.324] Train epoch: 109 : loss : 0.098198, loss_ce: 0.021512, loss_dice: 0.149322
+[23:10:05.423] Val epoch: 109 : loss : 0.173886, loss_ce: 0.013760, loss_dice: 0.280636
+[23:10:05.676] save model to ./model_out/last_model.pth
+[23:10:42.262] Train epoch: 110 : loss : 0.076384, loss_ce: 0.014651, loss_dice: 0.117540
+[23:11:07.713] Val epoch: 110 : loss : 0.147128, loss_ce: 0.012658, loss_dice: 0.236775
+[23:11:08.024] save model to ./model_out/last_model.pth
+[23:11:45.349] Train epoch: 111 : loss : 0.091139, loss_ce: 0.018044, loss_dice: 0.139869
+[23:12:10.621] Val epoch: 111 : loss : 0.144141, loss_ce: 0.013828, loss_dice: 0.231017
+[23:12:10.886] save model to ./model_out/last_model.pth
+[23:12:47.580] Train epoch: 112 : loss : 0.086926, loss_ce: 0.015675, loss_dice: 0.134426
+[23:13:12.844] Val epoch: 112 : loss : 0.304485, loss_ce: 0.014391, loss_dice: 0.497882
+[23:13:13.089] save model to ./model_out/last_model.pth
+[23:13:49.722] Train epoch: 113 : loss : 0.154483, loss_ce: 0.050254, loss_dice: 0.223969
+[23:14:14.857] Val epoch: 113 : loss : 0.266243, loss_ce: 0.053552, loss_dice: 0.408037
+[23:14:15.099] save model to ./model_out/last_model.pth
+[23:14:52.091] Train epoch: 114 : loss : 0.149239, loss_ce: 0.036747, loss_dice: 0.224234
+[23:15:17.306] Val epoch: 114 : loss : 0.257627, loss_ce: 0.018009, loss_dice: 0.417372
+[23:15:17.570] save model to ./model_out/last_model.pth
+[23:15:54.317] Train epoch: 115 : loss : 0.092942, loss_ce: 0.017811, loss_dice: 0.143029
+[23:16:19.544] Val epoch: 115 : loss : 0.207470, loss_ce: 0.014481, loss_dice: 0.336130
+[23:16:19.785] save model to ./model_out/last_model.pth
+[23:16:56.546] Train epoch: 116 : loss : 0.089295, loss_ce: 0.017364, loss_dice: 0.137249
+[23:17:21.818] Val epoch: 116 : loss : 0.178714, loss_ce: 0.014470, loss_dice: 0.288209
+[23:17:22.059] save model to ./model_out/last_model.pth
+[23:17:58.737] Train epoch: 117 : loss : 0.091122, loss_ce: 0.016845, loss_dice: 0.140640
+[23:18:25.783] Val epoch: 117 : loss : 0.166143, loss_ce: 0.013417, loss_dice: 0.267960
+[23:18:26.028] save model to ./model_out/last_model.pth
+[23:19:02.709] Train epoch: 118 : loss : 0.097302, loss_ce: 0.021812, loss_dice: 0.147628
+[23:19:27.921] Val epoch: 118 : loss : 0.217211, loss_ce: 0.016291, loss_dice: 0.351158
+[23:19:28.175] save model to ./model_out/last_model.pth
+[23:20:05.064] Train epoch: 119 : loss : 0.089398, loss_ce: 0.016907, loss_dice: 0.137725
+[23:20:30.470] Val epoch: 119 : loss : 0.165042, loss_ce: 0.013683, loss_dice: 0.265948
+[23:20:30.822] save model to ./model_out/last_model.pth
+[23:21:07.585] Train epoch: 120 : loss : 0.084768, loss_ce: 0.015861, loss_dice: 0.130707
+[23:21:34.614] Val epoch: 120 : loss : 0.166480, loss_ce: 0.014302, loss_dice: 0.267932
+[23:21:34.873] save model to ./model_out/last_model.pth
+[23:22:11.579] Train epoch: 121 : loss : 0.086980, loss_ce: 0.015622, loss_dice: 0.134551
+[23:22:37.077] Val epoch: 121 : loss : 0.178236, loss_ce: 0.013044, loss_dice: 0.288364
+[23:22:37.323] save model to ./model_out/last_model.pth
+[23:23:14.019] Train epoch: 122 : loss : 0.083010, loss_ce: 0.015653, loss_dice: 0.127915
+[23:23:39.357] Val epoch: 122 : loss : 0.181780, loss_ce: 0.013706, loss_dice: 0.293830
+[23:23:39.607] save model to ./model_out/last_model.pth
+[23:24:16.334] Train epoch: 123 : loss : 0.093076, loss_ce: 0.019915, loss_dice: 0.141850
+[23:24:41.498] Val epoch: 123 : loss : 0.173861, loss_ce: 0.014585, loss_dice: 0.280044
+[23:24:41.747] save model to ./model_out/last_model.pth
+[23:25:18.587] Train epoch: 124 : loss : 0.080882, loss_ce: 0.016214, loss_dice: 0.123993
+[23:25:43.743] Val epoch: 124 : loss : 0.116274, loss_ce: 0.012985, loss_dice: 0.185133
+[23:25:43.999] save model to ./model_out/best_model.pth
+[23:26:20.630] Train epoch: 125 : loss : 0.091276, loss_ce: 0.018169, loss_dice: 0.140014
+[23:26:45.826] Val epoch: 125 : loss : 0.134175, loss_ce: 0.016378, loss_dice: 0.212706
+[23:26:46.075] save model to ./model_out/last_model.pth
+[23:27:22.731] Train epoch: 126 : loss : 0.085605, loss_ce: 0.016934, loss_dice: 0.131385
+[23:27:47.999] Val epoch: 126 : loss : 0.134540, loss_ce: 0.013251, loss_dice: 0.215399
+[23:27:48.266] save model to ./model_out/last_model.pth
+[23:28:24.985] Train epoch: 127 : loss : 0.080822, loss_ce: 0.016867, loss_dice: 0.123459
+[23:28:51.186] Val epoch: 127 : loss : 0.154284, loss_ce: 0.014212, loss_dice: 0.247665
+[23:28:51.443] save model to ./model_out/last_model.pth
+[23:29:28.110] Train epoch: 128 : loss : 0.096565, loss_ce: 0.020823, loss_dice: 0.147060
+[23:29:53.317] Val epoch: 128 : loss : 0.164775, loss_ce: 0.014622, loss_dice: 0.264877
+[23:29:53.568] save model to ./model_out/last_model.pth
+[23:30:30.230] Train epoch: 129 : loss : 0.093783, loss_ce: 0.020194, loss_dice: 0.142842
+[23:30:55.404] Val epoch: 129 : loss : 0.191776, loss_ce: 0.043314, loss_dice: 0.290750
+[23:30:55.668] save model to ./model_out/last_model.pth
+[23:31:32.340] Train epoch: 130 : loss : 0.138563, loss_ce: 0.036203, loss_dice: 0.206803
+[23:31:59.225] Val epoch: 130 : loss : 0.170005, loss_ce: 0.015438, loss_dice: 0.273051
+[23:31:59.483] save model to ./model_out/last_model.pth
+[23:32:36.189] Train epoch: 131 : loss : 0.091873, loss_ce: 0.019129, loss_dice: 0.140369
+[23:33:01.334] Val epoch: 131 : loss : 0.174995, loss_ce: 0.018552, loss_dice: 0.279290
+[23:33:01.597] save model to ./model_out/last_model.pth
+[23:33:38.269] Train epoch: 132 : loss : 0.096534, loss_ce: 0.018559, loss_dice: 0.148517
+[23:34:03.421] Val epoch: 132 : loss : 0.156730, loss_ce: 0.014396, loss_dice: 0.251618
+[23:34:03.676] save model to ./model_out/last_model.pth
+[23:34:40.353] Train epoch: 133 : loss : 0.081875, loss_ce: 0.015776, loss_dice: 0.125941
+[23:35:05.517] Val epoch: 133 : loss : 0.147954, loss_ce: 0.013303, loss_dice: 0.237722
+[23:35:05.776] save model to ./model_out/last_model.pth
+[23:35:42.909] Train epoch: 134 : loss : 0.076586, loss_ce: 0.015042, loss_dice: 0.117615
+[23:36:08.128] Val epoch: 134 : loss : 0.155214, loss_ce: 0.012922, loss_dice: 0.250075
+[23:36:08.370] save model to ./model_out/last_model.pth
+[23:36:45.024] Train epoch: 135 : loss : 0.077100, loss_ce: 0.014781, loss_dice: 0.118646
+[23:37:10.289] Val epoch: 135 : loss : 0.178220, loss_ce: 0.014002, loss_dice: 0.287699
+[23:37:10.537] save model to ./model_out/last_model.pth
+[23:37:47.193] Train epoch: 136 : loss : 0.087464, loss_ce: 0.017490, loss_dice: 0.134113
+[23:38:12.303] Val epoch: 136 : loss : 0.154171, loss_ce: 0.013439, loss_dice: 0.247992
+[23:38:12.556] save model to ./model_out/last_model.pth
+[23:38:49.348] Train epoch: 137 : loss : 0.075105, loss_ce: 0.014384, loss_dice: 0.115586
+[23:39:14.663] Val epoch: 137 : loss : 0.149032, loss_ce: 0.012779, loss_dice: 0.239868
+[23:39:14.916] save model to ./model_out/last_model.pth
+[23:39:51.603] Train epoch: 138 : loss : 0.082614, loss_ce: 0.016203, loss_dice: 0.126888
+[23:40:16.901] Val epoch: 138 : loss : 0.161122, loss_ce: 0.013371, loss_dice: 0.259622
+[23:40:17.144] save model to ./model_out/last_model.pth
+[23:40:53.836] Train epoch: 139 : loss : 0.076946, loss_ce: 0.015623, loss_dice: 0.117829
+[23:41:19.118] Val epoch: 139 : loss : 0.161412, loss_ce: 0.019815, loss_dice: 0.255810
+[23:41:19.374] save model to ./model_out/last_model.pth
+[23:41:56.070] Train epoch: 140 : loss : 0.085207, loss_ce: 0.017149, loss_dice: 0.130578
+[23:42:23.138] Val epoch: 140 : loss : 0.155372, loss_ce: 0.013495, loss_dice: 0.249957
+[23:42:23.400] save model to ./model_out/last_model.pth
+[23:43:00.050] Train epoch: 141 : loss : 0.079632, loss_ce: 0.014997, loss_dice: 0.122722
+[23:43:25.308] Val epoch: 141 : loss : 0.148875, loss_ce: 0.012719, loss_dice: 0.239645
+[23:43:25.560] save model to ./model_out/last_model.pth
+[23:44:02.170] Train epoch: 142 : loss : 0.084055, loss_ce: 0.015131, loss_dice: 0.130005
+[23:44:27.414] Val epoch: 142 : loss : 0.137052, loss_ce: 0.013231, loss_dice: 0.219600
+[23:44:27.660] save model to ./model_out/last_model.pth
+[23:45:04.329] Train epoch: 143 : loss : 0.072051, loss_ce: 0.014157, loss_dice: 0.110648
+[23:45:29.587] Val epoch: 143 : loss : 0.134185, loss_ce: 0.012479, loss_dice: 0.215323
+[23:45:29.836] save model to ./model_out/last_model.pth
+[23:46:06.574] Train epoch: 144 : loss : 0.072475, loss_ce: 0.014023, loss_dice: 0.111442
+[23:46:31.808] Val epoch: 144 : loss : 0.134973, loss_ce: 0.012347, loss_dice: 0.216724
+[23:46:32.065] save model to ./model_out/last_model.pth
+[23:47:08.674] Train epoch: 145 : loss : 0.074341, loss_ce: 0.013646, loss_dice: 0.114805
+[23:47:33.924] Val epoch: 145 : loss : 0.135092, loss_ce: 0.012215, loss_dice: 0.217009
+[23:47:34.171] save model to ./model_out/last_model.pth
+[23:48:10.849] Train epoch: 146 : loss : 0.074134, loss_ce: 0.013829, loss_dice: 0.114337
+[23:48:36.082] Val epoch: 146 : loss : 0.134194, loss_ce: 0.012386, loss_dice: 0.215399
+[23:48:36.339] save model to ./model_out/last_model.pth
+[23:49:13.158] Train epoch: 147 : loss : 0.072094, loss_ce: 0.013736, loss_dice: 0.110999
+[23:49:38.500] Val epoch: 147 : loss : 0.131204, loss_ce: 0.012353, loss_dice: 0.210437
+[23:49:38.752] save model to ./model_out/last_model.pth
+[23:50:15.389] Train epoch: 148 : loss : 0.069358, loss_ce: 0.013556, loss_dice: 0.106559
+[23:50:40.610] Val epoch: 148 : loss : 0.131953, loss_ce: 0.012263, loss_dice: 0.211747
+[23:50:40.866] save model to ./model_out/last_model.pth
+[23:51:17.509] Train epoch: 149 : loss : 0.072175, loss_ce: 0.013642, loss_dice: 0.111197
+[23:51:42.684] Val epoch: 149 : loss : 0.129063, loss_ce: 0.012286, loss_dice: 0.206915
+[23:51:42.935] save model to ./model_out/last_model.pth

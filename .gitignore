@@ -1,0 +1,54 @@
+# --- 深度学习模型权重 ---
+*.pth
+*.pt
+*.ckpt
+*.weights
+*.h5
+*.onnx
+# 如果你有特定的权重文件夹，也可以直接忽略整个目录
+/checkpoints/
+/weights/
+/trained_models/
+
+# --- 数据集 ---
+# 建议不要将原始数据上传到 GitHub
+data/
+datasets/
+*.zip
+*.tar.gz
+*.rar
+*.npy
+*.npz
+*.png
+*.jpg
+
+# --- 训练日志与可视化 ---
+/runs/
+/logs/
+/output/
+*.log
+/tf_logs/
+
+# --- Python 环境与缓存 ---
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# --- IDE 与系统文件 ---
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# --- 编译文件 ---
+/bin/
+/obj/

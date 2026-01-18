@@ -1,0 +1,49 @@
+多GPU训练指令
+python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py     --dataset TN3K     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K     --n_class 2     --output_dir ./output_tn3k     --img_size 224     --batch_size 24     --max_epochs 300     --base_lr 0.01     --cfg configs/swin_tiny_patch4_window7_224_lite.yaml
+
+python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py     --dataset TN3K     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K     --n_class 2     --output_dir ./output_tn3k     --img_size 384     --batch_size 6     --max_epochs 100     --base_lr 0.01     --cfg configs/swin_base_patch4_window12_384_22k.yaml
+
+多GPU断点续训(Resuming)
+python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py     --dataset TN3K     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K     --n_class 2     --output_dir ./output_tn3k_resume     --img_size 384     --batch_size 6     --max_epochs 100     --base_lr 0.005    --cfg configs/swin_tiny_patch4_window7_224_lite.yaml  --resume ./output_tn3k/epoch_92.pth
+
+
+测试命令
+python test_tn3k.py     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K     --cfg configs/swin_tiny_patch4_window7_224_lite.yaml     --model_path ./output_tn3k/epoch_99.pth
+
+微调测试
+python test_tn3k.py     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K     --cfg configs/swin_tiny_patch4_window7_224_lite.yaml     --model_path ./output_tn3k_resume/epoch_79.pth
+以上均为swin-tiny版本
+
+下面是swin-base版本
+训练指令
+python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py \
+     --dataset TN3K \
+     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+     --n_class 2 \
+     --output_dir ./output_tn3k \
+     --img_size 384 \
+     --batch_size 2 \
+     --max_epochs 100 \
+     --base_lr 0.01 \
+     --cfg configs/swin_base_patch4_window12_384_22k.yaml
+
+
+断点续训
+python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train_resume.py \
+     --dataset TN3K \
+     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+     --n_class 2 \
+     --output_dir ./output_tn3k_resume \
+     --img_size 384 \
+     --batch_size 2 \
+     --max_epochs 50 \
+     --base_lr 0.001 \
+     --cfg configs/swin_base_patch4_window12_384_22k.yaml\
+     --resume ./output_tn3k/epoch_98.pth
+
+
+测试指令
+python test_tn3k.py --cfg configs/swin_base_patch4_window12_384_22k.yaml --img_size 384 --model_path ./output_tn3k/epoch_22.pth
+
