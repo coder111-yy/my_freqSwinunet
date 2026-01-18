@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Swin-Unet
 [ECCVW2022] The codes for the work "Swin-Unet: Unet-like Pure Transformer for Medical Image Segmentation"(https://arxiv.org/abs/2105.05537). Our paper has been accepted by ECCV 2022 MEDICAL COMPUTER VISION WORKSHOP (https://mcv-workshop.github.io/). We updated the Reproducibility. I hope this will help you to reproduce the results.
 
@@ -61,4 +62,7 @@ year = {2022}
       archivePrefix={arXiv},
       primaryClass={eess.IV}
 }
-```
+
+# my_freqSwinunet
+This is a variant model of SwinUNET, with some additional modules added. The original SwinUNET structure has been modified and adjusted.
+
