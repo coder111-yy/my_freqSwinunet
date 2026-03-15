@@ -24,36 +24,58 @@ except ImportError:
         if hasattr(module, 'bias') and module.bias is not None:
             nn.init.constant_(module.bias, bias)
 
+
     def carafe(x, normed_mask, kernel_size, group=1, up=1):
-            b, c, h, w = x.shape
-            _, m_c, m_h, m_w = normed_mask.shape
-            print('x', x.shape)
-            print('normed_mask', normed_mask.shape)
-            # assert m_c == kernel_size ** 2 * up ** 2
-            assert m_h == up * h
-            assert m_w == up * w
-            pad = kernel_size // 2
-            # print(pad)
-            pad_x = F.pad(x, pad=[pad] * 4, mode='reflect')
-            # print(pad_x.shape)
-            unfold_x = F.unfold(pad_x, kernel_size=(kernel_size, kernel_size), stride=1, padding=0)
-            # unfold_x = unfold_x.reshape(b, c, 1, kernel_size, kernel_size, h, w).repeat(1, 1, up ** 2, 1, 1, 1, 1)
-            unfold_x = unfold_x.reshape(b, c * kernel_size * kernel_size, h, w)
-            unfold_x = F.interpolate(unfold_x, scale_factor=up, mode='nearest')
-            # normed_mask = normed_mask.reshape(b, 1, up ** 2, kernel_size, kernel_size, h, w)
-            unfold_x = unfold_x.reshape(b, c, kernel_size * kernel_size, m_h, m_w)
-            normed_mask = normed_mask.reshape(b, 1, kernel_size * kernel_size, m_h, m_w)
+        b, c, h, w = x.shape
+        _, m_c, m_h, m_w = normed_mask.shape
+
+        # 检查空间维度是否符合预期
+        # assert m_h == up * h
+        # assert m_w == up * w
+
+        pad = kernel_size // 2
+        pad_x = F.pad(x, pad=[pad] * 4, mode='reflect')
+        unfold_x = F.unfold(pad_x, kernel_size=(kernel_size, kernel_size), stride=1, padding=0)
+
+        # 调整 unfold_x 的形状以适配上采样
+        unfold_x = unfold_x.reshape(b, c, kernel_size * kernel_size, h, w)
+        unfold_x = F.interpolate(unfold_x, scale_factor=up, mode='nearest')
+        # 此时 unfold_x 形状: (b, c, k*k, m_h, m_w)
+
+        # --- 修复核心：处理 mask 通道数不匹配的问题 ---
+        # 理论上需要的 mask 通道数
+        expected_mask_c = group * kernel_size * kernel_size
+
+        if m_c != expected_mask_c:
+            # 如果 mask 通道数是预期的整数倍（例如 scale=2 时 mask 是 4 倍），则取平均
+            if m_c > expected_mask_c and m_c % expected_mask_c == 0:
+                ratio = m_c // expected_mask_c
+                # 将多余的倍数维度分离出来，取平均值
+                normed_mask = normed_mask.view(b, ratio, expected_mask_c, m_h, m_w).mean(dim=1)
+            else:
+                # 如果倍数关系不对，则抛出异常，便于排查其他问题
+                raise ValueError(
+                    f"Mask channels {m_c} mismatch. Expected {expected_mask_c} (group={group}, k={kernel_size})")
+
+        # 重塑 mask 形状以匹配计算
+        normed_mask = normed_mask.reshape(b, group, kernel_size * kernel_size, m_h, m_w)
+
+        # 执行加权计算
+        if group == 1:
+            # 单组情况：直接广播乘法
+            # unfold_x: (b, c, k*k, ...) * normed_mask: (b, 1, k*k, ...)
             res = unfold_x * normed_mask
-            # test
-            # res[:, :, 0] = 1
-            # res[:, :, 1] = 2
-            # res[:, :, 2] = 3
-            # res[:, :, 3] = 4
-            res = res.sum(dim=2).reshape(b, c, m_h, m_w)
-            # res = F.pixel_shuffle(res, up)
-            # print(res.shape)
-            # print(res)
-            return res
+        else:
+            # 多组情况：拆分 channel 进行计算
+            unfold_x = unfold_x.view(b, group, c // group, kernel_size * kernel_size, m_h, m_w)
+            normed_mask = normed_mask.unsqueeze(2)  # (b, g, 1, k*k, ...)
+            res = unfold_x * normed_mask
+            res = res.view(b, c, kernel_size * kernel_size, m_h, m_w)
+
+        # 在核维度求和，得到最终结果
+        res = res.sum(dim=2).reshape(b, c, m_h, m_w)
+        return res
+
 
     def normal_init(module, mean=0, std=1, bias=0):
         if hasattr(module, 'weight') and module.weight is not None:
@@ -67,6 +89,7 @@ def constant_init(module, val, bias=0):
         nn.init.constant_(module.weight, val)
     if hasattr(module, 'bias') and module.bias is not None:
         nn.init.constant_(module.bias, bias)
+
 
 def resize(input,
            size=None,
@@ -89,6 +112,7 @@ def resize(input,
                         f'out size {(output_h, output_w)} is `nx+1`')
     return F.interpolate(input, size, scale_factor, mode, align_corners)
 
+
 def hamming2D(M, N):
     """
     生成二维Hamming窗
@@ -109,29 +133,30 @@ def hamming2D(M, N):
     hamming_2d = np.outer(hamming_x, hamming_y)
     return hamming_2d
 
+
 class FreqFusion(nn.Module):
     def __init__(self,
-                hr_channels,
-                lr_channels,
-                scale_factor=1,
-                lowpass_kernel=5,
-                highpass_kernel=3,
-                up_group=1,
-                encoder_kernel=3,
-                encoder_dilation=1,
-                compressed_channels=64,        
-                align_corners=False,
-                upsample_mode='nearest',
-                feature_resample=False, # use offset generator or not
-                feature_resample_group=4,
-                comp_feat_upsample=True, # use ALPF & AHPF for init upsampling
-                use_high_pass=True,
-                use_low_pass=True,
-                hr_residual=True,
-                semi_conv=True,
-                hamming_window=True, # for regularization, do not matter really
-                feature_resample_norm=True,
-                **kwargs):
+                 hr_channels,
+                 lr_channels,
+                 scale_factor=1,
+                 lowpass_kernel=5,
+                 highpass_kernel=3,
+                 up_group=1,
+                 encoder_kernel=3,
+                 encoder_dilation=1,
+                 compressed_channels=64,
+                 align_corners=False,
+                 upsample_mode='nearest',
+                 feature_resample=False,  # use offset generator or not
+                 feature_resample_group=4,
+                 comp_feat_upsample=True,  # use ALPF & AHPF for init upsampling
+                 use_high_pass=True,
+                 use_low_pass=True,
+                 hr_residual=True,
+                 semi_conv=True,
+                 hamming_window=True,  # for regularization, do not matter really
+                 feature_resample_norm=True,
+                 **kwargs):
         super().__init__()
         self.scale_factor = scale_factor
         self.lowpass_kernel = lowpass_kernel
@@ -140,16 +165,16 @@ class FreqFusion(nn.Module):
         self.encoder_kernel = encoder_kernel
         self.encoder_dilation = encoder_dilation
         self.compressed_channels = compressed_channels
-        self.hr_channel_compressor = nn.Conv2d(hr_channels, self.compressed_channels,1)
-        self.lr_channel_compressor = nn.Conv2d(lr_channels, self.compressed_channels,1)
-        self.content_encoder = nn.Conv2d( # ALPF generator
+        self.hr_channel_compressor = nn.Conv2d(hr_channels, self.compressed_channels, 1)
+        self.lr_channel_compressor = nn.Conv2d(lr_channels, self.compressed_channels, 1)
+        self.content_encoder = nn.Conv2d(  # ALPF generator
             self.compressed_channels,
             lowpass_kernel ** 2 * self.up_group * self.scale_factor * self.scale_factor,
             self.encoder_kernel,
             padding=int((self.encoder_kernel - 1) * self.encoder_dilation / 2),
             dilation=self.encoder_dilation,
             groups=1)
-        
+
         self.align_corners = align_corners
         self.upsample_mode = upsample_mode
         self.hr_residual = hr_residual
@@ -159,9 +184,11 @@ class FreqFusion(nn.Module):
         self.feature_resample = feature_resample
         self.comp_feat_upsample = comp_feat_upsample
         if self.feature_resample:
-            self.dysampler = LocalSimGuidedSampler(in_channels=compressed_channels, scale=2, style='lp', groups=feature_resample_group, use_direct_scale=True, kernel_size=encoder_kernel, norm=feature_resample_norm)
+            self.dysampler = LocalSimGuidedSampler(in_channels=compressed_channels, scale=2, style='lp',
+                                                   groups=feature_resample_group, use_direct_scale=True,
+                                                   kernel_size=encoder_kernel, norm=feature_resample_norm)
         if self.use_high_pass:
-            self.content_encoder2 = nn.Conv2d( # AHPF generator
+            self.content_encoder2 = nn.Conv2d(  # AHPF generator
                 self.compressed_channels,
                 highpass_kernel ** 2 * self.up_group * self.scale_factor * self.scale_factor,
                 self.encoder_kernel,
@@ -169,11 +196,13 @@ class FreqFusion(nn.Module):
                 dilation=self.encoder_dilation,
                 groups=1)
         self.hamming_window = hamming_window
-        lowpass_pad=0
-        highpass_pad=0
+        lowpass_pad = 0
+        highpass_pad = 0
         if self.hamming_window:
-            self.register_buffer('hamming_lowpass', torch.FloatTensor(hamming2D(lowpass_kernel + 2 * lowpass_pad, lowpass_kernel + 2 * lowpass_pad))[None, None,])
-            self.register_buffer('hamming_highpass', torch.FloatTensor(hamming2D(highpass_kernel + 2 * highpass_pad, highpass_kernel + 2 * highpass_pad))[None, None,])
+            self.register_buffer('hamming_lowpass', torch.FloatTensor(
+                hamming2D(lowpass_kernel + 2 * lowpass_pad, lowpass_kernel + 2 * lowpass_pad))[None, None,])
+            self.register_buffer('hamming_highpass', torch.FloatTensor(
+                hamming2D(highpass_kernel + 2 * highpass_pad, highpass_kernel + 2 * highpass_pad))[None, None,])
         else:
             self.register_buffer('hamming_lowpass', torch.FloatTensor([1.0]))
             self.register_buffer('hamming_highpass', torch.FloatTensor([1.0]))
@@ -192,7 +221,7 @@ class FreqFusion(nn.Module):
         if scale_factor is not None:
             mask = F.pixel_shuffle(mask, self.scale_factor)
         n, mask_c, h, w = mask.size()
-        mask_channel = int(mask_c / float(kernel**2)) # group
+        mask_channel = int(mask_c / float(kernel ** 2))  # group
         # mask = mask.view(n, mask_channel, -1, h, w)
         # mask = F.softmax(mask, dim=2, dtype=mask.dtype)
         # mask = mask.view(n, mask_c, h, w).contiguous()
@@ -200,17 +229,17 @@ class FreqFusion(nn.Module):
         mask = mask.view(n, mask_channel, -1, h, w)
         mask = F.softmax(mask, dim=2, dtype=mask.dtype)
         mask = mask.view(n, mask_channel, kernel, kernel, h, w)
-        mask = mask.permute(0, 1, 4, 5, 2, 3).view(n, -1, kernel, kernel)
+        mask = mask.permute(0, 1, 4, 5, 2, 3).reshape(n, -1, kernel, kernel)
         # mask = F.pad(mask, pad=[padding] * 4, mode=self.padding_mode) # kernel + 2 * padding
         mask = mask * hamming
         mask /= mask.sum(dim=(-1, -2), keepdims=True)
         # print(hamming)
         # print(mask.shape)
         mask = mask.view(n, mask_channel, h, w, -1)
-        mask =  mask.permute(0, 1, 4, 2, 3).view(n, -1, h, w).contiguous()
+        mask = mask.permute(0, 1, 4, 2, 3).reshape(n, -1, h, w).contiguous()
         return mask
 
-    def forward(self, hr_feat, lr_feat, use_checkpoint=False): # use check_point to save GPU memory
+    def forward(self, hr_feat, lr_feat, use_checkpoint=False):  # use check_point to save GPU memory
         if use_checkpoint:
             return checkpoint(self._forward, hr_feat, lr_feat)
         else:
@@ -222,36 +251,49 @@ class FreqFusion(nn.Module):
         if self.semi_conv:
             if self.comp_feat_upsample:
                 if self.use_high_pass:
-                    mask_hr_hr_feat = self.content_encoder2(compressed_hr_feat) #从hr_feat得到初始高通滤波特征
-                    mask_hr_init = self.kernel_normalizer(mask_hr_hr_feat, self.highpass_kernel, hamming=self.hamming_highpass) #kernel归一化得到初始高通滤波
-                    compressed_hr_feat = compressed_hr_feat + compressed_hr_feat - carafe(compressed_hr_feat, mask_hr_init, self.highpass_kernel, self.up_group, 1) #利用初始高通滤波对压缩hr_feat的高频增强 （x-x的低通结果=x的高通结果）
-                    
-                    mask_lr_hr_feat = self.content_encoder(compressed_hr_feat) #从hr_feat得到初始低通滤波特征
-                    mask_lr_init = self.kernel_normalizer(mask_lr_hr_feat, self.lowpass_kernel, hamming=self.hamming_lowpass) #kernel归一化得到初始低通滤波
-                    
-                    mask_lr_lr_feat_lr = self.content_encoder(compressed_lr_feat) #从hr_feat得到另一部分初始低通滤波特征
-                    mask_lr_lr_feat = F.interpolate( #利用初始低通滤波对另一部分初始低通滤波特征上采样
-                        carafe(mask_lr_lr_feat_lr, mask_lr_init, self.lowpass_kernel, self.up_group, 2), size=compressed_hr_feat.shape[-2:], mode='nearest')
-                    mask_lr = mask_lr_hr_feat + mask_lr_lr_feat #将两部分初始低通滤波特征合在一起
+                    mask_hr_hr_feat = self.content_encoder2(compressed_hr_feat)  # 从hr_feat得到初始高通滤波特征
+                    mask_hr_init = self.kernel_normalizer(mask_hr_hr_feat, self.highpass_kernel,
+                                                          hamming=self.hamming_highpass)  # kernel归一化得到初始高通滤波
+                    compressed_hr_feat = compressed_hr_feat + compressed_hr_feat - carafe(compressed_hr_feat,
+                                                                                          mask_hr_init,
+                                                                                          self.highpass_kernel,
+                                                                                          self.up_group,
+                                                                                          1)  # 利用初始高通滤波对压缩hr_feat的高频增强 （x-x的低通结果=x的高通结果）
 
-                    mask_lr_init = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass) #得到初步融合的初始低通滤波
-                    mask_hr_lr_feat = F.interpolate( #使用初始低通滤波对lr_feat处理，分辨率得到提高
-                        carafe(self.content_encoder2(compressed_lr_feat), mask_lr_init, self.lowpass_kernel, self.up_group, 2), size=compressed_hr_feat.shape[-2:], mode='nearest')
-                    mask_hr = mask_hr_hr_feat + mask_hr_lr_feat # 最终高通滤波特征
-                else: raise NotImplementedError
+                    mask_lr_hr_feat = self.content_encoder(compressed_hr_feat)  # 从hr_feat得到初始低通滤波特征
+                    mask_lr_init = self.kernel_normalizer(mask_lr_hr_feat, self.lowpass_kernel,
+                                                          hamming=self.hamming_lowpass)  # kernel归一化得到初始低通滤波
+
+                    mask_lr_lr_feat_lr = self.content_encoder(compressed_lr_feat)  # 从hr_feat得到另一部分初始低通滤波特征
+                    mask_lr_lr_feat = F.interpolate(  # 利用初始低通滤波对另一部分初始低通滤波特征上采样
+                        carafe(mask_lr_lr_feat_lr, mask_lr_init, self.lowpass_kernel, self.up_group, 2),
+                        size=compressed_hr_feat.shape[-2:], mode='nearest')
+                    mask_lr = mask_lr_hr_feat + mask_lr_lr_feat  # 将两部分初始低通滤波特征合在一起
+
+                    mask_lr_init = self.kernel_normalizer(mask_lr, self.lowpass_kernel,
+                                                          hamming=self.hamming_lowpass)  # 得到初步融合的初始低通滤波
+                    mask_hr_lr_feat = F.interpolate(  # 使用初始低通滤波对lr_feat处理，分辨率得到提高
+                        carafe(self.content_encoder2(compressed_lr_feat), mask_lr_init, self.lowpass_kernel,
+                               self.up_group, 2), size=compressed_hr_feat.shape[-2:], mode='nearest')
+                    mask_hr = mask_hr_hr_feat + mask_hr_lr_feat  # 最终高通滤波特征
+                else:
+                    raise NotImplementedError
             else:
-                mask_lr = self.content_encoder(compressed_hr_feat) + F.interpolate(self.content_encoder(compressed_lr_feat), size=compressed_hr_feat.shape[-2:], mode='nearest')
+                mask_lr = self.content_encoder(compressed_hr_feat) + F.interpolate(
+                    self.content_encoder(compressed_lr_feat), size=compressed_hr_feat.shape[-2:], mode='nearest')
                 if self.use_high_pass:
-                    mask_hr = self.content_encoder2(compressed_hr_feat) + F.interpolate(self.content_encoder2(compressed_lr_feat), size=compressed_hr_feat.shape[-2:], mode='nearest')
+                    mask_hr = self.content_encoder2(compressed_hr_feat) + F.interpolate(
+                        self.content_encoder2(compressed_lr_feat), size=compressed_hr_feat.shape[-2:], mode='nearest')
         else:
-            compressed_x = F.interpolate(compressed_lr_feat, size=compressed_hr_feat.shape[-2:], mode='nearest') + compressed_hr_feat
+            compressed_x = F.interpolate(compressed_lr_feat, size=compressed_hr_feat.shape[-2:],
+                                         mode='nearest') + compressed_hr_feat
             mask_lr = self.content_encoder(compressed_x)
-            if self.use_high_pass: 
+            if self.use_high_pass:
                 mask_hr = self.content_encoder2(compressed_x)
-        
+
         mask_lr = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
         if self.semi_conv:
-                lr_feat = carafe(lr_feat, mask_lr, self.lowpass_kernel, self.up_group, 2)
+            lr_feat = carafe(lr_feat, mask_lr, self.lowpass_kernel, self.up_group, 2)
         else:
             lr_feat = resize(
                 input=lr_feat,
@@ -271,21 +313,22 @@ class FreqFusion(nn.Module):
 
         if self.feature_resample:
             # print(lr_feat.shape)
-            lr_feat = self.dysampler(hr_x=compressed_hr_feat, 
+            lr_feat = self.dysampler(hr_x=compressed_hr_feat,
                                      lr_x=compressed_lr_feat, feat2sample=lr_feat)
-                
-        return  mask_lr, hr_feat, lr_feat
 
+        return mask_lr, hr_feat, lr_feat
 
 
 class LocalSimGuidedSampler(nn.Module):
     """
     offset generator in FreqFusion
     """
-    def __init__(self, in_channels, scale=2, style='lp', groups=4, use_direct_scale=True, kernel_size=1, local_window=3, sim_type='cos', norm=True, direction_feat='sim_concat'):
+
+    def __init__(self, in_channels, scale=2, style='lp', groups=4, use_direct_scale=True, kernel_size=1, local_window=3,
+                 sim_type='cos', norm=True, direction_feat='sim_concat'):
         super().__init__()
-        assert scale==2
-        assert style=='lp'
+        assert scale == 2
+        assert style == 'lp'
 
         self.scale = scale
         self.style = style
@@ -304,33 +347,45 @@ class LocalSimGuidedSampler(nn.Module):
         else:
             out_channels = 2 * groups * scale ** 2
         if self.direction_feat == 'sim':
-            self.offset = nn.Conv2d(local_window**2 - 1, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
+            self.offset = nn.Conv2d(local_window ** 2 - 1, out_channels, kernel_size=kernel_size,
+                                    padding=kernel_size // 2)
         elif self.direction_feat == 'sim_concat':
-            self.offset = nn.Conv2d(in_channels + local_window**2 - 1, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
-        else: raise NotImplementedError
+            self.offset = nn.Conv2d(in_channels + local_window ** 2 - 1, out_channels, kernel_size=kernel_size,
+                                    padding=kernel_size // 2)
+        else:
+            raise NotImplementedError
         normal_init(self.offset, std=0.001)
         if use_direct_scale:
             if self.direction_feat == 'sim':
-                self.direct_scale = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
+                self.direct_scale = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size,
+                                              padding=kernel_size // 2)
             elif self.direction_feat == 'sim_concat':
-                self.direct_scale = nn.Conv2d(in_channels + local_window**2 - 1, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
-            else: raise NotImplementedError
+                self.direct_scale = nn.Conv2d(in_channels + local_window ** 2 - 1, out_channels,
+                                              kernel_size=kernel_size, padding=kernel_size // 2)
+            else:
+                raise NotImplementedError
             constant_init(self.direct_scale, val=0.)
 
         out_channels = 2 * groups
         if self.direction_feat == 'sim':
-            self.hr_offset = nn.Conv2d(local_window**2 - 1, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
+            self.hr_offset = nn.Conv2d(local_window ** 2 - 1, out_channels, kernel_size=kernel_size,
+                                       padding=kernel_size // 2)
         elif self.direction_feat == 'sim_concat':
-            self.hr_offset = nn.Conv2d(in_channels + local_window**2 - 1, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
-        else: raise NotImplementedError
+            self.hr_offset = nn.Conv2d(in_channels + local_window ** 2 - 1, out_channels, kernel_size=kernel_size,
+                                       padding=kernel_size // 2)
+        else:
+            raise NotImplementedError
         normal_init(self.hr_offset, std=0.001)
-        
+
         if use_direct_scale:
             if self.direction_feat == 'sim':
-                self.hr_direct_scale = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
+                self.hr_direct_scale = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size,
+                                                 padding=kernel_size // 2)
             elif self.direction_feat == 'sim_concat':
-                self.hr_direct_scale = nn.Conv2d(in_channels + local_window**2 - 1, out_channels, kernel_size=kernel_size, padding=kernel_size//2)
-            else: raise NotImplementedError
+                self.hr_direct_scale = nn.Conv2d(in_channels + local_window ** 2 - 1, out_channels,
+                                                 kernel_size=kernel_size, padding=kernel_size // 2)
+            else:
+                raise NotImplementedError
             constant_init(self.hr_direct_scale, val=0.)
 
         self.norm = norm
@@ -345,7 +400,7 @@ class LocalSimGuidedSampler(nn.Module):
     def _init_pos(self):
         h = torch.arange((-self.scale + 1) / 2, (self.scale - 1) / 2 + 1) / self.scale
         return torch.stack(torch.meshgrid([h, h])).transpose(1, 2).repeat(1, self.groups, 1).reshape(1, -1, 1, 1)
-    
+
     def sample(self, x, offset, scale=None):
         if scale is None: scale = self.scale
         B, _, H, W = offset.shape
@@ -360,7 +415,7 @@ class LocalSimGuidedSampler(nn.Module):
             B, 2, -1, scale * H, scale * W).permute(0, 2, 3, 4, 1).contiguous().flatten(0, 1)
         return F.grid_sample(x.reshape(B * self.groups, -1, x.size(-2), x.size(-1)), coords, mode='bilinear',
                              align_corners=False, padding_mode="border").view(B, -1, scale * H, scale * W)
-    
+
     def forward(self, hr_x, lr_x, feat2sample):
         hr_x = self.norm_hr(hr_x)
         lr_x = self.norm_lr(lr_x)
@@ -375,22 +430,24 @@ class LocalSimGuidedSampler(nn.Module):
         # offset = self.get_offset(hr_x, lr_x)
         offset = self.get_offset_lp(hr_x, lr_x, hr_sim, lr_sim)
         return self.sample(feat2sample, offset)
-    
+
     # def get_offset_lp(self, hr_x, lr_x):
     def get_offset_lp(self, hr_x, lr_x, hr_sim, lr_sim):
         if hasattr(self, 'direct_scale'):
             # offset = (self.offset(lr_x) + F.pixel_unshuffle(self.hr_offset(hr_x), self.scale)) * (self.direct_scale(lr_x) + F.pixel_unshuffle(self.hr_direct_scale(hr_x), self.scale)).sigmoid() + self.init_pos
-            offset = (self.offset(lr_sim) + F.pixel_unshuffle(self.hr_offset(hr_sim), self.scale)) * (self.direct_scale(lr_x) + F.pixel_unshuffle(self.hr_direct_scale(hr_x), self.scale)).sigmoid() + self.init_pos
+            offset = (self.offset(lr_sim) + F.pixel_unshuffle(self.hr_offset(hr_sim), self.scale)) * (
+                        self.direct_scale(lr_x) + F.pixel_unshuffle(self.hr_direct_scale(hr_x),
+                                                                    self.scale)).sigmoid() + self.init_pos
             # offset = (self.offset(lr_sim) + F.pixel_unshuffle(self.hr_offset(hr_sim), self.scale)) * (self.direct_scale(lr_sim) + F.pixel_unshuffle(self.hr_direct_scale(hr_sim), self.scale)).sigmoid() + self.init_pos
         else:
-            offset =  (self.offset(lr_x) + F.pixel_unshuffle(self.hr_offset(hr_x), self.scale)) * 0.25 + self.init_pos
+            offset = (self.offset(lr_x) + F.pixel_unshuffle(self.hr_offset(hr_x), self.scale)) * 0.25 + self.init_pos
         return offset
 
     def get_offset(self, hr_x, lr_x):
         if self.style == 'pl':
             raise NotImplementedError
         return self.get_offset_lp(hr_x, lr_x)
-    
+
 
 def compute_similarity(input_tensor, k=3, dilation=1, sim='cos'):
     """
@@ -408,9 +465,9 @@ def compute_similarity(input_tensor, k=3, dilation=1, sim='cos'):
     # padded_input = F.pad(input_tensor, (k // 2, k // 2, k // 2, k // 2), mode='constant', value=0)
 
     # 展平输入张量中每个点及其周围KxK范围内的点
-    unfold_tensor = F.unfold(input_tensor, k, padding=(k // 2) * dilation, dilation=dilation) # B, CxKxK, HW
+    unfold_tensor = F.unfold(input_tensor, k, padding=(k // 2) * dilation, dilation=dilation)  # B, CxKxK, HW
     # print(unfold_tensor.shape)
-    unfold_tensor = unfold_tensor.reshape(B, C, k**2, H, W)
+    unfold_tensor = unfold_tensor.reshape(B, C, k ** 2, H, W)
 
     # 计算余弦相似度
     if sim == 'cos':
