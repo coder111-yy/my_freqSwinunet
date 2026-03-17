@@ -1,0 +1,16 @@
+[15:19:57.735] Namespace(accumulation_steps=1, amp_opt_level='O1', base_lr=0.005, batch_size=4, cache_mode='part', cfg='./configs/swin_base_patch4_window12_384_22k.yaml', dataset='TN3K', deterministic=1, eval=False, eval_interval=1, exp_name='proposed', img_size=384, list_dir='./lists/TN3K', local_rank=0, max_epochs=100, max_iterations=30000, n_class=2, n_gpu=3, num_classes=2, num_workers=8, opts=None, output_dir='./results/proposed/seed_2024', resume='', root_path='./data/TN3K', seed=2024, tag='', throughput=False, use_checkpoint=False, zip=False)
+[15:19:57.735] Using Gradient Accumulation: Real Batch Size=4, Accumulation Steps=1, Virtual Batch Size=4
+[15:19:57.745] 192 iterations per epoch. 19200 max iterations
+[15:20:13.835] iteration 20 : loss: 0.479501, loss_ce: 0.607316, loss_dice: 0.394291, loss_boundary: 1.160182, alpha: 0.000000
+[15:20:25.520] iteration 40 : loss: 0.442019, loss_ce: 0.533451, loss_dice: 0.381064, loss_boundary: 1.057488, alpha: 0.000000
+[15:20:37.227] iteration 60 : loss: 0.379805, loss_ce: 0.367152, loss_dice: 0.388240, loss_boundary: 1.038046, alpha: 0.000000
+[15:20:48.954] iteration 80 : loss: 0.375941, loss_ce: 0.345551, loss_dice: 0.396201, loss_boundary: 1.035932, alpha: 0.000000
+[15:21:00.739] iteration 100 : loss: 0.409979, loss_ce: 0.442427, loss_dice: 0.388346, loss_boundary: 1.042197, alpha: 0.000000
+[15:21:12.484] iteration 120 : loss: 0.451498, loss_ce: 0.551640, loss_dice: 0.384736, loss_boundary: 1.072412, alpha: 0.000000
+[15:21:24.173] iteration 140 : loss: 0.387287, loss_ce: 0.387402, loss_dice: 0.387211, loss_boundary: 1.042027, alpha: 0.000000
+[15:21:35.882] iteration 160 : loss: 0.435628, loss_ce: 0.460832, loss_dice: 0.418826, loss_boundary: 1.051578, alpha: 0.000000
+[15:21:47.565] iteration 180 : loss: 0.342432, loss_ce: 0.293182, loss_dice: 0.375266, loss_boundary: 1.070690, alpha: 0.000000
+[15:22:13.063] Epoch 0: val_dice=0.0000, val_iou=0.0000, val_hd95=101.9537
+[15:22:14.099] save best model to ./results/proposed/seed_2024/best_model.pth, best_epoch=0, best_val_dice=0.0000
+[15:22:15.290] save last model to ./results/proposed/seed_2024/last_model.pth
+[15:22:16.225] save model to ./results/proposed/seed_2024/epoch_0.pth
