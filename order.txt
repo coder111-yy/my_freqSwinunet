@@ -37,7 +37,7 @@ python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.
      --output_dir ./output_tn3k \
      --img_size 384 \
      --batch_size 2 \
-     --max_epochs 200 \
+     --max_epochs 150 \
      --base_lr 0.01 \
      --cfg configs/swin_base_patch4_window12_384_22k.yaml\
 
@@ -65,7 +65,7 @@ python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.
      --img_size 384 \
      --batch_size 2 \
      --max_epochs 50 \
-     --base_lr 0.0005 \
+     --base_lr 0.001 \
      --cfg configs/swin_base_patch4_window12_384_22k.yaml\
      --resume ./output_tn3k/epoch_163.pth
 
@@ -75,20 +75,3 @@ python test_tn3k.py --cfg configs/swin_base_patch4_window12_384_22k.yaml --img_s
 
 
 python test_tn3k_auto.py --cfg configs/swin_base_patch4_window12_384_22k.yaml --output_dir ./output_tn3k --img_size 384
-
-
-
-
-  torchrun --nproc_per_node=3 train.py \
-    --dataset TN3K \
-    --root_path ./data/TN3K \
-    --cfg ./configs/swin_base_patch4_window12_384_22k.yaml \
-    --output_dir ./results \
-    --exp_name proposed \
-    --img_size 384 \
-    --max_epochs 100 \
-    --batch_size 4 \
-    --seed 1234 \
-    --eval_interval 1 \
-    --accumulation_steps 1 \
-    --num_workers 8

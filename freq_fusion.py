@@ -7,60 +7,75 @@ from torch.utils.checkpoint import checkpoint
 import warnings
 import numpy as np
 
-
-# ==================== 创新模块：显式结构先验注入 (ESPI) ====================
+# ==================== 创新模块升级：语义门控结构先验注入 (SGSPI) ====================
 class StructurePriorInjection(nn.Module):
     def __init__(self, channels):
         super(StructurePriorInjection, self).__init__()
-        # 1. 结构先验提取器：使用深度可分离卷积 (Depthwise Conv)
-        self.spatial_gradient = nn.Conv2d(channels, channels, kernel_size=3, padding=1, groups=channels, bias=False)
+        # 1. 结构先验提取器：可学习的 Sobel 算子
+        self.sobel_conv = nn.Conv2d(channels, channels * 2, kernel_size=3, padding=1, groups=channels, bias=False)
+        self._init_sobel_prior(channels)
 
-        # [修改点]：调用自定义的初始化函数，注入 Laplacian 物理先验
-        self._init_edge_prior()
+        # 2. [新增] 空间语义门控生成器 (Spatial Semantic Gate)
+        # 利用干净的深层低频特征，生成通道数为1的空间注意力掩码，压制解剖学背景噪声
+        self.spatial_attention = nn.Sequential(
+            nn.Conv2d(channels, channels // 4, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(channels // 4),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(channels // 4, 1, kernel_size=1, bias=False),
+            nn.Sigmoid()
+        )
 
-        # 2. 动态注入门控：决定在哪些空间位置、注入多少强度的结构先验
+        # 3. 动态注入门控
         self.injection_gate = nn.Sequential(
             nn.Conv2d(channels * 2, channels, kernel_size=1, bias=False),
             nn.Sigmoid()
         )
 
-    def _init_edge_prior(self, scale_factor=0.1):
-        """
-        使用缩放后的 Laplacian 算子初始化边缘提取器的权重。
-        scale_factor: 缩放系数。默认 0.1，以提供温和的结构引导，
-                      防止超声图像中的散斑噪声引起初始梯度爆炸，
-                      从而在保住内部区域 Dice 的同时优化边缘。
-        """
-        # 定义 3x3 的 Laplacian 边缘提取算子
-        laplacian_kernel = torch.tensor([
-            [-1., -1., -1.],
-            [-1., 8., -1.],
-            [-1., -1., -1.]
-        ], dtype=torch.float32)
+    def _init_sobel_prior(self, channels, scale_factor=0.1):
+        sobel_x = torch.tensor([
+            [-1., 0., 1.],
+            [-2., 0., 2.],
+            [-1., 0., 1.]
+        ], dtype=torch.float32) * scale_factor
 
-        # 核心修改：乘以 scale_factor 弱化初始强度
-        laplacian_kernel = laplacian_kernel * scale_factor
+        sobel_y = torch.tensor([
+            [-1., -2., -1.],
+            [0., 0., 0.],
+            [1., 2., 1.]
+        ], dtype=torch.float32) * scale_factor
 
-        # 深度可分离卷积 (groups=channels) 的权重 shape 为: (channels, 1, 3, 3)
-        laplacian_kernel = laplacian_kernel.view(1, 1, 3, 3).repeat(self.spatial_gradient.groups, 1, 1, 1)
+        weight = torch.zeros((channels * 2, 1, 3, 3), dtype=torch.float32)
+        for i in range(channels):
+            weight[i * 2, 0, :, :] = sobel_x
+            weight[i * 2 + 1, 0, :, :] = sobel_y
 
-        # 使用 no_grad 强行覆盖原本随机初始化的权重
         with torch.no_grad():
-            self.spatial_gradient.weight.copy_(laplacian_kernel)
+            self.sobel_conv.weight.copy_(weight)
+            self.sobel_conv.weight.requires_grad = True
 
     def forward(self, hf_feat, lf_feat):
-        # 1. 从干净的低频特征中提取“结构/边缘先验”
-        struct_prior = self.spatial_gradient(lf_feat)
+        # 1. 生成全局空间语义注意力图 (Shape: B, 1, H, W)
+        semantic_gate = self.spatial_attention(lf_feat)
 
-        # 2. 结合高低频信息，计算自适应的注入权重图 (0~1 之间)
-        gate_weight = self.injection_gate(torch.cat([hf_feat, struct_prior], dim=1))
+        # 2. 提取物理边缘
+        edges = self.sobel_conv(lf_feat)
+        edges_x = edges[:, 0::2, :, :]
+        edges_y = edges[:, 1::2, :, :]
 
-        # 3. 核心创新：残差注入 (Residual Injection)
-        enhanced_hf = hf_feat + (struct_prior * gate_weight)
+        # 3. 计算梯度幅值
+        struct_prior_raw = torch.sqrt(edges_x ** 2 + edges_y ** 2 + 1e-6)
+
+        # 4. [核心修正] 语义遮罩干预：物理抹除解剖学伪影边缘
+        # 非结节区域 (如肌肉边缘) 的 semantic_gate 趋近于 0，其强边缘会被强制归零
+        struct_prior_masked = struct_prior_raw * semantic_gate
+
+        # 5. 结合高低频信息计算残差注入权重
+        gate_weight = self.injection_gate(torch.cat([hf_feat, struct_prior_masked], dim=1))
+
+        # 6. 残差注入
+        enhanced_hf = hf_feat + (struct_prior_masked * gate_weight)
 
         return enhanced_hf.contiguous()
-
-
 # =========================================================================
 
 try:
@@ -150,7 +165,6 @@ class FreqFusion(nn.Module):
                                               highpass_kernel ** 2 * up_group * scale_factor ** 2,
                                               encoder_kernel, padding=int((encoder_kernel - 1) * encoder_dilation / 2),
                                               dilation=encoder_dilation)
-
             # 注册 ESPI 模块
             self.espi = StructurePriorInjection(channels=hr_channels)
 
@@ -209,13 +223,13 @@ class FreqFusion(nn.Module):
                                                           hamming=self.hamming_lowpass)
                     mask_lr_lr_feat_lr = self.content_encoder(compressed_lr_feat)
                     mask_lr_lr_feat = F.interpolate(
-                        carafe(mask_lr_lr_feat_lr, mask_lr_init, self.lowpass_kernel, self.up_group, 2),
+                        carafe(mask_lr_lr_feat_lr, mask_lr_init, self.lowpass_kernel, self.up_group, self.scale_factor),
                         size=compressed_hr_feat.shape[-2:], mode='nearest')
                     mask_lr = mask_lr_hr_feat + mask_lr_lr_feat
                     mask_lr_init = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
                     mask_hr_lr_feat = F.interpolate(
                         carafe(self.content_encoder2(compressed_lr_feat), mask_lr_init, self.lowpass_kernel,
-                               self.up_group, 2), size=compressed_hr_feat.shape[-2:], mode='nearest')
+                               self.up_group, self.scale_factor), size=compressed_hr_feat.shape[-2:], mode='nearest')
                     mask_hr = mask_hr_hr_feat + mask_hr_lr_feat
                 else:
                     raise NotImplementedError
@@ -233,9 +247,8 @@ class FreqFusion(nn.Module):
 
         mask_lr = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
 
-        # 统一变量名以防混淆
         if self.semi_conv:
-            lr_feat_up = carafe(lr_feat, mask_lr, self.lowpass_kernel, self.up_group, 2)
+            lr_feat_up = carafe(lr_feat, mask_lr, self.lowpass_kernel, self.up_group, self.scale_factor)
         else:
             lr_feat_up = resize(input=lr_feat, size=hr_feat.shape[2:], mode=self.upsample_mode,
                                 align_corners=None if self.upsample_mode == 'nearest' else self.align_corners)
@@ -243,22 +256,15 @@ class FreqFusion(nn.Module):
 
         if self.use_high_pass and mask_hr is not None:
             mask_hr = self.kernel_normalizer(mask_hr, self.highpass_kernel, hamming=self.hamming_highpass)
-
-            # 1. 提取原始高频特征 (包含脆弱边界与散斑噪声)
             hr_feat_hf_raw = hr_feat - carafe(hr_feat, mask_hr, self.highpass_kernel, self.up_group, 1)
-
-            # 2. ESPI 介入：将低频的结构先验显式注入到高频特征中
-            # 这里的 lr_feat_up 是已经上采样好的、干净的低频语义特征
             hr_feat_hf = self.espi(hr_feat_hf_raw, lr_feat_up)
 
-            # 3. 融合回主干
             if self.hr_residual:
                 hr_feat = (hr_feat_hf + hr_feat).contiguous()
             else:
                 hr_feat = hr_feat_hf.contiguous()
 
         if self.feature_resample:
-            # dysampler 同样调用上采样后的特征
             lr_feat_up = self.dysampler(hr_x=compressed_hr_feat, lr_x=compressed_lr_feat, feat2sample=lr_feat_up)
 
         return mask_lr, hr_feat, lr_feat_up

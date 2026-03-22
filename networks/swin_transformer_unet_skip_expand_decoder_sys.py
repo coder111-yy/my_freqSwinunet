@@ -581,25 +581,24 @@ class BasicLayer_up(nn.Module):
                                  drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
                                  norm_layer=norm_layer)for i in range(depth)])
 
-        # --- 修改 1: 恢复上采样层 (PatchExpand) ---
+        # --- 修正 1: 恢复原生 PatchExpand 上采样模块，接管分辨率放大职责 ---
         if upsample is not None:
             self.upsample = upsample(input_resolution, dim=dim, dim_scale=2, norm_layer=norm_layer)
         else:
             self.upsample = None
 
-        # --- 修改 2: 修正 skip_dim 和 FreqFusion 配置 ---
-        self.skip_dim = dim # 保持与 dim 一致
+        self.skip_dim = dim
         self.align_conv = nn.Linear(dim, self.skip_dim)
 
-        # 实例化 FreqFusion
-        # 关键修改：scale_factor=1 (不进行上采样)，comp_feat_upsample=False (禁用内部上采样逻辑)
+        # --- 修正 2: 修正 FreqFusion 配置 ---
+        # 强制设定 scale_factor=1 与 comp_feat_upsample=False，作为纯粹的同尺度高频引导算子
         self.freq_fusion = FreqFusion(
             hr_channels=self.skip_dim,
             lr_channels=self.skip_dim,
             scale_factor=1,
             comp_feat_upsample=False,
-            semi_conv=False)
-
+            semi_conv=True
+        )
 
     def forward(self, x, skip_col):
         x_low = self.align_conv(x)
@@ -616,18 +615,17 @@ class BasicLayer_up(nn.Module):
         x_low_img = x_low.transpose(1, 2).view(B, C_new, H_low, W_low)
         skip_img = skip_col.transpose(1, 2).view(B, C_skip, H_high, W_high)
 
-        # --- 修改 3: 正确解包 FreqFusion 的返回值 ---
-        # FreqFusion 返回 (mask, hr, lr)，我们需要的是第三个 lr_feat (即融合后的特征)
+        # FreqFusion 在同分辨率下进行高低频结构特征融合
         _, _, x_fused_img = self.freq_fusion(hr_feat=skip_img, lr_feat=x_low_img)
 
         # 转回 Sequence 格式
         x = x_fused_img.flatten(2).transpose(1, 2)
 
-        # Swin Blocks 处理
+        # Swin Blocks 局部注意力计算
         for blk in self.blocks:
             x = blk(x)
 
-        # --- 修改 4: 在最后执行上采样 ---
+        # --- 修正 3: 在层级末端执行标准的特征图上采样 ---
         if self.upsample is not None:
             x = self.upsample(x)
 
