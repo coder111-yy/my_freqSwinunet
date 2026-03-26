@@ -43,11 +43,11 @@ class SwinUnet(nn.Module):
                                 patch_norm=config.MODEL.SWIN.PATCH_NORM,
                                 use_checkpoint=config.TRAIN.USE_CHECKPOINT)
 
-    def forward(self, x):
+    def forward(self, x, return_edge=False):
         if x.size()[1] == 1:
             x = x.repeat(1,3,1,1)
-        logits = self.swin_unet(x)
-        return logits
+        outputs = self.swin_unet(x, return_edge=return_edge)
+        return outputs
 
     def load_from(self, config):
         pretrained_path = config.MODEL.PRETRAIN_CKPT

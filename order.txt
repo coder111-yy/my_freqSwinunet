@@ -29,6 +29,23 @@ python test_tn3k.py     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K     --
 
 下面是swin-base版本
 训练指令
+torchrun --nproc_per_node=3 train.py \
+  --dataset TN3K \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --cfg configs/swin_base_patch4_window12_384_22k.yaml \
+  --img_size 384 \
+  --n_class 2 \
+  --output_dir ./output_tn3k \
+  --batch_size 4 \
+  --max_epochs 150 \
+  --base_lr 1e-4 \
+  --optimizer adamw \
+  --edge_lambda 0.05 \
+  --boundary_width 2 \
+  --num_workers 4
+
+
 python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py \
      --dataset TN3K \
      --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \

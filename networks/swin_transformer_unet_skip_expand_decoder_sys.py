@@ -472,163 +472,102 @@ class BasicLayer(nn.Module):
         return flops
 
 
-class FreqFusionUpBlock(nn.Module):
-    def __init__(self, dim, skip_dim, num_heads, resolution, scale_factor=2):
-        """
-        dim: Low-Res 输入特征的通道数 (例如 192)
-        skip_dim: Skip Connection 高分辨率特征的通道数 (例如 96)
-        resolution: Skip Connection (目标) 的分辨率 (H, W)
-        """
+class ContentAwareUpLayer(nn.Module):
+    def __init__(self, low_dim, skip_dim, input_resolution, target_resolution, depth, num_heads, window_size,
+                 mlp_ratio=4., qkv_bias=True, qk_scale=None, drop=0., attn_drop=0., drop_path=0.,
+                 norm_layer=nn.LayerNorm, use_checkpoint=False, stage_idx=None, total_stages=4):
         super().__init__()
-        self.resolution = resolution  # 目标分辨率 (High-Res 的 H, W)
-        self.dim = dim
+        self.low_dim = low_dim
         self.skip_dim = skip_dim
+        self.input_resolution = input_resolution
+        self.target_resolution = target_resolution
+        self.use_checkpoint = use_checkpoint
 
-        # 1. 通道对齐层
-        # Low-Res 特征通常通道数较多，我们先把它映射到与 Skip 特征相同的维度，或者 FreqFusion 指定的维度
-        # 这里假设我们将 Low-Res 降维到与 Skip 一致，以便进行融合
-        self.reduce_conv = nn.Conv2d(dim, skip_dim, kernel_size=1)
-
-        # 2. FreqFusion 模块
-        # 注意：FreqFusion 内部应当包含上采样逻辑
-        # hr_channels = skip_dim
-        # lr_channels = skip_dim (经过 reduce_conv 后)
+        self.reduce = nn.Linear(low_dim, skip_dim)
         self.freq_fusion = FreqFusion(
             hr_channels=skip_dim,
             lr_channels=skip_dim,
-            scale_factor=scale_factor  # 告诉 FreqFusion 需要上采样 2 倍
+            scale_factor=2,
+            comp_feat_upsample=True,
+            semi_conv=True,
+            use_high_pass=True,
+            hr_residual=True,
+            stage_idx=stage_idx,
+            total_stages=total_stages,
         )
 
-        # 3. 融合后的 Swin Block (处理融合后的 High-Res 特征)
-        # 此时特征分辨率已经变大，通道数为 skip_dim
-        # 你可能需要在这里接一个标准的 SwinTransformerBlock 或 BasicLayer
-        # self.blocks = ... (保持原 Swin-Unet Decoder 后续处理不变)
-
-    def forward(self, x_low, x_skip):
-        """
-        x_low:  来自深层的特征, shape (B, L_low, C_low) 或 (B, C_low, H_low, W_low)
-                在 Swin-Unet 中通常是 (B, H*W/4, 2C)
-        x_skip: 来自 Skip Connection 的特征, shape (B, L_high, C_high)
-                在 Swin-Unet 中通常是 (B, H*W, C)
-        """
-
-        # -----------------------------------------------------------
-        # 第一步：数据格式对齐 (Sequence -> Image Map)
-        # Swin-Unet 传递的是 (B, L, C)，我们需要恢复成 (B, C, H, W)
-        # -----------------------------------------------------------
-        B, L_low, C_low = x_low.shape
-        B, L_skip, C_skip = x_skip.shape
-
-        # 计算 Low-Res 的 H, W (假设是正方形，或者你必须传入 shape)
-        H_low = int(L_low ** 0.5)
-        W_low = int(L_low ** 0.5)
-
-        # 计算 High-Res (Skip) 的 H, W
-        H_high = int(L_skip ** 0.5)
-        W_high = int(L_skip ** 0.5)
-
-        # 转换形状: (B, L, C) -> (B, C, H, W)
-        x_low_map = x_low.transpose(1, 2).view(B, C_low, H_low, W_low)
-        x_skip_map = x_skip.transpose(1, 2).view(B, C_skip, H_high, W_high)
-
-        # -----------------------------------------------------------
-        # 第二步：通道对齐
-        # -----------------------------------------------------------
-        # x_low_map: (B, 2C, H/2, W/2) -> (B, C, H/2, W/2)
-        x_low_aligned = self.reduce_conv(x_low_map)
-
-        # -----------------------------------------------------------
-        # 第三步：FreqFusion (替代 Patch Expanding)
-        # 输入：不同分辨率的特征图
-        # 输出：融合后的高分辨率特征图
-        # -----------------------------------------------------------
-        # 这里 FreqFusion 会利用 x_skip_map (高频/高分辨率) 指导 x_low_aligned 进行上采样
-        # 输出 shape 应该是 (B, C_skip, H_high, W_high)
-        fused_map = self.freq_fusion(hr_feat=x_skip_map, lr_feat=x_low_aligned)
-
-        # -----------------------------------------------------------
-        # 第四步：恢复格式 (Image Map -> Sequence)
-        # 以便送入后续的 Swin Transformer Block
-        # -----------------------------------------------------------
-        # (B, C, H, W) -> (B, C, L) -> (B, L, C)
-        fused_flat = fused_map.flatten(2).transpose(1, 2)
-
-        # 这里的 fused_flat 现在是高分辨率的 Sequence，可以直接传给下一个 Stage
-        return fused_flat
-
-class BasicLayer_up(nn.Module):
-    """ A basic Swin Transformer layer for one stage.
-    """
-
-    def __init__(self, dim, input_resolution, depth, num_heads, window_size,
-                 mlp_ratio=4., qkv_bias=True, qk_scale=None, drop=0., attn_drop=0.,
-                 drop_path=0., norm_layer=nn.LayerNorm, upsample=None, use_checkpoint=False):
-
-        super().__init__()
-        self.dim = dim
-        self.input_resolution = input_resolution
-        self.depth = depth
-        self.use_checkpoint = use_checkpoint
-
-        # build blocks
         self.blocks = nn.ModuleList([
-            SwinTransformerBlock(dim=dim, input_resolution=input_resolution,
-                                 num_heads=num_heads, window_size=window_size,
-                                 shift_size=0 if (i % 2 == 0) else window_size // 2,
-                                 mlp_ratio=mlp_ratio,
-                                 qkv_bias=qkv_bias, qk_scale=qk_scale,
-                                 drop=drop, attn_drop=attn_drop,
-                                 drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
-                                 norm_layer=norm_layer)for i in range(depth)])
+            SwinTransformerBlock(
+                dim=skip_dim,
+                input_resolution=target_resolution,
+                num_heads=num_heads,
+                window_size=window_size,
+                shift_size=0 if (i % 2 == 0) else window_size // 2,
+                mlp_ratio=mlp_ratio,
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
+                drop=drop,
+                attn_drop=attn_drop,
+                drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
+                norm_layer=norm_layer,
+            )
+            for i in range(depth)
+        ])
 
-        # --- 修正 1: 恢复原生 PatchExpand 上采样模块，接管分辨率放大职责 ---
-        if upsample is not None:
-            self.upsample = upsample(input_resolution, dim=dim, dim_scale=2, norm_layer=norm_layer)
-        else:
-            self.upsample = None
+    def forward(self, x_low, x_skip_hr):
+        B, L_low, _ = x_low.shape
+        H_low, W_low = self.input_resolution
+        H_hr, W_hr = self.target_resolution
 
-        self.skip_dim = dim
-        self.align_conv = nn.Linear(dim, self.skip_dim)
+        x_low = self.reduce(x_low)
+        x_low = x_low.transpose(1, 2).contiguous().view(B, self.skip_dim, H_low, W_low)
 
-        # --- 修正 2: 修正 FreqFusion 配置 ---
-        # 强制设定 scale_factor=1 与 comp_feat_upsample=False，作为纯粹的同尺度高频引导算子
-        self.freq_fusion = FreqFusion(
-            hr_channels=self.skip_dim,
-            lr_channels=self.skip_dim,
-            scale_factor=1,
-            comp_feat_upsample=False,
-            semi_conv=True
-        )
+        B2, L_skip, C_skip = x_skip_hr.shape
+        assert B == B2 and C_skip == self.skip_dim
+        assert L_skip == H_hr * W_hr
+        x_skip_hr = x_skip_hr.transpose(1, 2).contiguous().view(B, C_skip, H_hr, W_hr)
 
-    def forward(self, x, skip_col):
-        x_low = self.align_conv(x)
+        _, _, fused_map = self.freq_fusion(hr_feat=x_skip_hr, lr_feat=x_low)
+        x = fused_map.flatten(2).transpose(1, 2).contiguous()
 
-        # 形状变换
-        B, L_low, C_new = x_low.shape
-        H_low = int(L_low ** 0.5)
-        W_low = int(L_low ** 0.5)
-
-        B, L_skip, C_skip = skip_col.shape
-        H_high = int(L_skip ** 0.5)
-        W_high = int(L_skip ** 0.5)
-
-        x_low_img = x_low.transpose(1, 2).view(B, C_new, H_low, W_low)
-        skip_img = skip_col.transpose(1, 2).view(B, C_skip, H_high, W_high)
-
-        # FreqFusion 在同分辨率下进行高低频结构特征融合
-        _, _, x_fused_img = self.freq_fusion(hr_feat=skip_img, lr_feat=x_low_img)
-
-        # 转回 Sequence 格式
-        x = x_fused_img.flatten(2).transpose(1, 2)
-
-        # Swin Blocks 局部注意力计算
         for blk in self.blocks:
-            x = blk(x)
+            if self.use_checkpoint:
+                x = checkpoint.checkpoint(blk, x)
+            else:
+                x = blk(x)
+        return x
 
-        # --- 修正 3: 在层级末端执行标准的特征图上采样 ---
-        if self.upsample is not None:
-            x = self.upsample(x)
 
+class DecoderRefineLayer(nn.Module):
+    def __init__(self, dim, input_resolution, depth, num_heads, window_size,
+                 mlp_ratio=4., qkv_bias=True, qk_scale=None, drop=0., attn_drop=0., drop_path=0.,
+                 norm_layer=nn.LayerNorm, use_checkpoint=False):
+        super().__init__()
+        self.use_checkpoint = use_checkpoint
+        self.blocks = nn.ModuleList([
+            SwinTransformerBlock(
+                dim=dim,
+                input_resolution=input_resolution,
+                num_heads=num_heads,
+                window_size=window_size,
+                shift_size=0 if (i % 2 == 0) else window_size // 2,
+                mlp_ratio=mlp_ratio,
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
+                drop=drop,
+                attn_drop=attn_drop,
+                drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
+                norm_layer=norm_layer,
+            )
+            for i in range(depth)
+        ])
+
+    def forward(self, x):
+        for blk in self.blocks:
+            if self.use_checkpoint:
+                x = checkpoint.checkpoint(blk, x)
+            else:
+                x = blk(x)
         return x
 
 
@@ -772,34 +711,73 @@ class SwinTransformerSys(nn.Module):
 
         # build decoder layers
         self.layers_up = nn.ModuleList()
-        self.concat_back_dim = nn.ModuleList()
-        for i_layer in range(self.num_layers):
-            concat_linear = nn.Linear(2 * int(embed_dim * 2 ** (self.num_layers - 1 - i_layer)),
-                                      int(embed_dim * 2 ** (
-                                                  self.num_layers - 1 - i_layer))) if i_layer > 0 else nn.Identity()
-            if i_layer == 0:
-                layer_up = PatchExpand(
-                    input_resolution=(patches_resolution[0] // (2 ** (self.num_layers - 1 - i_layer)),
-                                      patches_resolution[1] // (2 ** (self.num_layers - 1 - i_layer))),
-                    dim=int(embed_dim * 2 ** (self.num_layers - 1 - i_layer)), dim_scale=2, norm_layer=norm_layer)
-            else:
-                layer_up = BasicLayer_up(dim=int(embed_dim * 2 ** (self.num_layers - 1 - i_layer)),
-                                         input_resolution=(
-                                         patches_resolution[0] // (2 ** (self.num_layers - 1 - i_layer)),
-                                         patches_resolution[1] // (2 ** (self.num_layers - 1 - i_layer))),
-                                         depth=depths[(self.num_layers - 1 - i_layer)],
-                                         num_heads=num_heads[(self.num_layers - 1 - i_layer)],
-                                         window_size=window_size,
-                                         mlp_ratio=self.mlp_ratio,
-                                         qkv_bias=qkv_bias, qk_scale=qk_scale,
-                                         drop=drop_rate, attn_drop=attn_drop_rate,
-                                         drop_path=dpr[sum(depths[:(self.num_layers - 1 - i_layer)]):sum(
-                                             depths[:(self.num_layers - 1 - i_layer) + 1])],
-                                         norm_layer=norm_layer,
-                                         upsample=PatchExpand if (i_layer < self.num_layers - 1) else None,
-                                         use_checkpoint=use_checkpoint)
-            self.layers_up.append(layer_up)
-            self.concat_back_dim.append(concat_linear)
+        self.layers_up.append(
+            PatchExpand(
+                input_resolution=(patches_resolution[0] // 8, patches_resolution[1] // 8),
+                dim=int(embed_dim * 8),
+                dim_scale=2,
+                norm_layer=norm_layer,
+            )
+        )
+        self.layers_up.append(
+            ContentAwareUpLayer(
+                low_dim=int(embed_dim * 4),
+                skip_dim=int(embed_dim * 2),
+                input_resolution=(patches_resolution[0] // 4, patches_resolution[1] // 4),
+                target_resolution=(patches_resolution[0] // 2, patches_resolution[1] // 2),
+                depth=depths[1],
+                num_heads=num_heads[1],
+                window_size=window_size,
+                mlp_ratio=self.mlp_ratio,
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
+                drop=drop_rate,
+                attn_drop=attn_drop_rate,
+                drop_path=dpr[sum(depths[:1]):sum(depths[:2])],
+                norm_layer=norm_layer,
+                use_checkpoint=use_checkpoint,
+                stage_idx=2,
+                total_stages=self.num_layers,
+            )
+        )
+        self.layers_up.append(
+            ContentAwareUpLayer(
+                low_dim=int(embed_dim * 2),
+                skip_dim=int(embed_dim),
+                input_resolution=(patches_resolution[0] // 2, patches_resolution[1] // 2),
+                target_resolution=patches_resolution,
+                depth=max(1, depths[0] - 1),
+                num_heads=num_heads[0],
+                window_size=window_size,
+                mlp_ratio=self.mlp_ratio,
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
+                drop=drop_rate,
+                attn_drop=attn_drop_rate,
+                drop_path=dpr[0:max(1, depths[0] - 1)],
+                norm_layer=norm_layer,
+                use_checkpoint=use_checkpoint,
+                stage_idx=3,
+                total_stages=self.num_layers,
+            )
+        )
+        self.layers_up.append(
+            DecoderRefineLayer(
+                dim=embed_dim,
+                input_resolution=patches_resolution,
+                depth=1,
+                num_heads=num_heads[0],
+                window_size=window_size,
+                mlp_ratio=self.mlp_ratio,
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
+                drop=drop_rate,
+                attn_drop=attn_drop_rate,
+                drop_path=0.0,
+                norm_layer=norm_layer,
+                use_checkpoint=use_checkpoint,
+            )
+        )
 
         self.norm = norm_layer(self.num_features)
         self.norm_up = norm_layer(self.embed_dim)
@@ -808,6 +786,12 @@ class SwinTransformerSys(nn.Module):
             print("---final upsample expand_first---")
             self.up = FinalPatchExpand_X4(input_resolution=(img_size // patch_size, img_size // patch_size),
                                           dim_scale=4, dim=embed_dim)
+            self.edge_head = nn.Sequential(
+                nn.Conv2d(embed_dim, embed_dim, kernel_size=3, padding=1, bias=False),
+                nn.GroupNorm(8, embed_dim),
+                nn.GELU(),
+                nn.Conv2d(embed_dim, 1, kernel_size=1, bias=True),
+            )
             self.output = nn.Conv2d(in_channels=embed_dim, out_channels=self.num_classes, kernel_size=1, bias=False)
 
         self.apply(self._init_weights)
@@ -845,25 +829,17 @@ class SwinTransformerSys(nn.Module):
 
         return x, x_downsample
 
-    # Dencoder and Skip connection
+    # Decoder and Skip connection
     def forward_up_features(self, x, x_downsample):
-            for inx, layer_up in enumerate(self.layers_up):
-                skip_col = x_downsample[-(inx + 1)]
+        x = x + x_downsample[-1]
+        x = self.layers_up[0](x)
+        x = self.layers_up[1](x, x_downsample[-3])
+        x = self.layers_up[2](x, x_downsample[-4])
+        x = self.layers_up[3](x)
+        x = self.norm_up(x)  # B L C
+        return x
 
-                # --- 修改开始 ---
-                # PatchExpand 层只接受 x，不接受 skip_col
-                # 而 BasicLayer_up (使用了FreqFusion) 需要 skip_col
-                if isinstance(layer_up, PatchExpand):
-                    x = layer_up(x)
-                else:
-                    x = layer_up(x, skip_col)
-                # --- 修改结束 ---
-
-            x = self.norm_up(x)  # B L C
-
-            return x
-
-    def up_x4(self, x):
+    def up_x4(self, x, return_edge=False):
         H, W = self.patches_resolution
         B, L, C = x.shape
         assert L == H * W, "input features has wrong size"
@@ -871,16 +847,21 @@ class SwinTransformerSys(nn.Module):
         if self.final_upsample == "expand_first":
             x = self.up(x)
             x = x.view(B, 4 * H, 4 * W, -1)
-            x = x.permute(0, 3, 1, 2)  # B,C,H,W
-            x = self.output(x)
+            x = x.permute(0, 3, 1, 2).contiguous()  # B,C,H,W
+            edge_logits = self.edge_head(x)
+            edge_attn = torch.sigmoid(edge_logits)
+            x = x * (1.0 + edge_attn)
+            seg_logits = self.output(x)
+            if return_edge:
+                return seg_logits, edge_logits
+            return seg_logits
 
-        return x
+        raise ValueError(f"Unsupported final upsample mode: {self.final_upsample}")
 
-    def forward(self, x):
+    def forward(self, x, return_edge=False):
         x, x_downsample = self.forward_features(x)
         x = self.forward_up_features(x, x_downsample)
-        x = self.up_x4(x)
-
+        x = self.up_x4(x, return_edge=return_edge)
         return x
 
     def flops(self):

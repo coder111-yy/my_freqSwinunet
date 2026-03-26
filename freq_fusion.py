@@ -1,4 +1,4 @@
-# TPAMI 2024：Frequency-aware Feature Fusion for Dense Image Prediction (Integrated with CFCA)
+# TPAMI 2024：Frequency-aware Feature Fusion for Dense Image Prediction (Integrated with CFCA & DAG)
 
 import torch
 import torch.nn as nn
@@ -7,29 +7,35 @@ from torch.utils.checkpoint import checkpoint
 import warnings
 import numpy as np
 
-# ==================== 创新模块升级：语义门控结构先验注入 (SGSPI) ====================
+
+# ==================== 创新模块升级：深度感知 & 语义门控结构先验注入 (SGSPI) ====================
 class StructurePriorInjection(nn.Module):
-    def __init__(self, channels):
+    def __init__(self, channels, stage_idx=None, total_stages=4):
         super(StructurePriorInjection, self).__init__()
-        # 1. 结构先验提取器：可学习的 Sobel 算子
         self.sobel_conv = nn.Conv2d(channels, channels * 2, kernel_size=3, padding=1, groups=channels, bias=False)
         self._init_sobel_prior(channels)
 
-        # 2. [新增] 空间语义门控生成器 (Spatial Semantic Gate)
-        # 利用干净的深层低频特征，生成通道数为1的空间注意力掩码，压制解剖学背景噪声
         self.spatial_attention = nn.Sequential(
             nn.Conv2d(channels, channels // 4, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(channels // 4),
+            nn.GroupNorm(num_groups=8, num_channels=channels // 4),
             nn.ReLU(inplace=True),
             nn.Conv2d(channels // 4, 1, kernel_size=1, bias=False),
             nn.Sigmoid()
         )
 
-        # 3. 动态注入门控
+        # 动态注入门控 (注意：此处开启 bias=True，以便接受深度先验初始化)
         self.injection_gate = nn.Sequential(
-            nn.Conv2d(channels * 2, channels, kernel_size=1, bias=False),
+            nn.Conv2d(channels * 2, channels, kernel_size=1, bias=True),
             nn.Sigmoid()
         )
+
+        # -------------------------------------------------------------
+        # 深度先验初始化：浅层 bias 为正 (鼓励高频)，深层 bias 为负 (压制伪影)
+        # -------------------------------------------------------------
+        if stage_idx is not None:
+            # stage_idx 从深到浅通常为 1, 2, 3
+            bias_val = (float(stage_idx) / float(total_stages - 1)) * 2.0 - 1.0
+            nn.init.constant_(self.injection_gate[0].bias, bias_val)
 
     def _init_sobel_prior(self, channels, scale_factor=0.1):
         sobel_x = torch.tensor([
@@ -51,31 +57,24 @@ class StructurePriorInjection(nn.Module):
 
         with torch.no_grad():
             self.sobel_conv.weight.copy_(weight)
-            self.sobel_conv.weight.requires_grad = True
+            self.sobel_conv.weight.requires_grad = False
 
     def forward(self, hf_feat, lf_feat):
-        # 1. 生成全局空间语义注意力图 (Shape: B, 1, H, W)
         semantic_gate = self.spatial_attention(lf_feat)
 
-        # 2. 提取物理边缘
         edges = self.sobel_conv(lf_feat)
         edges_x = edges[:, 0::2, :, :]
         edges_y = edges[:, 1::2, :, :]
 
-        # 3. 计算梯度幅值
         struct_prior_raw = torch.sqrt(edges_x ** 2 + edges_y ** 2 + 1e-6)
-
-        # 4. [核心修正] 语义遮罩干预：物理抹除解剖学伪影边缘
-        # 非结节区域 (如肌肉边缘) 的 semantic_gate 趋近于 0，其强边缘会被强制归零
         struct_prior_masked = struct_prior_raw * semantic_gate
 
-        # 5. 结合高低频信息计算残差注入权重
         gate_weight = self.injection_gate(torch.cat([hf_feat, struct_prior_masked], dim=1))
-
-        # 6. 残差注入
         enhanced_hf = hf_feat + (struct_prior_masked * gate_weight)
 
         return enhanced_hf.contiguous()
+
+
 # =========================================================================
 
 try:
@@ -101,13 +100,24 @@ except ImportError:
         pad = kernel_size // 2
         pad_x = F.pad(x, pad=[pad] * 4, mode='reflect')
         unfold_x = F.unfold(pad_x, kernel_size=(kernel_size, kernel_size), stride=1, padding=0)
-        unfold_x = unfold_x.reshape(b, c, kernel_size * kernel_size, h, w)
-        unfold_x = F.interpolate(unfold_x, scale_factor=up, mode='nearest')
+        unfold_x = unfold_x.reshape(b, c * kernel_size * kernel_size, h, w)
+        if up != 1:
+            unfold_x = F.interpolate(unfold_x, size=(h * up, w * up), mode='nearest')
+        unfold_x = unfold_x.reshape(b, c, kernel_size * kernel_size, h * up, w * up)
+
         expected_mask_c = group * kernel_size * kernel_size
         if m_c != expected_mask_c:
             if m_c > expected_mask_c and m_c % expected_mask_c == 0:
                 ratio = m_c // expected_mask_c
                 normed_mask = normed_mask.view(b, ratio, expected_mask_c, m_h, m_w).mean(dim=1)
+            else:
+                raise RuntimeError(f"CARAFE mask channels mismatch: got {m_c}, expected {expected_mask_c}")
+
+        if (m_h, m_w) != (h * up, w * up):
+            raise RuntimeError(
+                f"CARAFE spatial mismatch: mask {(m_h, m_w)} vs unfolded {(h * up, w * up)}"
+            )
+
         normed_mask = normed_mask.reshape(b, group, kernel_size * kernel_size, m_h, m_w)
         if group == 1:
             res = unfold_x * normed_mask
@@ -116,11 +126,6 @@ except ImportError:
             res = unfold_x * normed_mask.unsqueeze(2)
             res = res.view(b, c, kernel_size * kernel_size, m_h, m_w)
         return res.sum(dim=2).reshape(b, c, m_h, m_w)
-
-
-def constant_init(module, val, bias=0):
-    if hasattr(module, 'weight') and module.weight is not None: nn.init.constant_(module.weight, val)
-    if hasattr(module, 'bias') and module.bias is not None: nn.init.constant_(module.bias, bias)
 
 
 def resize(input, size=None, scale_factor=None, mode='nearest', align_corners=None):
@@ -134,13 +139,17 @@ def hamming2D(M, N):
 
 
 class FreqFusion(nn.Module):
+    # [新增] stage_idx 与 total_stages 参数
     def __init__(self, hr_channels, lr_channels, scale_factor=1, lowpass_kernel=5, highpass_kernel=3,
                  up_group=1, encoder_kernel=3, encoder_dilation=1, compressed_channels=64,
                  align_corners=False, upsample_mode='nearest', feature_resample=False,
                  feature_resample_group=4, comp_feat_upsample=True, use_high_pass=True,
                  use_low_pass=True, hr_residual=True, semi_conv=True, hamming_window=True,
-                 feature_resample_norm=True, **kwargs):
+                 feature_resample_norm=True, stage_idx=None, total_stages=4, **kwargs):
         super().__init__()
+        self.stage_idx = stage_idx
+        self.total_stages = total_stages
+
         self.scale_factor, self.lowpass_kernel, self.highpass_kernel = scale_factor, lowpass_kernel, highpass_kernel
         self.up_group, self.encoder_kernel, self.encoder_dilation = up_group, encoder_kernel, encoder_dilation
         self.compressed_channels = compressed_channels
@@ -154,19 +163,34 @@ class FreqFusion(nn.Module):
         self.use_high_pass, self.use_low_pass, self.semi_conv = use_high_pass, use_low_pass, semi_conv
         self.feature_resample, self.comp_feat_upsample = feature_resample, comp_feat_upsample
 
-        if self.feature_resample:
-            from .freq_fusion import LocalSimGuidedSampler
-            self.dysampler = LocalSimGuidedSampler(in_channels=compressed_channels, scale=2, style='lp',
-                                                   groups=feature_resample_group, use_direct_scale=True,
-                                                   kernel_size=encoder_kernel, norm=feature_resample_norm)
-
         if self.use_high_pass:
             self.content_encoder2 = nn.Conv2d(self.compressed_channels,
                                               highpass_kernel ** 2 * up_group * scale_factor ** 2,
                                               encoder_kernel, padding=int((encoder_kernel - 1) * encoder_dilation / 2),
                                               dilation=encoder_dilation)
-            # 注册 ESPI 模块
-            self.espi = StructurePriorInjection(channels=hr_channels)
+            # 注册具有深度感知的 ESPI 模块
+            self.espi = StructurePriorInjection(channels=hr_channels, stage_idx=stage_idx, total_stages=total_stages)
+
+        # ==================== 深度感知门控融合模块 (DAG) ====================
+        if stage_idx is not None:
+            # 高频强度随深度变浅而增强 (深层0.33 -> 浅层1.0)
+            hf_init = float(stage_idx) / float(total_stages - 1)
+            hf_init = min(max(hf_init, 1e-3), 0.99)
+            self.depth_hf_weight = nn.Parameter(torch.tensor([np.log(hf_init / (1.0 - hf_init))], dtype=torch.float32))
+
+            # 低频语义主干采用以 1.0 为中心的有界可学习门控
+            self.depth_lf_weight = nn.Parameter(torch.tensor([0.0], dtype=torch.float32))
+
+            # SE Channel Attention 动态调配高低频贡献
+            self.dag_se = nn.Sequential(
+                nn.AdaptiveAvgPool2d(1),
+                nn.Conv2d(hr_channels + lr_channels, (hr_channels + lr_channels) // 4, 1, bias=False),
+                nn.ReLU(inplace=True),
+                nn.Conv2d((hr_channels + lr_channels) // 4, hr_channels + lr_channels, 1, bias=False),
+                nn.Sigmoid()
+            )
+            self.dag_conv = nn.Conv2d(hr_channels + lr_channels, hr_channels, 1, bias=False)
+        # ====================================================================
 
         self.hamming_window = hamming_window
         if self.hamming_window:
@@ -208,55 +232,35 @@ class FreqFusion(nn.Module):
 
         mask_hr = None
 
-        if self.semi_conv:
-            if self.comp_feat_upsample:
-                if self.use_high_pass:
-                    mask_hr_hr_feat = self.content_encoder2(compressed_hr_feat)
-                    mask_hr_init = self.kernel_normalizer(mask_hr_hr_feat, self.highpass_kernel,
-                                                          hamming=self.hamming_highpass)
-                    compressed_hr_feat = compressed_hr_feat + compressed_hr_feat - carafe(compressed_hr_feat,
-                                                                                          mask_hr_init,
-                                                                                          self.highpass_kernel,
-                                                                                          self.up_group, 1)
-                    mask_lr_hr_feat = self.content_encoder(compressed_hr_feat)
-                    mask_lr_init = self.kernel_normalizer(mask_lr_hr_feat, self.lowpass_kernel,
-                                                          hamming=self.hamming_lowpass)
-                    mask_lr_lr_feat_lr = self.content_encoder(compressed_lr_feat)
-                    mask_lr_lr_feat = F.interpolate(
-                        carafe(mask_lr_lr_feat_lr, mask_lr_init, self.lowpass_kernel, self.up_group, self.scale_factor),
-                        size=compressed_hr_feat.shape[-2:], mode='nearest')
-                    mask_lr = mask_lr_hr_feat + mask_lr_lr_feat
-                    mask_lr_init = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
-                    mask_hr_lr_feat = F.interpolate(
-                        carafe(self.content_encoder2(compressed_lr_feat), mask_lr_init, self.lowpass_kernel,
-                               self.up_group, self.scale_factor), size=compressed_hr_feat.shape[-2:], mode='nearest')
-                    mask_hr = mask_hr_hr_feat + mask_hr_lr_feat
-                else:
-                    raise NotImplementedError
-            else:
-                mask_lr = self.content_encoder(compressed_hr_feat) + F.interpolate(
-                    self.content_encoder(compressed_lr_feat), size=compressed_hr_feat.shape[-2:], mode='nearest')
-                if self.use_high_pass:
-                    mask_hr = self.content_encoder2(compressed_hr_feat) + F.interpolate(
-                        self.content_encoder2(compressed_lr_feat), size=compressed_hr_feat.shape[-2:], mode='nearest')
+        if self.scale_factor > 1:
+            # 低分辨率空间生成动态重采样核，再 pixel-shuffle 到高分辨率。
+            compressed_hr_to_lr = F.interpolate(
+                compressed_hr_feat, size=compressed_lr_feat.shape[-2:], mode='nearest')
+            compressed_x = compressed_lr_feat + compressed_hr_to_lr
+            mask_lr = self.content_encoder(compressed_x)
+            mask_lr = self.kernel_normalizer(
+                mask_lr, self.lowpass_kernel, scale_factor=self.scale_factor, hamming=self.hamming_lowpass)
+
+            # 高频支路仍在高分辨率空间估计 same-scale filter。
+            if self.use_high_pass:
+                compressed_x_hr = F.interpolate(
+                    compressed_lr_feat, size=compressed_hr_feat.shape[-2:], mode='nearest') + compressed_hr_feat
+                mask_hr = self.content_encoder2(compressed_x_hr)
         else:
             compressed_x = F.interpolate(compressed_lr_feat, size=compressed_hr_feat.shape[-2:],
                                          mode='nearest') + compressed_hr_feat
             mask_lr = self.content_encoder(compressed_x)
-            if self.use_high_pass: mask_hr = self.content_encoder2(compressed_x)
+            if self.use_high_pass:
+                mask_hr = self.content_encoder2(compressed_x)
+            mask_lr = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
 
-        mask_lr = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
-
-        if self.semi_conv:
-            lr_feat_up = carafe(lr_feat, mask_lr, self.lowpass_kernel, self.up_group, self.scale_factor)
-        else:
-            lr_feat_up = resize(input=lr_feat, size=hr_feat.shape[2:], mode=self.upsample_mode,
-                                align_corners=None if self.upsample_mode == 'nearest' else self.align_corners)
-            lr_feat_up = carafe(lr_feat_up, mask_lr, self.lowpass_kernel, self.up_group, 1)
+        # 提取并上采样低频语义特征 (LF)
+        lr_feat_up = carafe(lr_feat, mask_lr, self.lowpass_kernel, self.up_group, self.scale_factor)
 
         if self.use_high_pass and mask_hr is not None:
             mask_hr = self.kernel_normalizer(mask_hr, self.highpass_kernel, hamming=self.hamming_highpass)
             hr_feat_hf_raw = hr_feat - carafe(hr_feat, mask_hr, self.highpass_kernel, self.up_group, 1)
+            # 提取经过门控的高频物理先验 (HF)
             hr_feat_hf = self.espi(hr_feat_hf_raw, lr_feat_up)
 
             if self.hr_residual:
@@ -264,7 +268,23 @@ class FreqFusion(nn.Module):
             else:
                 hr_feat = hr_feat_hf.contiguous()
 
-        if self.feature_resample:
-            lr_feat_up = self.dysampler(hr_x=compressed_hr_feat, lr_x=compressed_lr_feat, feat2sample=lr_feat_up)
+        # ==================== 终极合并：修复原先高频特征丢失的 Bug ====================
+        if self.stage_idx is not None:
+            # 乘上深度可学习标量权重（有界，避免负权重破坏稳定性）
+            hf_w = torch.sigmoid(self.depth_hf_weight)
+            lf_w = 1.0 + 0.5 * torch.tanh(self.depth_lf_weight)
+            hr_feat_w = hr_feat * hf_w
+            lr_feat_up_w = lr_feat_up * lf_w
 
-        return mask_lr, hr_feat, lr_feat_up
+            # 拼接高低频特征，经 SE 注意力调控后融合
+            concat_feat = torch.cat([hr_feat_w, lr_feat_up_w], dim=1)
+            gate = self.dag_se(concat_feat)
+            concat_feat = concat_feat * gate
+            fused_out = self.dag_conv(concat_feat) + lr_feat_up
+
+            # 将 fused_out 作为最终完整的高低频融合特征返回给第 3 个参数
+            return mask_lr, hr_feat, fused_out
+        else:
+            # 兼容非 DAG 模式的硬性相加
+            fused_out = hr_feat + lr_feat_up
+            return mask_lr, hr_feat, fused_out

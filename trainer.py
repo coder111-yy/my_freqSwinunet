@@ -2,14 +2,14 @@ import logging
 import os
 import random
 import sys
-import numpy as np
+from contextlib import nullcontext
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from torchvision import transforms
 from tqdm import tqdm
 
 from utils import DiceLoss
@@ -35,147 +35,175 @@ def get_largest_connected_component(binary_mask):
     return largest_component
 
 
-class DistanceWeightedBCELoss(nn.Module):
-    def __init__(self, penalty_factor=0.05):
-        super(DistanceWeightedBCELoss, self).__init__()
-        self.bce = nn.BCELoss(reduction='none')
-        self.penalty_factor = penalty_factor
+def build_boundary_target(label_batch, boundary_width=2):
+    mask = label_batch.float().unsqueeze(1)
+    k = boundary_width * 2 + 1
+    dil = F.max_pool2d(mask, kernel_size=k, stride=1, padding=boundary_width)
+    ero = -F.max_pool2d(-mask, kernel_size=k, stride=1, padding=boundary_width)
+    boundary = (dil - ero > 0).float()
+    return boundary
 
-    def forward(self, pred, gt, dist_map):
-        pred_clamp = torch.clamp(pred, 1e-6, 1.0 - 1e-6)
 
-        # ---------------------------------------------------------
-        # I/O 消除：直接使用从 Dataloader 并行加载的 GPU 距离图张量
-        # ---------------------------------------------------------
-        weight_tensor = 1.0 + self.penalty_factor * dist_map
+def binary_dice_loss_with_logits(logits, target, smooth=1e-5):
+    prob = torch.sigmoid(logits)
+    dims = (2, 3)
+    intersection = (prob * target).sum(dim=dims)
+    union = prob.sum(dim=dims) + target.sum(dim=dims)
+    dice = (2.0 * intersection + smooth) / (union + smooth)
+    return 1.0 - dice.mean()
 
-        base_bce = self.bce(pred_clamp, gt.float())
-        weighted_loss = (base_bce * weight_tensor).mean()
 
-        return weighted_loss
+def boundary_loss(edge_logits, edge_target):
+    pos = edge_target.sum()
+    neg = edge_target.numel() - pos
+    pos_weight = ((neg + 1.0) / (pos + 1.0)).clamp(1.0, 10.0)
+    pos_weight = pos_weight.to(edge_logits.device, dtype=edge_logits.dtype)
+
+    loss_bce = F.binary_cross_entropy_with_logits(edge_logits, edge_target, pos_weight=pos_weight)
+    loss_dice = binary_dice_loss_with_logits(edge_logits, edge_target)
+    return 0.5 * loss_bce + 0.5 * loss_dice, loss_bce, loss_dice
 
 
 def trainer_synapse(args, model, snapshot_path):
-    pass
+    raise NotImplementedError('This modified trainer only implements TN3K training.')
 
 
 def trainer_tn3k(args, model, snapshot_path):
-    accumulation_steps = args.accumulation_steps if args.accumulation_steps else 6
-    scaler = GradScaler()
+    accumulation_steps = args.accumulation_steps if args.accumulation_steps else 1
+    use_amp = torch.cuda.is_available() and args.amp_opt_level != 'O0'
+    scaler = GradScaler(enabled=use_amp)
 
-    if args.local_rank == 0:
-        logging.basicConfig(filename=snapshot_path + "/log.txt", level=logging.INFO,
+    rank = args.local_rank if args.local_rank != -1 else 0
+    is_main_process = rank == 0
+
+    if is_main_process:
+        logging.basicConfig(filename=os.path.join(snapshot_path, 'log.txt'), level=logging.INFO,
                             format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
         logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
         logging.info(str(args))
-        logging.info(f"Using Gradient Accumulation: Real Batch Size={args.batch_size}, "
-                     f"Accumulation Steps={accumulation_steps}, "
-                     f"Virtual Batch Size={args.batch_size * accumulation_steps}")
+        logging.info(f'Gradient accumulation steps: {accumulation_steps}')
+        logging.info(f'AMP enabled: {use_amp}')
 
-    base_lr = args.base_lr
     num_classes = args.num_classes
     batch_size = args.batch_size
+    base_lr = args.base_lr
 
     db_train = TN3KDataset(base_dir=args.root_path,
                            list_dir=args.list_dir,
-                           split="train",
+                           split='train',
                            img_size=args.img_size,
                            transform=RandomGenerator(output_size=[args.img_size, args.img_size]))
 
-    if args.local_rank == 0:
-        print("The length of train set is: {}".format(len(db_train)))
+    if is_main_process:
+        logging.info('The length of train set is: %d', len(db_train))
 
     def worker_init_fn(worker_id):
         random.seed(args.seed + worker_id)
+        np.random.seed(args.seed + worker_id)
 
-    from torch.utils.data.distributed import DistributedSampler
-    train_sampler = DistributedSampler(db_train, shuffle=True)
-    trainloader = DataLoader(db_train, batch_size=batch_size, shuffle=False,
-                             num_workers=args.num_workers, pin_memory=True, worker_init_fn=worker_init_fn,
-                             sampler=train_sampler)
+    if args.local_rank != -1:
+        from torch.utils.data.distributed import DistributedSampler
+        train_sampler = DistributedSampler(db_train, shuffle=True)
+    else:
+        train_sampler = None
+
+    trainloader = DataLoader(
+        db_train,
+        batch_size=batch_size,
+        shuffle=(train_sampler is None),
+        num_workers=args.num_workers,
+        pin_memory=True,
+        worker_init_fn=worker_init_fn,
+        sampler=train_sampler,
+        drop_last=False,
+    )
 
     model.train()
-
     ce_loss = nn.CrossEntropyLoss()
     dice_loss = DiceLoss(num_classes)
 
-    dist_loss_fn = DistanceWeightedBCELoss(penalty_factor=0.05).cuda(args.local_rank)
-
-    optimizer = optim.SGD(model.parameters(), lr=base_lr, momentum=0.9, weight_decay=0.0001)
+    optimizer_name = getattr(args, 'optimizer', 'adamw').lower()
+    if optimizer_name == 'sgd':
+        optimizer = optim.SGD(model.parameters(), lr=base_lr, momentum=0.9, weight_decay=1e-4, nesterov=True)
+    else:
+        optimizer = optim.AdamW(model.parameters(), lr=base_lr, weight_decay=0.01)
 
     iter_num = 0
     max_epoch = args.max_epochs
-    max_iterations = args.max_epochs * len(trainloader)
+    updates_per_epoch = (len(trainloader) + accumulation_steps - 1) // accumulation_steps
+    max_iterations = max_epoch * updates_per_epoch
+    edge_warmup_epochs = max(1, int(max_epoch * 0.1))
 
-    # ---------------------------------------------------------
-    # 动力学控制：课程学习 (Curriculum Learning) 退火参数设置
-    # ---------------------------------------------------------
-    warmup_epochs = int(max_epoch * 0.2)
-    max_dist_alpha = 0.2
+    if is_main_process:
+        logging.info('%d iterations per epoch. %d max optimizer updates.', len(trainloader), max_iterations)
 
-    if args.local_rank == 0:
-        logging.info("{} iterations per epoch. {} max iterations ".format(len(trainloader), max_iterations))
-
-    iterator = tqdm(range(max_epoch), ncols=70) if args.local_rank == 0 else range(max_epoch)
-
-    optimizer.zero_grad()
+    iterator = tqdm(range(max_epoch), ncols=100) if is_main_process else range(max_epoch)
+    optimizer.zero_grad(set_to_none=True)
 
     for epoch_num in iterator:
-        train_sampler.set_epoch(epoch_num)
+        if train_sampler is not None:
+            train_sampler.set_epoch(epoch_num)
 
-        # 动态计算当前 Epoch 的距离惩罚损失权重系数
-        if epoch_num < warmup_epochs:
-            current_alpha = 0.0
-        else:
-            current_alpha = max_dist_alpha * ((epoch_num - warmup_epochs) / (max_epoch - warmup_epochs))
+        edge_lambda = args.edge_lambda * min(1.0, float(epoch_num + 1) / float(edge_warmup_epochs))
 
         for i_batch, sampled_batch in enumerate(trainloader):
-            # 获取额外的 dist_map 张量
-            image_batch, label_batch, dist_map = sampled_batch['image'], sampled_batch['label'], sampled_batch[
-                'dist_map']
+            image_batch = sampled_batch['image'].cuda(rank, non_blocking=True) if torch.cuda.is_available() else sampled_batch['image']
+            label_batch = sampled_batch['label'].cuda(rank, non_blocking=True) if torch.cuda.is_available() else sampled_batch['label']
+            edge_target = build_boundary_target(label_batch, boundary_width=args.boundary_width)
 
-            image_batch = image_batch.cuda(args.local_rank, non_blocking=True)
-            label_batch = label_batch.cuda(args.local_rank, non_blocking=True)
-            dist_map = dist_map.cuda(args.local_rank, non_blocking=True)
+            sync_now = ((i_batch + 1) % accumulation_steps == 0) or ((i_batch + 1) == len(trainloader))
+            sync_context = nullcontext()
+            if hasattr(model, 'no_sync') and not sync_now:
+                sync_context = model.no_sync()
 
-            outputs = model(image_batch)
-            loss_ce = ce_loss(outputs, label_batch[:].long())
-            loss_dice = dice_loss(outputs, label_batch, softmax=True)
+            with sync_context:
+                with autocast(enabled=use_amp):
+                    outputs, edge_logits = model(image_batch, return_edge=True)
+                    loss_ce = ce_loss(outputs, label_batch.long())
+                    loss_dice = dice_loss(outputs, label_batch, softmax=True)
+                    loss_seg = 0.5 * loss_ce + 0.5 * loss_dice
 
-            pred_prob = torch.softmax(outputs, dim=1)[:, 1:2, :, :]
-            gt_mask = label_batch.unsqueeze(1).float()
+                    loss_edge, loss_edge_bce, loss_edge_dice = boundary_loss(edge_logits, edge_target)
+                    loss_total = loss_seg + edge_lambda * loss_edge
+                    loss_for_backward = loss_total / accumulation_steps
 
-            loss_dist = dist_loss_fn(pred_prob, gt_mask, dist_map)
+                scaler.scale(loss_for_backward).backward()
 
-            # 引入动态权重 current_alpha 控制距离惩罚强度
-            loss = 0.3 * loss_ce + 0.5 * loss_dice + current_alpha * loss_dist
-
-            loss = loss / accumulation_steps
-            loss.backward()
-
-            if (i_batch + 1) % accumulation_steps == 0 or (i_batch + 1) == len(trainloader):
-                optimizer.step()
-                optimizer.zero_grad()
+            if sync_now:
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
 
                 lr_ = base_lr * (1.0 - iter_num / max_iterations) ** 0.9
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = lr_
 
-                iter_num = iter_num + 1
+                iter_num += 1
 
-                if args.local_rank == 0:
-                    if iter_num % 20 == 0:
-                        logging.info(
-                            'iteration %d : loss: %f, ce: %f, dice: %f, dist: %f, alpha: %f' %
-                            (iter_num, loss.item() * accumulation_steps, loss_ce.item(), loss_dice.item(),
-                             loss_dist.item(), current_alpha))
+                if is_main_process and iter_num % 20 == 0:
+                    logging.info(
+                        'iteration %d : total=%f seg=%f ce=%f dice=%f edge=%f edge_bce=%f edge_dice=%f edge_lambda=%f lr=%f',
+                        iter_num,
+                        loss_total.item(),
+                        loss_seg.item(),
+                        loss_ce.item(),
+                        loss_dice.item(),
+                        loss_edge.item(),
+                        loss_edge_bce.item(),
+                        loss_edge_dice.item(),
+                        edge_lambda,
+                        lr_,
+                    )
 
-        if args.local_rank == 0:
+        if is_main_process:
+            state_dict = model.module.state_dict() if hasattr(model, 'module') else model.state_dict()
             last_save_path = os.path.join(snapshot_path, 'last_model.pth')
-            torch.save(model.state_dict(), last_save_path)
+            torch.save(state_dict, last_save_path)
 
             save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
-            torch.save(model.state_dict(), save_mode_path)
+            torch.save(state_dict, save_mode_path)
 
             obsolete_epoch = epoch_num - 100
             if obsolete_epoch >= 0:
@@ -183,4 +211,4 @@ def trainer_tn3k(args, model, snapshot_path):
                 if os.path.exists(obsolete_model_path):
                     os.remove(obsolete_model_path)
 
-    return "Training Finished!"
+    return 'Training Finished!'

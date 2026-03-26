@@ -11,12 +11,11 @@ import glob
 import re
 from medpy import metric
 import skimage.morphology as morphology
-import cv2  # 用于图像可视化与保存
 
 
 def remove_speckle_noise(binary_mask, min_size=150):
     """
-    [修正版后处理] 
+    [修正版后处理]
     移除面积小于 min_size 的孤立噪点，完美保留多发性结节。
     min_size=150 适用于过滤 384x384 尺度下的超声干涉散斑。
     """
@@ -71,15 +70,7 @@ def test_single_model(args, model_path, db_test):
     metric_list = []
     penalty_count = 0
 
-    # 创建困难样本保存目录
-    bad_case_dir = os.path.join(args.output_dir, "bad_cases", os.path.basename(model_path).replace('.pth', ''))
-    os.makedirs(bad_case_dir, exist_ok=True)
-
     print(f"Testing {os.path.basename(model_path)}... ", end="")
-
-    # TN3K 数据集的标准化参数 (用于可视化时的反归一化)
-    tn3k_mean = np.array([0.3915, 0.2582, 0.2558])
-    tn3k_std = np.array([0.1656, 0.1430, 0.1631])
 
     with torch.no_grad():
         for batch_idx, sampled_batch in enumerate(tqdm(testloader, leave=False)):
@@ -96,30 +87,6 @@ def test_single_model(args, model_path, db_test):
             metric_list.append([dice, iou, hd95, asd])
             if is_penalty:
                 penalty_count += 1
-
-            # ================= 困难样本 (Bad Case) 物理落盘机制 =================
-            if hd95 > 30.0 or is_penalty:
-                # 1. 提取图像并反归一化到 0-255 RGB
-                orig_img = image_batch.squeeze(0).cpu().detach().numpy().transpose(1, 2, 0)
-                orig_img = (orig_img * tn3k_std) + tn3k_mean
-                orig_img = np.clip(orig_img * 255.0, 0, 255).astype(np.uint8)
-
-                # 2. 生成红色预测掩码
-                pred_color = np.zeros_like(orig_img)
-                pred_color[:, :, 0] = pred * 255  # Red 通道
-
-                # 3. 生成绿色真实掩码
-                gt_color = np.zeros_like(orig_img)
-                gt_color[:, :, 1] = label * 255  # Green 通道
-
-                # 4. Alpha 混合叠加
-                overlay = cv2.addWeighted(orig_img, 0.6, pred_color, 0.4, 0)
-                overlay = cv2.addWeighted(overlay, 1.0, gt_color, 0.4, 0)
-
-                # 5. 写入磁盘 (cv2 需转换为 BGR 格式)
-                save_name = f"idx_{batch_idx}_HD95_{hd95:.1f}_Dice_{dice:.4f}.jpg"
-                cv2.imwrite(os.path.join(bad_case_dir, save_name), cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR))
-            # =====================================================================
 
     metric_list = np.array(metric_list)
     avg_dice = np.mean(metric_list[:, 0])
