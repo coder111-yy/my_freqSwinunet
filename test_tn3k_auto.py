@@ -1,174 +1,110 @@
 import argparse
+import json
 import os
-import torch
+from copy import deepcopy
+
 import numpy as np
-from torch.utils.data import DataLoader
-from tqdm import tqdm
-from datasets.dataset_tn3k import TN3KDataset
-from networks.vision_transformer import SwinUnet as ViT_seg
+import torch
+
 from config import get_config
-import glob
-import re
-from medpy import metric
-import skimage.morphology as morphology
+from datasets.dataset_tn3k import load_tn3k_records, make_kfold_splits
+from networks.vision_transformer import SwinUnet as ViT_seg
+from trainer import evaluate_tn3k
 
 
-def remove_speckle_noise(binary_mask, min_size=150):
-    """
-    [修正版后处理]
-    移除面积小于 min_size 的孤立噪点，完美保留多发性结节。
-    min_size=150 适用于过滤 384x384 尺度下的超声干涉散斑。
-    """
-    mask_bool = binary_mask.astype(bool)
-    cleaned_mask = morphology.remove_small_objects(mask_bool, min_size=min_size, connectivity=2)
-    return cleaned_mask.astype(np.uint8)
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', '1', 'y'):
+        return True
+    if v.lower() in ('no', 'false', 'f', '0', 'n'):
+        return False
+    raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def calculate_metric_percase(pred, gt):
-    pred[pred > 0] = 1
-    gt[gt > 0] = 1
+parser = argparse.ArgumentParser()
+parser.add_argument('--root_path', type=str, required=True)
+parser.add_argument('--list_dir', type=str, required=True)
+parser.add_argument('--output_dir', type=str, required=True, help='directory containing fold_* subfolders')
+parser.add_argument('--cfg', type=str, required=True)
+parser.add_argument('--img_size', type=int, default=384)
+parser.add_argument('--n_class', type=int, default=2)
+parser.add_argument('--num_workers', type=int, default=4)
+parser.add_argument('--num_folds', type=int, default=5)
+parser.add_argument('--seed', type=int, default=1234)
+parser.add_argument('--cv_source_splits', nargs='+', default=['train', 'test'])
+parser.add_argument('--use_tta', type=str2bool, default=True)
+parser.add_argument('--post_use_lcc', type=str2bool, default=True)
+parser.add_argument('--post_min_size', type=int, default=0)
+parser.add_argument('--post_fill_holes', type=str2bool, default=True)
+parser.add_argument('--post_closing_radius', type=int, default=3)
+parser.add_argument('--opts', help='Modify config options by adding "KEY VALUE" pairs.', default=None, nargs='+')
+args = parser.parse_args()
 
-    if pred.sum() > 0 and gt.sum() > 0:
-        dice = (2.0 * (pred * gt).sum()) / (pred.sum() + gt.sum())
-        iou = (pred * gt).sum() / (pred.sum() + gt.sum() - (pred * gt).sum())
-        hd95 = metric.binary.hd95(pred, gt)
-        asd = metric.binary.asd(pred, gt)
-        return dice, iou, hd95, asd, False
 
-    elif pred.sum() == 0 and gt.sum() == 0:
-        return 1.0, 1.0, 0.0, 0.0, False
-    else:
-        # 触发极端预测失败 (假阴性或完全偏离的假阳性)
-        penalty_distance = 100.0
-        return 0.0, 0.0, penalty_distance, penalty_distance, True
-
-
-def test_single_model(args, model_path, db_test):
-    config = get_config(args)
+def build_model(local_args):
+    config = get_config(local_args)
     config.defrost()
-    config.DATA.IMG_SIZE = args.img_size
+    config.DATA.IMG_SIZE = local_args.img_size
     config.MODEL.SWIN.PATCH_SIZE = 4
     config.MODEL.SWIN.WINDOW_SIZE = 12
     config.freeze()
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    net = ViT_seg(config, img_size=local_args.img_size, num_classes=local_args.n_class).to(device)
+    return net
 
-    net = ViT_seg(config, img_size=args.img_size, num_classes=args.n_class).cuda()
 
+def load_checkpoint(net, model_path):
     checkpoint = torch.load(model_path, map_location='cpu')
-    if 'model' in checkpoint:
-        state_dict = checkpoint['model']
-    elif 'state_dict' in checkpoint:
-        state_dict = checkpoint['state_dict']
-    else:
-        state_dict = checkpoint
-
-    new_state_dict = {k[7:] if k.startswith('module.') else k: v for k, v in state_dict.items()}
-    net.load_state_dict(new_state_dict, strict=True)
+    state_dict = checkpoint.get('model', checkpoint.get('state_dict', checkpoint))
+    state_dict = {k[7:] if k.startswith('module.') else k: v for k, v in state_dict.items()}
+    net.load_state_dict(state_dict, strict=True)
     net.eval()
 
-    testloader = DataLoader(db_test, batch_size=1, shuffle=False, num_workers=2)
 
-    metric_list = []
-    penalty_count = 0
+def main():
+    records = load_tn3k_records(args.root_path, args.list_dir, source_splits=tuple(args.cv_source_splits))
+    fold_pairs = make_kfold_splits(records, num_folds=args.num_folds, seed=args.seed)
 
-    print(f"Testing {os.path.basename(model_path)}... ", end="")
+    all_results = []
+    for fold_id, (_, val_records) in enumerate(fold_pairs):
+        fold_dir = os.path.join(args.output_dir, f'fold_{fold_id}')
+        ckpt_path = os.path.join(fold_dir, 'best_model.pth')
+        if not os.path.exists(ckpt_path):
+            print(f'[Skip] Missing checkpoint: {ckpt_path}')
+            continue
 
-    with torch.no_grad():
-        for batch_idx, sampled_batch in enumerate(tqdm(testloader, leave=False)):
-            image_batch, label_batch = sampled_batch['image'].cuda(), sampled_batch['label'].cuda()
-            output = net(image_batch)
-            pred = torch.argmax(torch.softmax(output, dim=1), dim=1).squeeze(0).cpu().detach().numpy()
-            label = label_batch.squeeze(0).squeeze(0).cpu().detach().numpy()
-
-            # ================= 核心修正：基于面积阈值的多发性结节过滤 =================
-            pred = remove_speckle_noise(pred, min_size=150)
-            # ====================================================================
-
-            dice, iou, hd95, asd, is_penalty = calculate_metric_percase(pred, label)
-            metric_list.append([dice, iou, hd95, asd])
-            if is_penalty:
-                penalty_count += 1
-
-    metric_list = np.array(metric_list)
-    avg_dice = np.mean(metric_list[:, 0])
-    avg_iou = np.mean(metric_list[:, 1])
-    avg_hd95 = np.mean(metric_list[:, 2])
-    avg_asd = np.mean(metric_list[:, 3])
-
-    print(
-        f"Dice: {avg_dice:.4f}, IoU: {avg_iou:.4f}, HD95: {avg_hd95:.4f}, ASD: {avg_asd:.4f} (Penalty: {penalty_count})")
-    return avg_dice, avg_iou, avg_hd95, avg_asd, penalty_count
-
-
-def main(args):
-    model_dir = args.output_dir
-    pth_files = glob.glob(os.path.join(model_dir, "epoch_*.pth"))
-
-    if not pth_files:
-        print(f"在 {model_dir} 中没有找到任何 epoch_*.pth 文件！")
-        return
-
-    pth_files.sort(key=lambda x: int(re.search(r'epoch_(\d+)', os.path.basename(x)).group(1)))
-    print(f"共找到 {len(pth_files)} 个检查点，准备开始批量验证...")
-
-    db_test = TN3KDataset(base_dir=args.root_path,
-                          list_dir=args.list_dir,
-                          split="test",
-                          transform=None,
-                          img_size=args.img_size)
-    print(f"测试集图片数量: {len(db_test)}\n")
-
-    results = []
-
-    for pth in pth_files:
-        avg_dice, avg_iou, avg_hd95, avg_asd, penalty_count = test_single_model(args, pth, db_test)
-        epoch_name = os.path.basename(pth)
-        results.append({
-            "epoch": epoch_name,
-            "dice": avg_dice,
-            "iou": avg_iou,
-            "hd95": avg_hd95,
-            "asd": avg_asd,
-            "penalty": penalty_count
-        })
+        net = build_model(args)
+        load_checkpoint(net, ckpt_path)
+        fold_args = deepcopy(args)
+        metrics = evaluate_tn3k(
+            fold_args,
+            net,
+            val_records,
+            batch_size=1,
+            use_tta=args.use_tta,
+            desc=f'Fold {fold_id} Test',
+        )
+        metrics['fold_id'] = fold_id
+        all_results.append(metrics)
+        print(f"Fold {fold_id}: Dice={metrics['dice']:.4f} IoU={metrics['iou']:.4f} HD95={metrics['hd95']:.4f} ASD={metrics['asd']:.4f}")
+        del net
         torch.cuda.empty_cache()
 
-    print("\n" + "=" * 80)
-    print(" 🏆 批量测试完成！最终排行榜 (按 Dice 降序) 🏆")
-    print("=" * 80)
+    if not all_results:
+        raise RuntimeError('No fold checkpoints were found for evaluation.')
 
-    results.sort(key=lambda x: x["dice"], reverse=True)
+    summary = {'num_folds': len(all_results)}
+    for key in ['dice', 'iou', 'hd95', 'asd']:
+        values = np.asarray([item[key] for item in all_results], dtype=np.float32)
+        summary[f'{key}_mean'] = float(values.mean())
+        summary[f'{key}_std'] = float(values.std(ddof=0))
 
-    print(
-        f"{'排名':<4} | {'权重名称':<13} | {'Avg Dice ↑':<10} | {'Avg IoU ↑':<10} | {'Avg HD95 ↓':<10} | {'Avg ASD ↓':<10} | {'极值惩罚数'}")
-    print("-" * 80)
-    for i, res in enumerate(results):
-        star = " 🌟" if i == 0 else ""
-        print(
-            f"{i + 1:<4} | {res['epoch']:<15} | {res['dice']:.4f}{star:<6} | {res['iou']:.4f}     | {res['hd95']:.4f}     | {res['asd']:.4f}     | {res['penalty']}")
-    print("=" * 80)
+    print('=' * 80)
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    with open(os.path.join(args.output_dir, 'cv_summary_recomputed.json'), 'w', encoding='utf-8') as f:
+        json.dump({'folds': all_results, 'summary': summary}, f, indent=2, ensure_ascii=False)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--root_path', type=str, default='/home/ub/pql/Swin-Unet-main/data/TN3K')
-    parser.add_argument('--list_dir', type=str, default='/home/ub/pql/Swin-Unet-main/lists/TN3K')
-    parser.add_argument('--n_class', type=int, default=2)
-    parser.add_argument('--img_size', type=int, default=384)
-    parser.add_argument('--cfg', type=str, default='configs/swin_base_patch4_window12_384_22k.yaml')
-    parser.add_argument('--output_dir', type=str, default='./output_tn3k')
-
-    parser.add_argument('--batch_size', type=int, default=1)
-    parser.add_argument("--opts", default=None, nargs='+')
-    parser.add_argument('--zip', action='store_true')
-    parser.add_argument('--cache-mode', type=str, default='part')
-    parser.add_argument('--resume', help='resume from checkpoint')
-    parser.add_argument('--accumulation-steps', type=int)
-    parser.add_argument('--use-checkpoint', action='store_true')
-    parser.add_argument('--amp-opt-level', type=str, default='O1')
-    parser.add_argument('--tag', help='tag of experiment')
-    parser.add_argument('--eval', action='store_true')
-    parser.add_argument('--throughput', action='store_true')
-    parser.add_argument('--model_path', type=str, default='')
-
-    args = parser.parse_args()
-    main(args)
+if __name__ == '__main__':
+    main()

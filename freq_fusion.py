@@ -95,15 +95,26 @@ except ImportError:
 
 
     def carafe(x, normed_mask, kernel_size, group=1, up=1):
+        """
+        Pure PyTorch fallback for CARAFE.
+        Important: only upsample H/W, never the kernel dimension K^2.
+        """
         b, c, h, w = x.shape
         _, m_c, m_h, m_w = normed_mask.shape
         pad = kernel_size // 2
+
         pad_x = F.pad(x, pad=[pad] * 4, mode='reflect')
         unfold_x = F.unfold(pad_x, kernel_size=(kernel_size, kernel_size), stride=1, padding=0)
-        unfold_x = unfold_x.reshape(b, c * kernel_size * kernel_size, h, w)
+        # [B, C*K^2, H, W]
+        unfold_x = unfold_x.view(b, c * kernel_size * kernel_size, h, w)
+
         if up != 1:
-            unfold_x = F.interpolate(unfold_x, size=(h * up, w * up), mode='nearest')
-        unfold_x = unfold_x.reshape(b, c, kernel_size * kernel_size, h * up, w * up)
+            # 只放大 H/W，不能把 K^2 这个维度也放大
+            unfold_x = F.interpolate(unfold_x, scale_factor=up, mode='nearest')
+
+        unfold_x = unfold_x.view(
+            b, c, kernel_size * kernel_size, unfold_x.shape[-2], unfold_x.shape[-1]
+        )
 
         expected_mask_c = group * kernel_size * kernel_size
         if m_c != expected_mask_c:
@@ -111,20 +122,22 @@ except ImportError:
                 ratio = m_c // expected_mask_c
                 normed_mask = normed_mask.view(b, ratio, expected_mask_c, m_h, m_w).mean(dim=1)
             else:
-                raise RuntimeError(f"CARAFE mask channels mismatch: got {m_c}, expected {expected_mask_c}")
+                raise RuntimeError(
+                    f"CARAFE mask channels mismatch: got {m_c}, expected {expected_mask_c} "
+                    f"(group={group}, kernel={kernel_size})."
+                )
 
-        if (m_h, m_w) != (h * up, w * up):
-            raise RuntimeError(
-                f"CARAFE spatial mismatch: mask {(m_h, m_w)} vs unfolded {(h * up, w * up)}"
-            )
+        normed_mask = normed_mask.view(b, group, kernel_size * kernel_size, m_h, m_w)
 
-        normed_mask = normed_mask.reshape(b, group, kernel_size * kernel_size, m_h, m_w)
         if group == 1:
             res = unfold_x * normed_mask
         else:
+            if c % group != 0:
+                raise RuntimeError(f"Input channels {c} must be divisible by group {group}.")
             unfold_x = unfold_x.view(b, group, c // group, kernel_size * kernel_size, m_h, m_w)
             res = unfold_x * normed_mask.unsqueeze(2)
             res = res.view(b, c, kernel_size * kernel_size, m_h, m_w)
+
         return res.sum(dim=2).reshape(b, c, m_h, m_w)
 
 
@@ -232,27 +245,12 @@ class FreqFusion(nn.Module):
 
         mask_hr = None
 
-        if self.scale_factor > 1:
-            # 低分辨率空间生成动态重采样核，再 pixel-shuffle 到高分辨率。
-            compressed_hr_to_lr = F.interpolate(
-                compressed_hr_feat, size=compressed_lr_feat.shape[-2:], mode='nearest')
-            compressed_x = compressed_lr_feat + compressed_hr_to_lr
-            mask_lr = self.content_encoder(compressed_x)
-            mask_lr = self.kernel_normalizer(
-                mask_lr, self.lowpass_kernel, scale_factor=self.scale_factor, hamming=self.hamming_lowpass)
+        compressed_x = F.interpolate(compressed_lr_feat, size=compressed_hr_feat.shape[-2:],
+                                     mode='nearest') + compressed_hr_feat
+        mask_lr = self.content_encoder(compressed_x)
+        if self.use_high_pass: mask_hr = self.content_encoder2(compressed_x)
 
-            # 高频支路仍在高分辨率空间估计 same-scale filter。
-            if self.use_high_pass:
-                compressed_x_hr = F.interpolate(
-                    compressed_lr_feat, size=compressed_hr_feat.shape[-2:], mode='nearest') + compressed_hr_feat
-                mask_hr = self.content_encoder2(compressed_x_hr)
-        else:
-            compressed_x = F.interpolate(compressed_lr_feat, size=compressed_hr_feat.shape[-2:],
-                                         mode='nearest') + compressed_hr_feat
-            mask_lr = self.content_encoder(compressed_x)
-            if self.use_high_pass:
-                mask_hr = self.content_encoder2(compressed_x)
-            mask_lr = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
+        mask_lr = self.kernel_normalizer(mask_lr, self.lowpass_kernel, hamming=self.hamming_lowpass)
 
         # 提取并上采样低频语义特征 (LF)
         lr_feat_up = carafe(lr_feat, mask_lr, self.lowpass_kernel, self.up_group, self.scale_factor)

@@ -1,3 +1,0 @@
-[12:18:06.743] Namespace(accumulation_steps=1, amp_opt_level='O1', base_lr=0.0001, batch_size=4, boundary_width=2, cache_mode='part', cfg='configs/swin_base_patch4_window12_384_22k.yaml', dataset='TN3K', deterministic=1, edge_lambda=0.1, eval=False, eval_interval=1, img_size=384, list_dir='/path/to/lists/TN3K', local_rank=0, max_epochs=150, max_iterations=30000, n_class=2, n_gpu=1, num_classes=2, num_workers=4, optimizer='adamw', opts=None, output_dir='./output_tn3k_freqfusion_boundary', resume='', root_path='/path/to/TN3K', seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
-[12:18:06.744] Gradient accumulation steps: 1
-[12:18:06.744] AMP enabled: True

@@ -41,9 +41,27 @@ torchrun --nproc_per_node=3 train.py \
   --max_epochs 150 \
   --base_lr 1e-4 \
   --optimizer adamw \
-  --edge_lambda 0.05 \
-  --boundary_width 2 \
+  --edge_lambda 0.1 \
+  --boundary_width 3 \
+  --edge_focal_gamma 2.0 \
+  --edge_warmup_ratio 0.1 \
+  --edge_decay_start_ratio 0.6 \
+  --edge_lambda_min_factor 0.5 \
   --num_workers 4
+
+
+torchrun --nproc_per_node=3 train_5fold.py \
+  --dataset TN3K \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --cfg configs/swin_base_patch4_window12_384_22k.yaml \
+  --output_dir /path/to/output_tn3k_5fold \
+  --img_size 384 \
+  --max_epochs 100 \
+  --batch_size 4 \
+  --n_class 2 \
+  --base_lr 1e-4
+
 
 
 python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py \
@@ -57,34 +75,6 @@ python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.
      --max_epochs 150 \
      --base_lr 0.01 \
      --cfg configs/swin_base_patch4_window12_384_22k.yaml\
-
-
-断点续训
-python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train_resume.py \
-     --dataset TN3K \
-     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
-     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
-     --n_class 2 \
-     --output_dir ./output_tn3k_resume \
-     --img_size 384 \
-     --batch_size 2 \
-     --max_epochs 50 \
-     --base_lr 0.0005 \
-     --cfg configs/swin_base_patch4_window12_384_22k.yaml\
-     --resume ./output_tn3k/epoch_163.pth
-
-python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py \
-     --dataset TN3K \
-     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
-     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
-     --n_class 2 \
-     --output_dir ./output_tn3k_resume \
-     --img_size 384 \
-     --batch_size 2 \
-     --max_epochs 50 \
-     --base_lr 0.001 \
-     --cfg configs/swin_base_patch4_window12_384_22k.yaml\
-     --resume ./output_tn3k/epoch_163.pth
 
 
 测试指令

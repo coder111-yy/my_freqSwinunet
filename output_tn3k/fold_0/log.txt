@@ -1,0 +1,6 @@
+[13:01:37.896] ================================================================================
+[13:01:37.897] Fold 0 | AMP enabled: True | train=2794 | val=699
+[13:01:37.897] Post-process: lcc=True min_size=0 fill_holes=True closing_radius=3
+[13:05:56.725] ================================================================================
+[13:05:56.725] Fold 0 | AMP enabled: True | train=2794 | val=699
+[13:05:56.725] Post-process: lcc=True min_size=0 fill_holes=True closing_radius=3

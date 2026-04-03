@@ -1,0 +1,84 @@
+[17:28:42.344] Namespace(accumulation_steps=1, amp_opt_level='O1', base_lr=0.0001, batch_size=4, boundary_width=2, cache_mode='part', cfg='configs/swin_base_patch4_window12_384_22k.yaml', dataset='TN3K', deterministic=1, edge_lambda=0.1, eval=False, eval_interval=1, fold=-1, img_size=384, list_dir='/home/ub/pql/Swin-Unet-main/lists/TN3K', local_rank=0, max_epochs=100, n_class=2, num_classes=2, num_folds=5, num_workers=4, optimizer='adamw', opts=None, output_dir='./output_tn3k_5fold', resume='', root_path='/home/ub/pql/Swin-Unet-main/data/TN3K', save_epoch_ckpt=False, seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[17:28:42.345] Fold 0: start training
+[17:28:42.346] Gradient accumulation steps: 1
+[17:28:42.346] AMP enabled: True
+[17:28:42.346] Train size: 2794 | Val size: 699
+[17:28:47.152] Reducer buckets have been rebuilt in this iteration.
+[17:31:02.517] fold=0 epoch=0 train_total=0.153166 train_seg=0.145522 train_edge=0.764389 val_loss=0.120588 val_dice=0.729789 val_iou=0.625411 val_precision=0.746381 val_recall=0.831413
+[17:31:03.700] fold=0 epoch=0 New best model saved with val_dice=0.729789
+[17:33:19.724] fold=0 epoch=1 train_total=0.114791 train_seg=0.102038 train_edge=0.637650 val_loss=0.096017 val_dice=0.777027 val_iou=0.669637 val_precision=0.811067 val_recall=0.817505
+[17:33:21.293] fold=0 epoch=1 New best model saved with val_dice=0.777027
+[17:35:36.869] fold=0 epoch=2 train_total=0.102496 train_seg=0.084626 train_edge=0.595663 val_loss=0.089305 val_dice=0.788264 val_iou=0.686413 val_precision=0.801840 val_recall=0.847144
+[17:35:38.472] fold=0 epoch=2 New best model saved with val_dice=0.788264
+[17:37:53.735] fold=0 epoch=3 train_total=0.104442 train_seg=0.081887 train_edge=0.563879 val_loss=0.092596 val_dice=0.780932 val_iou=0.680494 val_precision=0.828079 val_recall=0.806636
+[17:40:09.761] fold=0 epoch=4 train_total=0.106704 train_seg=0.080725 train_edge=0.519587 val_loss=0.091389 val_dice=0.791626 val_iou=0.693341 val_precision=0.846504 val_recall=0.802327
+[17:40:11.335] fold=0 epoch=4 New best model saved with val_dice=0.791626
+[17:42:26.633] fold=0 epoch=5 train_total=0.106549 train_seg=0.076423 train_edge=0.502087 val_loss=0.090387 val_dice=0.786569 val_iou=0.688015 val_precision=0.883326 val_recall=0.774712
+[17:44:42.578] fold=0 epoch=6 train_total=0.108523 train_seg=0.074381 train_edge=0.487753 val_loss=0.091311 val_dice=0.778473 val_iou=0.679951 val_precision=0.868852 val_recall=0.772107
+[17:46:58.619] fold=0 epoch=7 train_total=0.107634 train_seg=0.069385 train_edge=0.478110 val_loss=0.087683 val_dice=0.786588 val_iou=0.685909 val_precision=0.855676 val_recall=0.785280
+[17:49:14.863] fold=0 epoch=8 train_total=0.109704 train_seg=0.067104 train_edge=0.473331 val_loss=0.098022 val_dice=0.779513 val_iou=0.681960 val_precision=0.768051 val_recall=0.877086
+[17:51:31.048] fold=0 epoch=9 train_total=0.110766 train_seg=0.064414 train_edge=0.463525 val_loss=0.083087 val_dice=0.807281 val_iou=0.712233 val_precision=0.876081 val_recall=0.803703
+[17:51:32.607] fold=0 epoch=9 New best model saved with val_dice=0.807281
+[17:53:48.000] fold=0 epoch=10 train_total=0.104688 train_seg=0.059391 train_edge=0.452967 val_loss=0.088476 val_dice=0.805404 val_iou=0.711133 val_precision=0.833101 val_recall=0.849383
+[17:56:03.594] fold=0 epoch=11 train_total=0.104801 train_seg=0.059929 train_edge=0.448718 val_loss=0.088626 val_dice=0.806498 val_iou=0.711025 val_precision=0.800962 val_recall=0.873371
+[17:58:19.490] fold=0 epoch=12 train_total=0.101555 train_seg=0.056763 train_edge=0.447919 val_loss=0.096565 val_dice=0.792453 val_iou=0.697537 val_precision=0.896773 val_recall=0.774415
+[18:00:35.230] fold=0 epoch=13 train_total=0.098786 train_seg=0.055046 train_edge=0.437400 val_loss=0.084524 val_dice=0.815258 val_iou=0.720234 val_precision=0.884894 val_recall=0.798745
+[18:00:36.807] fold=0 epoch=13 New best model saved with val_dice=0.815258
+[18:02:51.654] fold=0 epoch=14 train_total=0.097632 train_seg=0.053816 train_edge=0.438155 val_loss=0.088613 val_dice=0.819993 val_iou=0.726712 val_precision=0.855892 val_recall=0.839572
+[18:02:53.213] fold=0 epoch=14 New best model saved with val_dice=0.819993
+[18:05:08.209] fold=0 epoch=15 train_total=0.097207 train_seg=0.053796 train_edge=0.434111 val_loss=0.095154 val_dice=0.800983 val_iou=0.706257 val_precision=0.844309 val_recall=0.828333
+[18:07:23.801] fold=0 epoch=16 train_total=0.095578 train_seg=0.052477 train_edge=0.431006 val_loss=0.083624 val_dice=0.810764 val_iou=0.715062 val_precision=0.853506 val_recall=0.824965
+[18:09:39.729] fold=0 epoch=17 train_total=0.096259 train_seg=0.052937 train_edge=0.433218 val_loss=0.091790 val_dice=0.814031 val_iou=0.716268 val_precision=0.870355 val_recall=0.816962
+[18:11:55.737] fold=0 epoch=18 train_total=0.095012 train_seg=0.052077 train_edge=0.429351 val_loss=0.081461 val_dice=0.804420 val_iou=0.709074 val_precision=0.897824 val_recall=0.786620
+[18:14:11.209] fold=0 epoch=19 train_total=0.090912 train_seg=0.048745 train_edge=0.421675 val_loss=0.095807 val_dice=0.812375 val_iou=0.719670 val_precision=0.885127 val_recall=0.803562
+[18:16:27.364] fold=0 epoch=20 train_total=0.087603 train_seg=0.046024 train_edge=0.415791 val_loss=0.088675 val_dice=0.824383 val_iou=0.730892 val_precision=0.845670 val_recall=0.859558
+[18:16:28.919] fold=0 epoch=20 New best model saved with val_dice=0.824383
+[18:18:43.766] fold=0 epoch=21 train_total=0.092451 train_seg=0.050091 train_edge=0.423601 val_loss=0.091635 val_dice=0.813117 val_iou=0.716848 val_precision=0.862946 val_recall=0.821970
+[18:20:59.786] fold=0 epoch=22 train_total=0.087632 train_seg=0.045979 train_edge=0.416527 val_loss=0.084690 val_dice=0.822704 val_iou=0.729876 val_precision=0.864884 val_recall=0.841543
+[18:23:15.417] fold=0 epoch=23 train_total=0.090285 train_seg=0.048887 train_edge=0.413978 val_loss=0.091632 val_dice=0.813083 val_iou=0.719949 val_precision=0.864925 val_recall=0.826303
+[18:25:30.901] fold=0 epoch=24 train_total=0.083552 train_seg=0.043246 train_edge=0.403066 val_loss=0.093103 val_dice=0.816138 val_iou=0.722800 val_precision=0.859881 val_recall=0.835313
+[18:27:46.870] fold=0 epoch=25 train_total=0.084700 train_seg=0.044222 train_edge=0.404780 val_loss=0.090216 val_dice=0.813095 val_iou=0.720576 val_precision=0.830577 val_recall=0.862929
+[18:30:02.905] fold=0 epoch=26 train_total=0.079751 train_seg=0.040259 train_edge=0.394914 val_loss=0.083807 val_dice=0.820946 val_iou=0.728316 val_precision=0.851926 val_recall=0.839835
+[18:32:18.695] fold=0 epoch=27 train_total=0.084037 train_seg=0.043975 train_edge=0.400617 val_loss=0.087000 val_dice=0.824894 val_iou=0.733014 val_precision=0.830455 val_recall=0.877394
+[18:32:20.254] fold=0 epoch=27 New best model saved with val_dice=0.824894
+[18:34:35.360] fold=0 epoch=28 train_total=0.079132 train_seg=0.039919 train_edge=0.392127 val_loss=0.098143 val_dice=0.804999 val_iou=0.709150 val_precision=0.787149 val_recall=0.893462
+[18:36:56.965] fold=0 epoch=29 train_total=0.080758 train_seg=0.040852 train_edge=0.399060 val_loss=0.084014 val_dice=0.825809 val_iou=0.733202 val_precision=0.829420 val_recall=0.878885
+[18:36:58.527] fold=0 epoch=29 New best model saved with val_dice=0.825809
+[18:39:13.662] fold=0 epoch=30 train_total=0.077935 train_seg=0.038886 train_edge=0.390488 val_loss=0.090677 val_dice=0.818972 val_iou=0.725399 val_precision=0.860420 val_recall=0.839101
+[18:41:29.720] fold=0 epoch=31 train_total=0.074319 train_seg=0.036430 train_edge=0.378887 val_loss=0.083057 val_dice=0.824936 val_iou=0.729347 val_precision=0.863778 val_recall=0.838893
+[18:43:45.691] fold=0 epoch=32 train_total=0.076740 train_seg=0.037830 train_edge=0.389095 val_loss=0.096204 val_dice=0.817924 val_iou=0.726873 val_precision=0.846896 val_recall=0.845110
+[18:46:01.634] fold=0 epoch=33 train_total=0.072131 train_seg=0.034548 train_edge=0.375837 val_loss=0.098133 val_dice=0.815977 val_iou=0.723068 val_precision=0.845651 val_recall=0.846872
+[18:48:17.786] fold=0 epoch=34 train_total=0.074164 train_seg=0.036112 train_edge=0.380525 val_loss=0.092297 val_dice=0.818017 val_iou=0.728296 val_precision=0.844792 val_recall=0.855726
+[18:50:33.692] fold=0 epoch=35 train_total=0.074097 train_seg=0.036219 train_edge=0.378788 val_loss=0.096065 val_dice=0.812272 val_iou=0.721268 val_precision=0.834364 val_recall=0.859491
+[18:52:49.744] fold=0 epoch=36 train_total=0.074028 train_seg=0.036150 train_edge=0.378785 val_loss=0.094935 val_dice=0.818269 val_iou=0.727216 val_precision=0.835540 val_recall=0.859205
+[18:55:05.673] fold=0 epoch=37 train_total=0.072294 train_seg=0.034616 train_edge=0.376781 val_loss=0.089698 val_dice=0.828606 val_iou=0.737295 val_precision=0.845412 val_recall=0.867287
+[18:55:07.215] fold=0 epoch=37 New best model saved with val_dice=0.828606
+[18:57:22.216] fold=0 epoch=38 train_total=0.071066 train_seg=0.034215 train_edge=0.368509 val_loss=0.090129 val_dice=0.823935 val_iou=0.732647 val_precision=0.841796 val_recall=0.861380
+[18:59:38.187] fold=0 epoch=39 train_total=0.067998 train_seg=0.031965 train_edge=0.360335 val_loss=0.089290 val_dice=0.823712 val_iou=0.731749 val_precision=0.875327 val_recall=0.825052
+[19:01:54.066] fold=0 epoch=40 train_total=0.068373 train_seg=0.031914 train_edge=0.364598 val_loss=0.108565 val_dice=0.813202 val_iou=0.721404 val_precision=0.848857 val_recall=0.840222
+[19:04:09.899] fold=0 epoch=41 train_total=0.066107 train_seg=0.030499 train_edge=0.356085 val_loss=0.085923 val_dice=0.832929 val_iou=0.741896 val_precision=0.856381 val_recall=0.861466
+[19:04:11.421] fold=0 epoch=41 New best model saved with val_dice=0.832929
+[19:06:26.523] fold=0 epoch=42 train_total=0.068644 train_seg=0.032578 train_edge=0.360662 val_loss=0.096746 val_dice=0.825564 val_iou=0.735689 val_precision=0.858919 val_recall=0.844701
+[19:08:42.279] fold=0 epoch=43 train_total=0.066990 train_seg=0.031492 train_edge=0.354986 val_loss=0.093758 val_dice=0.825674 val_iou=0.733342 val_precision=0.845578 val_recall=0.862434
+[19:10:58.078] fold=0 epoch=44 train_total=0.064706 train_seg=0.029533 train_edge=0.351734 val_loss=0.089013 val_dice=0.832703 val_iou=0.743959 val_precision=0.857195 val_recall=0.853932
+[19:13:13.811] fold=0 epoch=45 train_total=0.062209 train_seg=0.028034 train_edge=0.341754 val_loss=0.093597 val_dice=0.828346 val_iou=0.737971 val_precision=0.859967 val_recall=0.851803
+[19:15:29.736] fold=0 epoch=46 train_total=0.062371 train_seg=0.028006 train_edge=0.343657 val_loss=0.096354 val_dice=0.826728 val_iou=0.735247 val_precision=0.856061 val_recall=0.851902
+[19:17:45.444] fold=0 epoch=47 train_total=0.060077 train_seg=0.026439 train_edge=0.336377 val_loss=0.101353 val_dice=0.830004 val_iou=0.739919 val_precision=0.863966 val_recall=0.851826
+[19:20:01.131] fold=0 epoch=48 train_total=0.060780 train_seg=0.026855 train_edge=0.339252 val_loss=0.098142 val_dice=0.828398 val_iou=0.738477 val_precision=0.855623 val_recall=0.852178
+[19:22:17.046] fold=0 epoch=49 train_total=0.063065 train_seg=0.028703 train_edge=0.343621 val_loss=0.090487 val_dice=0.828884 val_iou=0.737089 val_precision=0.857546 val_recall=0.853717
+[19:24:32.505] fold=0 epoch=50 train_total=0.062253 train_seg=0.027975 train_edge=0.342776 val_loss=0.101123 val_dice=0.828484 val_iou=0.736855 val_precision=0.861226 val_recall=0.853497
+[19:26:48.215] fold=0 epoch=51 train_total=0.058134 train_seg=0.025290 train_edge=0.328438 val_loss=0.099817 val_dice=0.826566 val_iou=0.734971 val_precision=0.865634 val_recall=0.846879
+[19:29:04.401] fold=0 epoch=52 train_total=0.058681 train_seg=0.025667 train_edge=0.330136 val_loss=0.102659 val_dice=0.829789 val_iou=0.739542 val_precision=0.867487 val_recall=0.843652
+[19:31:20.090] fold=0 epoch=53 train_total=0.058527 train_seg=0.025561 train_edge=0.329655 val_loss=0.097574 val_dice=0.822270 val_iou=0.729939 val_precision=0.864273 val_recall=0.839355
+[19:33:36.222] fold=0 epoch=54 train_total=0.059263 train_seg=0.026398 train_edge=0.328656 val_loss=0.101172 val_dice=0.831464 val_iou=0.740867 val_precision=0.850062 val_recall=0.869373
+[19:35:52.197] fold=0 epoch=55 train_total=0.057227 train_seg=0.024796 train_edge=0.324304 val_loss=0.103326 val_dice=0.826367 val_iou=0.737120 val_precision=0.864789 val_recall=0.847304
+[19:38:08.093] fold=0 epoch=56 train_total=0.054597 train_seg=0.023256 train_edge=0.313416 val_loss=0.100781 val_dice=0.835113 val_iou=0.745368 val_precision=0.859961 val_recall=0.861528
+[19:38:09.656] fold=0 epoch=56 New best model saved with val_dice=0.835113
+[19:40:24.915] fold=0 epoch=57 train_total=0.054140 train_seg=0.022693 train_edge=0.314463 val_loss=0.102240 val_dice=0.828213 val_iou=0.737307 val_precision=0.854536 val_recall=0.857838
+[19:42:40.728] fold=0 epoch=58 train_total=0.057598 train_seg=0.025210 train_edge=0.323876 val_loss=0.109833 val_dice=0.823588 val_iou=0.733455 val_precision=0.856561 val_recall=0.851660
+[19:44:56.716] fold=0 epoch=59 train_total=0.054911 train_seg=0.023250 train_edge=0.316612 val_loss=0.106729 val_dice=0.826161 val_iou=0.736457 val_precision=0.859194 val_recall=0.851468
+[19:47:12.736] fold=0 epoch=60 train_total=0.053029 train_seg=0.022152 train_edge=0.308765 val_loss=0.103558 val_dice=0.823198 val_iou=0.731950 val_precision=0.840736 val_recall=0.866843
+[19:49:28.808] fold=0 epoch=61 train_total=0.054085 train_seg=0.022873 train_edge=0.312118 val_loss=0.108540 val_dice=0.821387 val_iou=0.730923 val_precision=0.860101 val_recall=0.843433
+[19:51:44.631] fold=0 epoch=62 train_total=0.056281 train_seg=0.024450 train_edge=0.318308 val_loss=0.102896 val_dice=0.826040 val_iou=0.737265 val_precision=0.843715 val_recall=0.869185
+[19:54:00.235] fold=0 epoch=63 train_total=0.054026 train_seg=0.023315 train_edge=0.307115 val_loss=0.099428 val_dice=0.822056 val_iou=0.732298 val_precision=0.845468 val_recall=0.859448
+[19:56:16.166] fold=0 epoch=64 train_total=0.051787 train_seg=0.021418 train_edge=0.303689 val_loss=0.104591 val_dice=0.822904 val_iou=0.732467 val_precision=0.862313 val_recall=0.843592
