@@ -1,0 +1,12 @@
+{
+  "num_folds": 1,
+  "fold_results": [
+    {
+      "fold": 0,
+      "best_epoch": 34,
+      "best_dice": 0.8354106280538771
+    }
+  ],
+  "mean_best_dice": 0.8354106280538771,
+  "std_best_dice": 0.0
+}

@@ -1,28 +1,29 @@
 import argparse
 import os
 import random
+
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
-from networks.vision_transformer import SwinUnet as ViT_seg
 from config import get_config
+from networks.vision_transformer import SwinUnet as ViT_seg
 from trainer import trainer_synapse, trainer_tn3k
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--root_path', type=str, default='../data/Synapse/train_npz', help='root dir for data')
-parser.add_argument('--dataset', type=str, default='Synapse', help='experiment_name')
-parser.add_argument('--list_dir', type=str, default='./lists/lists_Synapse', help='list dir')
-parser.add_argument('--num_classes', type=int, default=9, help='output channel of network')
+parser.add_argument('--root_path', type=str, required=True, help='TN3K root dir, e.g. ./data/TN3K')
+parser.add_argument('--dataset', type=str, default='TN3K', help='experiment_name')
+parser.add_argument('--list_dir', type=str, required=True, help='directory containing official train.txt and test.txt')
+parser.add_argument('--num_classes', type=int, default=2, help='output channel of network')
 parser.add_argument('--output_dir', type=str, required=True, help='output dir')
-parser.add_argument('--max_iterations', type=int, default=30000, help='maximum iteration number')
+parser.add_argument('--max_iterations', type=int, default=30000, help='unused, kept for compatibility')
 parser.add_argument('--max_epochs', type=int, default=100, help='maximum epoch number to train')
 parser.add_argument('--batch_size', type=int, default=12, help='batch_size per gpu')
 parser.add_argument('--n_gpu', type=int, default=1, help='total gpu')
 parser.add_argument('--deterministic', type=int, default=1, help='whether use deterministic training')
 parser.add_argument('--base_lr', type=float, default=1e-4, help='segmentation network learning rate')
-parser.add_argument('--img_size', type=int, default=224, help='input patch size of network input')
+parser.add_argument('--img_size', type=int, default=384, help='input patch size of network input')
 parser.add_argument('--seed', type=int, default=1234, help='random seed')
 parser.add_argument('--cfg', type=str, required=True, metavar='FILE', help='path to config file')
 parser.add_argument('--opts', default=None, nargs='+', help="Modify config options by adding 'KEY VALUE' pairs.")
@@ -35,17 +36,17 @@ parser.add_argument('--amp-opt-level', type=str, default='O1', choices=['O0', 'O
 parser.add_argument('--tag', help='tag of experiment')
 parser.add_argument('--eval', action='store_true', help='Perform evaluation only')
 parser.add_argument('--throughput', action='store_true', help='Test throughput only')
-parser.add_argument('--n_class', default=9, type=int)
+parser.add_argument('--n_class', default=2, type=int)
 parser.add_argument('--num_workers', default=4, type=int)
 parser.add_argument('--eval_interval', default=1, type=int)
-parser.add_argument('--edge_lambda', type=float, default=0.1, help='weight for boundary loss')
+parser.add_argument('--edge_lambda', type=float, default=0.2, help='weight for boundary loss')
+parser.add_argument('--aux_weight_half', type=float, default=0.4, help='deep supervision weight for 1/2-resolution decoder head')
+parser.add_argument('--aux_weight_full', type=float, default=0.2, help='deep supervision weight for full-token decoder head')
 parser.add_argument('--boundary_width', type=int, default=2, help='boundary band radius in pixels')
 parser.add_argument('--optimizer', type=str, default='adamw', choices=['adamw', 'sgd'])
 parser.add_argument('--local_rank', type=int, default=int(os.environ.get('LOCAL_RANK', -1)), help='local rank for distributed training')
 
 args = parser.parse_args()
-if args.dataset == 'Synapse':
-    args.root_path = os.path.join(args.root_path, 'train_npz')
 
 config = get_config(args)
 config.defrost()
@@ -77,28 +78,14 @@ if __name__ == '__main__':
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed + rank)
 
-    dataset_name = args.dataset
-    dataset_config = {
-        args.dataset: {
-            'root_path': args.root_path,
-            'list_dir': args.list_dir,
-            'num_classes': args.n_class,
-        },
-    }
-
-    args.num_classes = dataset_config[dataset_name]['num_classes']
-    args.root_path = dataset_config[dataset_name]['root_path']
-    args.list_dir = dataset_config[dataset_name]['list_dir']
-
     os.makedirs(args.output_dir, exist_ok=True)
-
-    net = ViT_seg(config, img_size=args.img_size, num_classes=args.num_classes).to(device)
+    net = ViT_seg(config, img_size=args.img_size, num_classes=args.n_class).to(device)
 
     if args.resume:
         if rank == 0:
             print(f'Loading custom weights from: {args.resume}')
         checkpoint = torch.load(args.resume, map_location='cpu')
-        state_dict = checkpoint.get('model', checkpoint.get('state_dict', checkpoint))
+        state_dict = checkpoint.get('model_state_dict', checkpoint.get('model', checkpoint.get('state_dict', checkpoint)))
         new_state_dict = {}
         for k, v in state_dict.items():
             name = k[7:] if k.startswith('module.') else k
@@ -118,9 +105,7 @@ if __name__ == '__main__':
             find_unused_parameters=False,
         )
 
-    if args.dataset == 'Synapse':
-        trainer_synapse(args, net, args.output_dir)
-    elif args.dataset == 'TN3K':
+    if args.dataset == 'TN3K':
         trainer_tn3k(args, net, args.output_dir)
     else:
-        raise ValueError(f'Dataset not supported: {args.dataset}')
+        trainer_synapse(args, net, args.output_dir)

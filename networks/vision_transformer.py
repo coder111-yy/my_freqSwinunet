@@ -43,10 +43,10 @@ class SwinUnet(nn.Module):
                                 patch_norm=config.MODEL.SWIN.PATCH_NORM,
                                 use_checkpoint=config.TRAIN.USE_CHECKPOINT)
 
-    def forward(self, x, return_edge=False):
+    def forward(self, x, return_edge=False, return_aux=False):
         if x.size()[1] == 1:
             x = x.repeat(1,3,1,1)
-        outputs = self.swin_unet(x, return_edge=return_edge)
+        outputs = self.swin_unet(x, return_edge=return_edge, return_aux=return_aux)
         return outputs
 
     def load_from(self, config):

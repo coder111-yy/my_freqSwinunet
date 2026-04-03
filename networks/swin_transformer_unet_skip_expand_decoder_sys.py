@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
 from einops import rearrange
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
@@ -619,6 +620,27 @@ class PatchEmbed(nn.Module):
         return flops
 
 
+class DetailStem(nn.Module):
+    def __init__(self, out_ch):
+        super().__init__()
+        groups = 8 if out_ch >= 8 else 1
+        self.net = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.GELU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(64),
+            nn.GELU(),
+            nn.Conv2d(64, out_ch, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.GroupNorm(groups, out_ch),
+            nn.GELU(),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+
+
 class SwinTransformerSys(nn.Module):
     r""" Swin Transformer
         A PyTorch impl of : `Swin Transformer: Hierarchical Vision Transformer using Shifted Windows`  -
@@ -782,6 +804,28 @@ class SwinTransformerSys(nn.Module):
         self.norm = norm_layer(self.num_features)
         self.norm_up = norm_layer(self.embed_dim)
 
+        self.detail_stem = DetailStem(self.embed_dim)
+        self.detail_fuse = nn.Sequential(
+            nn.Conv2d(self.embed_dim * 2, self.embed_dim, kernel_size=3, padding=1, bias=False),
+            nn.GroupNorm(8, self.embed_dim),
+            nn.GELU(),
+            nn.Conv2d(self.embed_dim, self.embed_dim, kernel_size=3, padding=1, bias=False),
+            nn.GroupNorm(8, self.embed_dim),
+            nn.GELU(),
+        )
+        self.aux_head_half = nn.Sequential(
+            nn.Conv2d(self.embed_dim * 2, self.embed_dim, kernel_size=3, padding=1, bias=False),
+            nn.GroupNorm(8, self.embed_dim),
+            nn.GELU(),
+            nn.Conv2d(self.embed_dim, self.num_classes, kernel_size=1, bias=True),
+        )
+        self.aux_head_full = nn.Sequential(
+            nn.Conv2d(self.embed_dim, self.embed_dim, kernel_size=3, padding=1, bias=False),
+            nn.GroupNorm(8, self.embed_dim),
+            nn.GELU(),
+            nn.Conv2d(self.embed_dim, self.num_classes, kernel_size=1, bias=True),
+        )
+
         if self.final_upsample == "expand_first":
             print("---final upsample expand_first---")
             self.up = FinalPatchExpand_X4(input_resolution=(img_size // patch_size, img_size // patch_size),
@@ -830,38 +874,74 @@ class SwinTransformerSys(nn.Module):
         return x, x_downsample
 
     # Decoder and Skip connection
-    def forward_up_features(self, x, x_downsample):
+    def tokens_to_map(self, x, resolution):
+        H, W = resolution
+        B, L, C = x.shape
+        assert L == H * W, "input features has wrong size"
+        return x.transpose(1, 2).contiguous().view(B, C, H, W)
+
+    def map_to_tokens(self, x):
+        return x.flatten(2).transpose(1, 2).contiguous()
+
+    def forward_up_features(self, x, x_downsample, return_aux=False):
         x = x + x_downsample[-1]
         x = self.layers_up[0](x)
-        x = self.layers_up[1](x, x_downsample[-3])
-        x = self.layers_up[2](x, x_downsample[-4])
-        x = self.layers_up[3](x)
+        x_half = self.layers_up[1](x, x_downsample[-3])
+        x_full = self.layers_up[2](x_half, x_downsample[-4])
+        x = self.layers_up[3](x_full)
         x = self.norm_up(x)  # B L C
+        if return_aux:
+            return x, {'half': x_half, 'full': x}
         return x
 
-    def up_x4(self, x, return_edge=False):
+    def up_x4(self, x, raw_input, aux_tokens=None, return_edge=False, return_aux=False):
         H, W = self.patches_resolution
         B, L, C = x.shape
         assert L == H * W, "input features has wrong size"
 
         if self.final_upsample == "expand_first":
-            x = self.up(x)
-            x = x.view(B, 4 * H, 4 * W, -1)
+            x_map = self.tokens_to_map(x, self.patches_resolution)
+            detail_map = self.detail_stem(raw_input)
+            x_map = x_map + self.detail_fuse(torch.cat([x_map, detail_map], dim=1))
+
+            aux_outputs = None
+            if return_aux and aux_tokens is not None:
+                half_map = self.tokens_to_map(aux_tokens['half'], (H // 2, W // 2))
+                aux1 = self.aux_head_half(half_map)
+                aux1 = F.interpolate(aux1, size=raw_input.shape[-2:], mode='bilinear', align_corners=False)
+
+                aux2 = self.aux_head_full(x_map)
+                aux2 = F.interpolate(aux2, size=raw_input.shape[-2:], mode='bilinear', align_corners=False)
+                aux_outputs = [aux1, aux2]
+
+            x_tokens = self.map_to_tokens(x_map)
+            x_tokens = self.up(x_tokens)
+            x = x_tokens.view(B, 4 * H, 4 * W, -1)
             x = x.permute(0, 3, 1, 2).contiguous()  # B,C,H,W
             edge_logits = self.edge_head(x)
             edge_attn = torch.sigmoid(edge_logits)
             x = x * (1.0 + edge_attn)
             seg_logits = self.output(x)
+
+            if return_edge and return_aux:
+                return seg_logits, edge_logits, aux_outputs
             if return_edge:
                 return seg_logits, edge_logits
+            if return_aux:
+                return seg_logits, aux_outputs
             return seg_logits
 
         raise ValueError(f"Unsupported final upsample mode: {self.final_upsample}")
 
-    def forward(self, x, return_edge=False):
+    def forward(self, x, return_edge=False, return_aux=False):
+        raw_input = x
         x, x_downsample = self.forward_features(x)
-        x = self.forward_up_features(x, x_downsample)
-        x = self.up_x4(x, return_edge=return_edge)
+        if return_aux:
+            x, aux_tokens = self.forward_up_features(x, x_downsample, return_aux=True)
+        else:
+            x = self.forward_up_features(x, x_downsample, return_aux=False)
+            aux_tokens = None
+        x = self.up_x4(x, raw_input=raw_input, aux_tokens=aux_tokens, return_edge=return_edge, return_aux=return_aux)
         return x
 
     def flops(self):

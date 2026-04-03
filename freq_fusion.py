@@ -98,6 +98,9 @@ except ImportError:
         """
         Pure PyTorch fallback for CARAFE.
         Important: only upsample H/W, never the kernel dimension K^2.
+        The previous implementation called F.interpolate on a 5D tensor
+        shaped [B, C, K^2, H, W], which also doubled K^2 when up=2, causing
+        a mismatch like 50 vs 25 at dim=2.
         """
         b, c, h, w = x.shape
         _, m_c, m_h, m_w = normed_mask.shape
@@ -109,12 +112,10 @@ except ImportError:
         unfold_x = unfold_x.view(b, c * kernel_size * kernel_size, h, w)
 
         if up != 1:
-            # 只放大 H/W，不能把 K^2 这个维度也放大
+            # Upsample only spatial dimensions.
             unfold_x = F.interpolate(unfold_x, scale_factor=up, mode='nearest')
 
-        unfold_x = unfold_x.view(
-            b, c, kernel_size * kernel_size, unfold_x.shape[-2], unfold_x.shape[-1]
-        )
+        unfold_x = unfold_x.view(b, c, kernel_size * kernel_size, unfold_x.shape[-2], unfold_x.shape[-1])
 
         expected_mask_c = group * kernel_size * kernel_size
         if m_c != expected_mask_c:
@@ -130,6 +131,9 @@ except ImportError:
         normed_mask = normed_mask.view(b, group, kernel_size * kernel_size, m_h, m_w)
 
         if group == 1:
+            # normed_mask is already [B, 1, K^2, H, W] when group=1.
+            # Do NOT unsqueeze again, otherwise broadcasting creates a 6D tensor
+            # and sum(dim=2) will reduce the wrong axis.
             res = unfold_x * normed_mask
         else:
             if c % group != 0:
