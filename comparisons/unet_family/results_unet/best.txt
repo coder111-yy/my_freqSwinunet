@@ -1,0 +1,1 @@
+Epoch 24: loss=0.0950, dice=0.7807, iou=0.6872, precision=0.8366, recall=0.8075

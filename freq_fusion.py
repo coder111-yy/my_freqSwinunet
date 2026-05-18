@@ -8,7 +8,7 @@ import warnings
 import numpy as np
 
 
-# ==================== 创新模块升级：深度感知 & 语义门控结构先验注入 (SGSPI) ====================
+# ==================== 创新模块：深度感知 & 语义门控结构先验注入 (SGSPI) ====================
 class StructurePriorInjection(nn.Module):
     def __init__(self, channels, stage_idx=None, total_stages=4):
         super(StructurePriorInjection, self).__init__()
@@ -270,7 +270,7 @@ class FreqFusion(nn.Module):
             else:
                 hr_feat = hr_feat_hf.contiguous()
 
-        # ==================== 终极合并：修复原先高频特征丢失的 Bug ====================
+        # ==================== 合并：修复原先高频特征丢失的 Bug ====================
         if self.stage_idx is not None:
             # 乘上深度可学习标量权重（有界，避免负权重破坏稳定性）
             hf_w = torch.sigmoid(self.depth_hf_weight)

@@ -34,27 +34,6 @@ torchrun --nproc_per_node=3 train.py \
   --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
   --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
   --cfg configs/swin_base_patch4_window12_384_22k.yaml \
-  --img_size 384 \
-  --n_class 2 \
-  --output_dir ./output_tn3k \
-  --batch_size 4 \
-  --max_epochs 150 \
-  --base_lr 1e-4 \
-  --optimizer adamw \
-  --edge_lambda 0.1 \
-  --boundary_width 3 \
-  --edge_focal_gamma 2.0 \
-  --edge_warmup_ratio 0.1 \
-  --edge_decay_start_ratio 0.6 \
-  --edge_lambda_min_factor 0.5 \
-  --num_workers 4
-
-
-torchrun --nproc_per_node=3 train_5fold.py \
-  --dataset TN3K \
-  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
-  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
-  --cfg configs/swin_base_patch4_window12_384_22k.yaml \
   --output_dir /path/to/output_tn3k_5fold \
   --img_size 384 \
   --max_epochs 100 \
@@ -63,22 +42,248 @@ torchrun --nproc_per_node=3 train_5fold.py \
   --base_lr 1e-4
 
 
-
-python -m torch.distributed.launch --nproc_per_node=3 --master_port 12345 train.py \
-     --dataset TN3K \
-     --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
-     --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
-     --n_class 2 \
-     --output_dir ./output_tn3k \
-     --img_size 384 \
-     --batch_size 2 \
-     --max_epochs 150 \
-     --base_lr 0.01 \
-     --cfg configs/swin_base_patch4_window12_384_22k.yaml\
-
-
 测试指令
 python test_tn3k.py --cfg configs/swin_base_patch4_window12_384_22k.yaml --img_size 384 --model_path ./output_tn3k/epoch_22.pth
+python test_tn3k.py --cfg configs/swin_base_patch4_window12_384_22k.yaml --img_size 384 --model_path /home/ub/pql/Swin-Unet-main/output_tn3k_official_detail_ds/epoch_1.pth
 
 
-python test_tn3k_auto.py --cfg configs/swin_base_patch4_window12_384_22k.yaml --output_dir ./output_tn3k --img_size 384
+python test_tn3k.py \
+  --cfg configs/swin_base_patch4_window12_384_22k.yaml \
+  --img_size 384 \
+  --batch_size 4 \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --model_path /home/ub/pql/Swin-Unet-main/output_tn3k_official_detail_ds/best_model.pth
+
+
+
+  CUDA_VISIBLE_DEVICES=0,1,2 torchrun --nproc_per_node=3 train.py \
+  --dataset TN3K \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --cfg configs/swin_base_patch4_window12_384_22k.yaml \
+  --output_dir ./output_tn3k_ds_fulltest \
+  --img_size 384 \
+  --n_class 2 \
+  --num_classes 2 \
+  --batch_size 4 \
+  --max_epochs 150 \
+  --base_lr 1e-4 \
+  --optimizer adamw \
+  --edge_lambda 0.2 \
+  --aux_weight_half 0.4 \
+  --aux_weight_full 0.2 \
+  --boundary_width 2
+
+  CUDA_VISIBLE_DEVICES=0,1,2 torchrun --nproc_per_node=3 train.py \
+>   --dataset TN3K \
+>   --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+>   --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+>   --cfg configs/swin_base_patch4_window12_384_22k.yaml \
+>   --output_dir ./output_tn3k_ds_fulltest \
+>   --img_size 384 \
+>   --n_class 2 \
+>   --num_classes 2 \
+>   --batch_size 4 \
+>   --max_epochs 150 \
+>   --base_lr 1e-4 \
+>   --optimizer adamw \
+>   --edge_lambda 0.2 \
+>   --aux_weight_half 0.4 \
+>   --aux_weight_full 0.2 \
+>   --boundary_width 2
+
+
+cd /home/ub/pql/Swin-Unet-main/comparisons/unet_family
+
+cd /home/ub/pql/Swin-Unet-main/comparisons/unet_family
+
+CUDA_VISIBLE_DEVICES=2 python train_tn3k_unet_family.py \
+  --model unetpp \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_unetpp \
+  --img_size 384 \
+  --batch_size 4 \
+  --max_epochs 100 \
+  --base_lr 1e-4
+
+CUDA_VISIBLE_DEVICES=0,1,2 torchrun --nproc_per_node=3 train.py \
+  --dataset TN3K \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --cfg configs/swin_base_patch4_window12_384_22k.yaml \
+  --output_dir ./output_tn3k_edge01_aux02_seed3407 \
+  --img_size 384 \
+  --n_class 2 \
+  --num_classes 2 \
+  --batch_size 4 \
+  --max_epochs 200 \
+  --base_lr 1e-4 \
+  --edge_lambda 0.1 \
+  --aux_weight_half 0.2 \
+  --aux_weight_full 0.1 \
+  --boundary_width 2 \
+  --optimizer adamw \
+  --weight_decay 0.01 \
+  --num_workers 4 \
+  --seed 3407
+
+
+
+  CUDA_VISIBLE_DEVICES=0 python train_tn3k_deeplab.py \
+  --model deeplabv3plus_resnet50 \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_deeplabv3plus_resnet50 \
+  --img_size 384 \
+  --batch_size 24 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --output_stride 16
+
+
+
+CUDA_VISIBLE_DEVICES=1 python train_tn3k_swinunet.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_swin_unet_original \
+  --img_size 384 \
+  --batch_size 4 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --cfg /home/ub/pql/Swin-Unet-main/configs/swin_base_patch4_window12_384_22k.yaml \
+  --opts MODEL.PRETRAIN_CKPT /home/ub/pql/Swin-Unet-main/pretrained_ckpt/swin_base_patch4_window12_384_22k.pth
+
+
+  CUDA_VISIBLE_DEVICES=0 python train_tn3k_transunet.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_transunet \
+  --img_size 384 \
+  --batch_size 4 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --vit_name R50-ViT-B_16 \
+  --n_skip 3 \
+  --vit_patches_size 16
+
+
+CUDA_VISIBLE_DEVICES=2 python train_tn3k_uctransnet.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_uctransnet \
+  --img_size 384 \
+  --batch_size 2 \
+  --max_epochs 100 \
+  --base_lr 1e-4
+
+
+
+
+  CUDA_VISIBLE_DEVICES=0 python train_tn3k_missformer.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_missformer_384_bs1_acc12 \
+  --img_size 384 \
+  --batch_size 4 \
+  --accumulation_steps 12 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --num_workers 2 \
+  --no_amp
+
+
+  CUDA_VISIBLE_DEVICES=1 python train_tn3k_swin_ff_original.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_swin_unet_ff_original_384_bs2_acc6 \
+  --img_size 384 \
+  --batch_size 2 \
+  --accumulation_steps 6 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --num_workers 2 \
+  --no_amp
+
+
+  CUDA_VISIBLE_DEVICES=2 python train_tn3k_swin_ff_original.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_swin_unet_ff_original_384 \
+  --img_size 384 \
+  --batch_size 2 \
+  --accumulation_steps 6 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --num_workers 2 \
+  --no_amp
+
+
+   CUDA_VISIBLE_DEVICES=1 python train_tn3k_swin_ff_original.py \
+>   --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+>   --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+>   --output_dir ./results_swin_unet_ff_original_384_bs2_acc6 \
+>   --img_size 384 \
+>   --batch_size 2 \
+>   --accumulation_steps 6 \
+>   --max_epochs 100 \
+>   --base_lr 1e-4 \
+>   --num_workers 2 \
+>   --no_amp
+
+
+CUDA_VISIBLE_DEVICES=1 python train_tn3k_origin_swin_ff.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_acc3_bs_4 \
+  --img_size 384 \
+  --batch_size 4 \
+  --accumulation_steps 3 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --num_workers 2 \
+  --no_amp
+
+
+  CUDA_VISIBLE_DEVICES=1 python train_tn3k_swin_ff_original.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_current_decoder_original_ff_384_bs2_acc6 \
+  --img_size 384 \
+  --batch_size 4 \
+  --accumulation_steps 6 \
+  --max_epochs 93 \
+  --base_lr 1e-4 \
+  --num_workers 2 \
+  --no_amp \
+  --resume ./results_current_decoder_original_ff_384_bs2_acc6/last_model.pth
+
+
+
+CUDA_VISIBLE_DEVICES=0 python train_tn3k_hiformer.py \
+  --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+  --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+  --output_dir ./results_hiformer_s_384_bs1_acc12 \
+  --model_name hiformer-s \
+  --img_size 384 \
+  --batch_size 1 \
+  --accumulation_steps 12 \
+  --max_epochs 100 \
+  --base_lr 1e-4 \
+  --num_workers 2 \
+  --no_amp
+
+
+
+    CUDA_VISIBLE_DEVICES=0 python train_tn3k_uctransnet.py \
+   --root_path /home/ub/pql/Swin-Unet-main/data/TN3K \
+   --list_dir /home/ub/pql/Swin-Unet-main/lists/TN3K \
+   --output_dir ./results_bs4_acc3 \
+   --img_size 384 \
+   --batch_size 4 \
+   --accumulation_steps 3 \
+   --max_epochs 100 \
+   --base_lr 1e-4 \
+   --num_workers 2 \
+   --no_amp

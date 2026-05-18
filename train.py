@@ -44,6 +44,7 @@ parser.add_argument('--aux_weight_half', type=float, default=0.4, help='deep sup
 parser.add_argument('--aux_weight_full', type=float, default=0.2, help='deep supervision weight for full-token decoder head')
 parser.add_argument('--boundary_width', type=int, default=2, help='boundary band radius in pixels')
 parser.add_argument('--optimizer', type=str, default='adamw', choices=['adamw', 'sgd'])
+parser.add_argument('--weight_decay', type=float, default=0.01)
 parser.add_argument('--local_rank', type=int, default=int(os.environ.get('LOCAL_RANK', -1)), help='local rank for distributed training')
 
 args = parser.parse_args()

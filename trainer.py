@@ -61,11 +61,42 @@ def binary_seg_loss(logits, target):
     return loss, loss_bce, loss_dice
 
 
+# def compute_binary_metrics(logits, target, smooth=1e-5):
+#     if logits.shape[1] == 1:
+#         pred = (torch.sigmoid(logits) > 0.5).long()
+#     else:
+#         pred = torch.argmax(logits, dim=1)
+#
+#     target = target.long()
+#     pred_fg = (pred > 0).float()
+#     target_fg = (target > 0).float()
+#
+#     dims = (1, 2)
+#     intersection = (pred_fg * target_fg).sum(dim=dims)
+#     pred_sum = pred_fg.sum(dim=dims)
+#     target_sum = target_fg.sum(dim=dims)
+#     union = pred_sum + target_sum - intersection
+#
+#     dice = (2.0 * intersection + smooth) / (pred_sum + target_sum + smooth)
+#     iou = (intersection + smooth) / (union + smooth)
+#     precision = (intersection + smooth) / (pred_sum + smooth)
+#     recall = (intersection + smooth) / (target_sum + smooth)
+#
+#     return {
+#         'dice': dice.mean().item(),
+#         'iou': iou.mean().item(),
+#         'precision': precision.mean().item(),
+#         'recall': recall.mean().item(),
+#     }
+
 def compute_binary_metrics(logits, target, smooth=1e-5):
     if logits.shape[1] == 1:
-        pred = (torch.sigmoid(logits) > 0.5).long()
+        pred = (torch.sigmoid(logits) > 0.5).long().squeeze(1)
+    elif logits.shape[1] == 2:
+        # 与 binary_seg_loss 保持一致：只使用前景通道 logits[:, 1:2]
+        pred = (torch.sigmoid(logits[:, 1:2]) > 0.5).long().squeeze(1)
     else:
-        pred = torch.argmax(logits, dim=1)
+        raise ValueError(f'Expected 1 or 2 output channels for binary segmentation, got {logits.shape[1]}')
 
     target = target.long()
     pred_fg = (pred > 0).float()
@@ -88,6 +119,9 @@ def compute_binary_metrics(logits, target, smooth=1e-5):
         'precision': precision.mean().item(),
         'recall': recall.mean().item(),
     }
+
+
+
 
 
 def reset_logger(log_path):
@@ -118,11 +152,29 @@ def seed_worker_builder(seed):
     return worker_init_fn
 
 
+# def create_optimizer(args, model):
+#     optimizer_name = getattr(args, 'optimizer', 'adamw').lower()
+#     if optimizer_name == 'sgd':
+#         return optim.SGD(model.parameters(), lr=args.base_lr, momentum=0.9, weight_decay=1e-4, nesterov=True)
+#     return optim.AdamW(model.parameters(), lr=args.base_lr, weight_decay=0.01)
 def create_optimizer(args, model):
     optimizer_name = getattr(args, 'optimizer', 'adamw').lower()
+    weight_decay = getattr(args, 'weight_decay', 0.01)
+
     if optimizer_name == 'sgd':
-        return optim.SGD(model.parameters(), lr=args.base_lr, momentum=0.9, weight_decay=1e-4, nesterov=True)
-    return optim.AdamW(model.parameters(), lr=args.base_lr, weight_decay=0.01)
+        return optim.SGD(
+            model.parameters(),
+            lr=args.base_lr,
+            momentum=0.9,
+            weight_decay=weight_decay,
+            nesterov=True
+        )
+
+    return optim.AdamW(
+        model.parameters(),
+        lr=args.base_lr,
+        weight_decay=weight_decay
+    )
 
 
 def create_dataloaders(args):
@@ -144,10 +196,11 @@ def create_dataloaders(args):
     if args.local_rank != -1:
         from torch.utils.data.distributed import DistributedSampler
         train_sampler = DistributedSampler(db_train, shuffle=True)
-        test_sampler = DistributedSampler(db_test, shuffle=False)
     else:
         train_sampler = None
-        test_sampler = None
+
+    # 测试集不使用 DistributedSampler，保证 rank 0 评估完整 test set
+    test_sampler = None
 
     worker_init_fn = seed_worker_builder(args.seed)
     train_loader = DataLoader(
@@ -308,9 +361,10 @@ def trainer_tn3k(args, model, snapshot_path):
                     param_group['lr'] = lr_
                 iter_num += 1
 
-        test_metrics = evaluate_tn3k_official(args, model, test_loader, rank, use_amp)
-
         if is_main_process:
+            eval_model = model.module if hasattr(model, 'module') else model
+            test_metrics = evaluate_tn3k_official(args, eval_model, test_loader, rank, use_amp)
+
             logging.info(
                 'epoch=%d train_total=%.6f train_seg=%.6f train_edge=%.6f train_bce=%.6f train_dice=%.6f train_aux=%.6f test_loss=%.6f test_dice=%.6f test_iou=%.6f test_precision=%.6f test_recall=%.6f',
                 epoch_num,

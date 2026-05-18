@@ -1,0 +1,132 @@
+Namespace(accumulation_steps=12, base_lr=0.0001, batch_size=4, deterministic=0, img_size=384, list_dir='/home/ub/pql/Swin-Unet-main/lists/TN3K', max_epochs=100, no_amp=True, no_aug=False, num_workers=2, output_dir='./results_missformer_384_bs1_acc12', root_path='/home/ub/pql/Swin-Unet-main/data/TN3K', seed=1234, weight_decay=0.01)
+Epoch 1/100: loss=0.6458, dice=0.0037, iou=0.0020, precision=0.9490, recall=0.0022
+Saved best model: epoch=1, best_dice=0.0037
+Epoch 2/100: loss=0.6267, dice=0.0523, iou=0.0306, precision=0.2772, recall=0.0406
+Saved best model: epoch=2, best_dice=0.0523
+Epoch 3/100: loss=0.5423, dice=0.4620, iou=0.3350, precision=0.4691, recall=0.6475
+Saved best model: epoch=3, best_dice=0.4620
+Epoch 4/100: loss=0.4608, dice=0.5102, iou=0.3805, precision=0.5785, recall=0.5897
+Saved best model: epoch=4, best_dice=0.5102
+Epoch 5/100: loss=0.4208, dice=0.5746, iou=0.4421, precision=0.5744, recall=0.7324
+Saved best model: epoch=5, best_dice=0.5746
+Epoch 6/100: loss=0.3876, dice=0.6141, iou=0.4827, precision=0.6008, recall=0.7837
+Saved best model: epoch=6, best_dice=0.6141
+Epoch 7/100: loss=0.3612, dice=0.6147, iou=0.4844, precision=0.5803, recall=0.8100
+Saved best model: epoch=7, best_dice=0.6147
+Epoch 8/100: loss=0.3420, dice=0.6649, iou=0.5401, precision=0.6738, recall=0.7829
+Saved best model: epoch=8, best_dice=0.6649
+Epoch 9/100: loss=0.3191, dice=0.6534, iou=0.5278, precision=0.7307, recall=0.6894
+Epoch 10/100: loss=0.3112, dice=0.6974, iou=0.5780, precision=0.7019, recall=0.7990
+Saved best model: epoch=10, best_dice=0.6974
+Epoch 11/100: loss=0.2899, dice=0.7119, iou=0.5966, precision=0.7259, recall=0.8004
+Saved best model: epoch=11, best_dice=0.7119
+Epoch 12/100: loss=0.2752, dice=0.7333, iou=0.6198, precision=0.7836, recall=0.7701
+Saved best model: epoch=12, best_dice=0.7333
+Epoch 13/100: loss=0.2664, dice=0.7453, iou=0.6310, precision=0.7720, recall=0.8041
+Saved best model: epoch=13, best_dice=0.7453
+Epoch 14/100: loss=0.2536, dice=0.7289, iou=0.6168, precision=0.7969, recall=0.7432
+Epoch 15/100: loss=0.2538, dice=0.7183, iou=0.6045, precision=0.8102, recall=0.7209
+Epoch 16/100: loss=0.2449, dice=0.7502, iou=0.6430, precision=0.7168, recall=0.8847
+Saved best model: epoch=16, best_dice=0.7502
+Epoch 17/100: loss=0.2350, dice=0.7642, iou=0.6596, precision=0.7928, recall=0.8049
+Saved best model: epoch=17, best_dice=0.7642
+Epoch 18/100: loss=0.2319, dice=0.7560, iou=0.6466, precision=0.7968, recall=0.7920
+Epoch 19/100: loss=0.2236, dice=0.7652, iou=0.6603, precision=0.7784, recall=0.8258
+Saved best model: epoch=19, best_dice=0.7652
+Epoch 20/100: loss=0.2158, dice=0.7627, iou=0.6569, precision=0.7710, recall=0.8324
+Epoch 21/100: loss=0.2117, dice=0.7782, iou=0.6759, precision=0.7814, recall=0.8482
+Saved best model: epoch=21, best_dice=0.7782
+Epoch 22/100: loss=0.2127, dice=0.7574, iou=0.6514, precision=0.7432, recall=0.8613
+Epoch 23/100: loss=0.2086, dice=0.7828, iou=0.6815, precision=0.7563, recall=0.8857
+Saved best model: epoch=23, best_dice=0.7828
+Epoch 24/100: loss=0.2066, dice=0.7793, iou=0.6796, precision=0.7926, recall=0.8349
+Epoch 25/100: loss=0.2033, dice=0.7859, iou=0.6898, precision=0.7966, recall=0.8458
+Saved best model: epoch=25, best_dice=0.7859
+Epoch 26/100: loss=0.1973, dice=0.7841, iou=0.6837, precision=0.8263, recall=0.8072
+Epoch 27/100: loss=0.2009, dice=0.7678, iou=0.6684, precision=0.8481, recall=0.7614
+Epoch 28/100: loss=0.1941, dice=0.7791, iou=0.6841, precision=0.7761, recall=0.8578
+Epoch 29/100: loss=0.1978, dice=0.7786, iou=0.6806, precision=0.7511, recall=0.8862
+Epoch 30/100: loss=0.1838, dice=0.7922, iou=0.6934, precision=0.8198, recall=0.8340
+Saved best model: epoch=30, best_dice=0.7922
+Epoch 31/100: loss=0.1836, dice=0.7848, iou=0.6839, precision=0.7526, recall=0.8892
+Epoch 32/100: loss=0.1764, dice=0.7783, iou=0.6797, precision=0.7777, recall=0.8458
+Epoch 33/100: loss=0.1872, dice=0.8026, iou=0.7072, precision=0.8304, recall=0.8337
+Saved best model: epoch=33, best_dice=0.8026
+Epoch 34/100: loss=0.1770, dice=0.7962, iou=0.6974, precision=0.8144, recall=0.8414
+Epoch 35/100: loss=0.1825, dice=0.7891, iou=0.6903, precision=0.7710, recall=0.8769
+Epoch 36/100: loss=0.1767, dice=0.7761, iou=0.6738, precision=0.7377, recall=0.9062
+Epoch 37/100: loss=0.1756, dice=0.7961, iou=0.6998, precision=0.8401, recall=0.8122
+Epoch 38/100: loss=0.1756, dice=0.7971, iou=0.7012, precision=0.8155, recall=0.8445
+Epoch 39/100: loss=0.1724, dice=0.7962, iou=0.6995, precision=0.8160, recall=0.8359
+Epoch 40/100: loss=0.1723, dice=0.7952, iou=0.6987, precision=0.8319, recall=0.8196
+Epoch 41/100: loss=0.1758, dice=0.7829, iou=0.6846, precision=0.8199, recall=0.8078
+Epoch 42/100: loss=0.1755, dice=0.7937, iou=0.6971, precision=0.8103, recall=0.8420
+Epoch 43/100: loss=0.1677, dice=0.7990, iou=0.7018, precision=0.8069, recall=0.8553
+Epoch 44/100: loss=0.1648, dice=0.8083, iou=0.7164, precision=0.8136, recall=0.8627
+Saved best model: epoch=44, best_dice=0.8083
+Epoch 45/100: loss=0.1640, dice=0.7747, iou=0.6720, precision=0.7255, recall=0.9177
+Epoch 46/100: loss=0.1628, dice=0.8017, iou=0.7051, precision=0.7937, recall=0.8753
+Epoch 47/100: loss=0.1590, dice=0.8095, iou=0.7127, precision=0.8198, recall=0.8575
+Saved best model: epoch=47, best_dice=0.8095
+Epoch 48/100: loss=0.1602, dice=0.8005, iou=0.7025, precision=0.7789, recall=0.8893
+Epoch 49/100: loss=0.1578, dice=0.8125, iou=0.7191, precision=0.8439, recall=0.8368
+Saved best model: epoch=49, best_dice=0.8125
+Epoch 50/100: loss=0.1583, dice=0.8126, iou=0.7191, precision=0.8283, recall=0.8525
+Saved best model: epoch=50, best_dice=0.8126
+Epoch 51/100: loss=0.1607, dice=0.8147, iou=0.7212, precision=0.8187, recall=0.8710
+Saved best model: epoch=51, best_dice=0.8147
+Epoch 52/100: loss=0.1571, dice=0.8056, iou=0.7121, precision=0.8441, recall=0.8285
+Epoch 53/100: loss=0.1555, dice=0.8110, iou=0.7181, precision=0.8279, recall=0.8572
+Epoch 54/100: loss=0.1538, dice=0.7989, iou=0.7023, precision=0.7519, recall=0.9231
+Epoch 55/100: loss=0.1565, dice=0.8179, iou=0.7278, precision=0.8223, recall=0.8732
+Saved best model: epoch=55, best_dice=0.8179
+Epoch 56/100: loss=0.1512, dice=0.8120, iou=0.7175, precision=0.8416, recall=0.8409
+Epoch 57/100: loss=0.1506, dice=0.8157, iou=0.7237, precision=0.8098, recall=0.8752
+Epoch 58/100: loss=0.1493, dice=0.8137, iou=0.7247, precision=0.8456, recall=0.8353
+Epoch 59/100: loss=0.1546, dice=0.8132, iou=0.7207, precision=0.7936, recall=0.8962
+Epoch 60/100: loss=0.1460, dice=0.8144, iou=0.7221, precision=0.8246, recall=0.8652
+Epoch 61/100: loss=0.1454, dice=0.8003, iou=0.7053, precision=0.7842, recall=0.8856
+Epoch 62/100: loss=0.1438, dice=0.7953, iou=0.7062, precision=0.8057, recall=0.8526
+Epoch 63/100: loss=0.1548, dice=0.8015, iou=0.7074, precision=0.8068, recall=0.8642
+Epoch 64/100: loss=0.1665, dice=0.7821, iou=0.6857, precision=0.8732, recall=0.7652
+Epoch 65/100: loss=0.1586, dice=0.8085, iou=0.7165, precision=0.8104, recall=0.8739
+Epoch 66/100: loss=0.1570, dice=0.8022, iou=0.7124, precision=0.8236, recall=0.8418
+Epoch 67/100: loss=0.1546, dice=0.7885, iou=0.6905, precision=0.7495, recall=0.9070
+Epoch 68/100: loss=0.1522, dice=0.8158, iou=0.7256, precision=0.8157, recall=0.8780
+Epoch 69/100: loss=0.1440, dice=0.8187, iou=0.7283, precision=0.8017, recall=0.8960
+Saved best model: epoch=69, best_dice=0.8187
+Epoch 70/100: loss=0.1383, dice=0.8207, iou=0.7317, precision=0.8384, recall=0.8581
+Saved best model: epoch=70, best_dice=0.8207
+Epoch 71/100: loss=0.1431, dice=0.8144, iou=0.7216, precision=0.8023, recall=0.8836
+Epoch 72/100: loss=0.1358, dice=0.8161, iou=0.7252, precision=0.8422, recall=0.8491
+Epoch 73/100: loss=0.1348, dice=0.8141, iou=0.7249, precision=0.8121, recall=0.8803
+Epoch 74/100: loss=0.1387, dice=0.8065, iou=0.7162, precision=0.8780, recall=0.7935
+Epoch 75/100: loss=0.1439, dice=0.8125, iou=0.7221, precision=0.8224, recall=0.8639
+Epoch 76/100: loss=0.1409, dice=0.8135, iou=0.7205, precision=0.8616, recall=0.8212
+Epoch 77/100: loss=0.1395, dice=0.8220, iou=0.7329, precision=0.8382, recall=0.8602
+Saved best model: epoch=77, best_dice=0.8220
+Epoch 78/100: loss=0.1335, dice=0.8163, iou=0.7282, precision=0.8215, recall=0.8648
+Epoch 79/100: loss=0.1289, dice=0.8228, iou=0.7350, precision=0.8460, recall=0.8542
+Saved best model: epoch=79, best_dice=0.8228
+Epoch 80/100: loss=0.1306, dice=0.8190, iou=0.7278, precision=0.8231, recall=0.8763
+Epoch 81/100: loss=0.1335, dice=0.8060, iou=0.7139, precision=0.8004, recall=0.8844
+Epoch 82/100: loss=0.1344, dice=0.7909, iou=0.6953, precision=0.8157, recall=0.8344
+Epoch 83/100: loss=0.1302, dice=0.8103, iou=0.7198, precision=0.8069, recall=0.8705
+Epoch 84/100: loss=0.1356, dice=0.8143, iou=0.7244, precision=0.8255, recall=0.8601
+Epoch 85/100: loss=0.1334, dice=0.8169, iou=0.7272, precision=0.8110, recall=0.8870
+Epoch 86/100: loss=0.1359, dice=0.8181, iou=0.7301, precision=0.8468, recall=0.8470
+Epoch 87/100: loss=0.1332, dice=0.8164, iou=0.7272, precision=0.8139, recall=0.8808
+Epoch 88/100: loss=0.1268, dice=0.8109, iou=0.7190, precision=0.8320, recall=0.8529
+Epoch 89/100: loss=0.1314, dice=0.8192, iou=0.7276, precision=0.8043, recall=0.8941
+Epoch 90/100: loss=0.1287, dice=0.8225, iou=0.7342, precision=0.8492, recall=0.8477
+Epoch 91/100: loss=0.1269, dice=0.8145, iou=0.7219, precision=0.7896, recall=0.9074
+Epoch 92/100: loss=0.1349, dice=0.8040, iou=0.7068, precision=0.8009, recall=0.8693
+Epoch 93/100: loss=0.1432, dice=0.8230, iou=0.7322, precision=0.8580, recall=0.8433
+Saved best model: epoch=93, best_dice=0.8230
+Epoch 94/100: loss=0.1322, dice=0.8155, iou=0.7272, precision=0.8424, recall=0.8466
+Epoch 95/100: loss=0.1267, dice=0.8006, iou=0.7032, precision=0.7559, recall=0.9186
+Epoch 96/100: loss=0.1314, dice=0.8197, iou=0.7294, precision=0.8359, recall=0.8641
+Epoch 97/100: loss=0.1239, dice=0.8142, iou=0.7241, precision=0.8216, recall=0.8660
+Epoch 98/100: loss=0.1276, dice=0.8090, iou=0.7192, precision=0.8329, recall=0.8489
+Epoch 99/100: loss=0.1251, dice=0.8165, iou=0.7255, precision=0.8161, recall=0.8752
+Epoch 100/100: loss=0.1269, dice=0.8223, iou=0.7325, precision=0.8350, recall=0.8674

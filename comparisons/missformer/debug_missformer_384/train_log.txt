@@ -1,0 +1,1 @@
+Namespace(accumulation_steps=12, base_lr=0.0001, batch_size=1, deterministic=0, img_size=384, list_dir='/home/ub/pql/Swin-Unet-main/lists/TN3K', max_epochs=1, no_amp=True, no_aug=False, num_workers=2, output_dir='./debug_missformer_384', root_path='/home/ub/pql/Swin-Unet-main/data/TN3K', seed=1234, weight_decay=0.01)
